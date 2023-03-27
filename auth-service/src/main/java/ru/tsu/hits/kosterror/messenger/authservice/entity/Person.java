@@ -53,7 +53,7 @@ public class Person implements Serializable {
     @Column(name = "gender")
     private Gender gender;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "person_role",
             joinColumns = @JoinColumn(name = "person_id"),
