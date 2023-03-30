@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.service.jwt.servlet;
+package ru.tsu.hits.kosterror.messenger.authservice.service.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
