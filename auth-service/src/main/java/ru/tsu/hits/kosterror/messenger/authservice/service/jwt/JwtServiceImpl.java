@@ -42,7 +42,16 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String extractLogin(String token, String secret) throws TokenVerificationException {
+    public String extractLoginFromAccessToken(String token) throws TokenVerificationException {
+        return extractLogin(token, accessSecret);
+    }
+
+    @Override
+    public String extractLoginFromRefreshToken(String token) throws TokenVerificationException {
+        return extractLogin(token, refreshSecret);
+    }
+
+    private String extractLogin(String token, String secret) throws TokenVerificationException {
         if (token == null || token.isBlank() || token.isEmpty()) {
             throw new TokenVerificationException("Токен пустой");
         }

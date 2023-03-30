@@ -8,6 +8,8 @@ public interface JwtService {
 
     String generateRefreshToken(String login);
 
-    String extractLogin(String token, String secret) throws TokenVerificationException;
+    String extractLoginFromAccessToken(String token) throws TokenVerificationException;
+
+    String extractLoginFromRefreshToken(String token) throws TokenVerificationException;
 
 }
