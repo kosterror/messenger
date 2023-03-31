@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.TokenVerificationException;
 import ru.tsu.hits.kosterror.messenger.authservice.service.jwt.JwtService;
 import ru.tsu.hits.kosterror.messenger.authservice.service.servlet.ServletResponseService;
+import ru.tsu.hits.kosterror.messenger.authservice.util.SecuredEndpoints;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -61,4 +62,14 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+        for (var endpoint : SecuredEndpoints.ENDPOINTS) {
+            if (endpoint.matches(request)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
