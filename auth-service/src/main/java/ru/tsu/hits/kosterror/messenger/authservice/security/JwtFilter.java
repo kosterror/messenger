@@ -11,7 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.TokenVerificationException;
 import ru.tsu.hits.kosterror.messenger.authservice.service.jwt.JwtService;
 import ru.tsu.hits.kosterror.messenger.authservice.service.servlet.ServletResponseService;
-import ru.tsu.hits.kosterror.messenger.authservice.util.SecuredEndpoints;
+import ru.tsu.hits.kosterror.messenger.authservice.util.constant.SecuredEndpoints;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
