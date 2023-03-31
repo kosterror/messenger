@@ -12,6 +12,8 @@ public class SecuredEndpoints {
     private static final String PATCH = "PATCH";
     private static final String DELETE = "DELETE";
 
-    public static final List<AntPathRequestMatcher> ENDPOINTS = List.of();
+    public static final List<AntPathRequestMatcher> ENDPOINTS = List.of(
+            new AntPathRequestMatcher("/api/account/**")
+    );
 
 }

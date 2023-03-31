@@ -24,6 +24,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
+                .antMatchers("/api/account/**").authenticated()
                 .anyRequest()
                 .permitAll()
                 .and()
