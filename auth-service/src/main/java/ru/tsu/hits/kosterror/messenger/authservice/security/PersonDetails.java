@@ -6,7 +6,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,13 +16,7 @@ public class PersonDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
-        person
-                .getRoles()
-                .forEach(role -> authorities.add(new SimpleGrantedAuthority(role.toString())));
-
-        return authorities;
+        return List.of(new SimpleGrantedAuthority(person.getRole().toString()));
     }
 
     @Override
