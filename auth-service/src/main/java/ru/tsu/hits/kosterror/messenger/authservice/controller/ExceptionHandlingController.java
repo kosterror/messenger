@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
+import ru.tsu.hits.kosterror.messenger.authservice.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -54,6 +55,18 @@ public class ExceptionHandlingController {
                 ),
                 HttpStatus.BAD_REQUEST
         );
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFoundException(HttpServletRequest request, NotFoundException exception) {
+        logError(request, exception);
+
+        ApiError error = new ApiError(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+
+        return new ResponseEntity<>(error, error.getHttpStatus());
     }
 
     @ExceptionHandler(Exception.class)
