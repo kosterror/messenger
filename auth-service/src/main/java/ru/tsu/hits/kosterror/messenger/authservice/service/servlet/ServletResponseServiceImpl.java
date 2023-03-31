@@ -9,8 +9,6 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +19,10 @@ public class ServletResponseServiceImpl implements ServletResponseService {
     private final ObjectMapper objectMapper;
 
     @Override
-    public void sendError(HttpServletResponse response, int statusCode, String... errorMessage) throws IOException {
+    public void sendError(HttpServletResponse response, int statusCode, String message) throws IOException {
         ApiError error = new ApiError(
-                LocalDateTime.now(),
                 HttpStatus.valueOf(statusCode),
-                List.of(errorMessage)
+                message
         );
 
         String responseBody = objectMapper.writeValueAsString(error);

@@ -5,6 +5,6 @@ import java.io.IOException;
 
 public interface ServletResponseService {
 
-    void sendError(HttpServletResponse response, int statusCode, String... errorMessage) throws IOException;
+    void sendError(HttpServletResponse response, int statusCode, String message) throws IOException;
 
 }
