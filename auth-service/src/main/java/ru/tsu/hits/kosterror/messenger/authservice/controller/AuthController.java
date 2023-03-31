@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonCredentialsDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.token.PairTokenDto;
+import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
 import ru.tsu.hits.kosterror.messenger.authservice.service.auth.AuthService;
 
 import javax.validation.Valid;
@@ -23,6 +25,11 @@ public class AuthController {
     @PostMapping("/register")
     public PairTokenDto register(@RequestBody @Valid RegisterPersonDto dto) {
         return service.register(dto);
+    }
+
+    @PostMapping("/login")
+    public PairTokenDto login(@RequestBody PersonCredentialsDto dto) throws UnauthorizedException {
+        return service.login(dto);
     }
 
 }
