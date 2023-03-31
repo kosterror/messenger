@@ -3,11 +3,11 @@ package ru.tsu.hits.kosterror.messenger.authservice.entity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.Gender;
+import ru.tsu.hits.kosterror.messenger.authservice.dto.Role;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -53,12 +53,8 @@ public class Person implements Serializable {
     @Column(name = "gender")
     private Gender gender;
 
-    @ManyToMany
-    @JoinTable(
-            name = "person_role",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Role role;
 
 }

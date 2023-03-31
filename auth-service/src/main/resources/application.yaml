@@ -17,3 +17,11 @@ spring:
   flyway:
     locations: classpath:migrations
     enabled: true
+token:
+  access:
+    secret-key: access_secret_key
+    lifetime_min: 15
+  refresh:
+    secret-key: refresh_secret_key
+    lifetime_min: 43200
+  issuer: messenger-auth-service
