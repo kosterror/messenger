@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -55,6 +56,20 @@ public class ExceptionHandlingController {
                 ),
                 HttpStatus.BAD_REQUEST
         );
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ApiError> handleUnauthorizedException(HttpServletRequest request,
+                                                                UnauthorizedException exception
+    ) {
+        logError(request, exception);
+
+        ApiError error = new ApiError(
+                HttpStatus.UNAUTHORIZED,
+                exception.getMessage()
+        );
+
+        return new ResponseEntity<>(error, error.getHttpStatus());
     }
 
     @ExceptionHandler(NotFoundException.class)
