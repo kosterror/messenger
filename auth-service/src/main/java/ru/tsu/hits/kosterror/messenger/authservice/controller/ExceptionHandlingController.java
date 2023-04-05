@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
+import ru.tsu.hits.kosterror.messenger.authservice.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
 
@@ -84,6 +85,18 @@ public class ExceptionHandlingController {
         return new ResponseEntity<>(error, error.getHttpStatus());
     }
 
+    @ExceptionHandler(InternalException.class)
+    public ResponseEntity<ApiError> handleInternalException(HttpServletRequest request, InternalException exception) {
+        logError(request, exception);
+
+        ApiError error = new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Внутрення ошибка сервера"
+        );
+
+        return new ResponseEntity<>(error, error.getHttpStatus());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(HttpServletRequest request, Exception exception) {
         logError(request, exception);
@@ -93,12 +106,11 @@ public class ExceptionHandlingController {
                 "Непредвиденная внутрення ошибка сервера"
         );
 
-
         return new ResponseEntity<>(error, error.getHttpStatus());
     }
 
     private void logError(HttpServletRequest request, Exception exception) {
-        log.error("Ошибка во время выполнения на URL: {} {}. {}",
+        log.error("Ошибка во время выполнения запроса на URL: {} {}. {}",
                 request.getMethod(),
                 request.getRequestURL(),
                 exception.getMessage(),
