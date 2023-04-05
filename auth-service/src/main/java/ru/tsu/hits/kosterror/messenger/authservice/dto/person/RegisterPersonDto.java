@@ -33,7 +33,7 @@ public class RegisterPersonDto {
     @NotBlank(message = "ФИО не может быть пустым")
     private String fullName;
 
-    @DateBetween(startDate = "1900.01.01", message = "Дата должна быть больше '1900-01-01', но меньше текущей")
+    @DateBetween(startDate = "1900-01-01", message = "Дата должна быть больше '1900-01-01', но меньше текущей")
     private LocalDate birthDate;
 
     private String phoneNumber;

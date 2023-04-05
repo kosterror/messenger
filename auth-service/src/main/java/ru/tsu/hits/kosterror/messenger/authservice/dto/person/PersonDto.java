@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -16,8 +17,8 @@ import java.util.UUID;
 public class PersonDto {
 
     private UUID id;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private String login;
     private String email;
     private String password;
@@ -25,6 +26,6 @@ public class PersonDto {
     private LocalDate birthDate;
     private String phoneNumber;
     private String city;
-    private String avatarId;
+    private UUID avatarId;
 
 }
