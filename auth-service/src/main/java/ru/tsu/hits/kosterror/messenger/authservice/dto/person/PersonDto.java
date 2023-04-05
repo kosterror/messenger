@@ -3,24 +3,29 @@ package ru.tsu.hits.kosterror.messenger.authservice.dto.person;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.Gender;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * DTO с информацией о пользователе.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class PersonDto {
 
     private UUID id;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private String login;
-    private LocalDate birthDate;
     private String email;
-    private String name;
     private String password;
-    private String surname;
-    private String patronymic;
-    private Gender gender;
+    private String fullName;
+    private LocalDate birthDate;
+    private String phoneNumber;
+    private String city;
+    private UUID avatarId;
 
 }

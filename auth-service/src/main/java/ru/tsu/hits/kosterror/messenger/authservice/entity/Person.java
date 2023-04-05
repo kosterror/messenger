@@ -1,15 +1,16 @@
 package ru.tsu.hits.kosterror.messenger.authservice.entity;
 
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.Gender;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.Role;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * Класс представляющий собой сущность пользователя для БД.
+ */
 @Entity
 @Table(name = "person")
 @Getter
@@ -17,44 +18,30 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Person implements Serializable {
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @Column(name = "id")
-    private UUID id;
+public class Person extends BaseEntity {
 
     @Column(name = "login", unique = true)
     private String login;
 
-    @Column(name = "password")
-    private String password;
-
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "password")
+    private String password;
 
-    @Column(name = "surname")
-    private String surname;
-
-    @Column(name = "patronymic")
-    private String patronymic;
+    @Column(name = "full_name")
+    private String fullName;
 
     @Column(name = "date_of_birth")
     private LocalDate birthDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "gender")
-    private Gender gender;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Role role;
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "avatar_id")
+    private UUID avatarId;
 
 }

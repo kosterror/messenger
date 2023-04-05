@@ -3,38 +3,30 @@ package ru.tsu.hits.kosterror.messenger.authservice.dto.person;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.Gender;
-import ru.tsu.hits.kosterror.messenger.authservice.util.validation.birthdate.BirthDateValidation;
-import ru.tsu.hits.kosterror.messenger.authservice.util.validation.email.UniqueEmail;
+import ru.tsu.hits.kosterror.messenger.authservice.util.validation.datebetween.DateBetween;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.UUID;
 
+/**
+ * DTO для обновления профиля пользователя.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdatePersonDto {
 
-    @BirthDateValidation
+    @NotBlank(message = "ФИО не может быть пустым")
+    private String fullName;
+
+    @DateBetween(startDate = "1900.01.01", message = "Дата должна быть больше '1900-01-01', но меньше текущей")
     private LocalDate birthDate;
 
-    @NotBlank(message = "Почта не может быть пустой")
-    @UniqueEmail
-    private String email;
+    private String phoneNumber;
 
-    @NotBlank(message = "Имя не может быть пустым")
-    private String name;
+    private String city;
 
-    @NotBlank(message = "Пароль не может быть пустым")
-    private String password;
-
-    @NotBlank(message = "Фамилия не может быть пустой")
-    private String surname;
-
-    private String patronymic;
-
-    @NotNull(message = "Пол не может быть null")
-    private Gender gender;
+    private UUID avatarId;
 
 }
