@@ -2,7 +2,6 @@ package ru.tsu.hits.kosterror.messenger.authservice.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 
@@ -12,11 +11,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PersonDetails implements UserDetails {
 
-    private final Person person;
+    private final transient Person person;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(person.getRole().toString()));
+        return List.of();
     }
 
     @Override
