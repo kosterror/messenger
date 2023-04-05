@@ -7,7 +7,9 @@ import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-
+/**
+ * Класс с бизнес-логикой для аннотации {@link UniqueLogin}
+ */
 @Component
 @RequiredArgsConstructor
 public class UniqueLoginValidator implements ConstraintValidator<UniqueLogin, String> {
