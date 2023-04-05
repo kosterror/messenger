@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
 /**
- * Класс с логикой бизнес-логикой для аннотации {@link DateBetween}.
+ * Класс с бизнес-логикой для аннотации {@link DateBetween}.
  */
 public class DateBetweenValidator implements ConstraintValidator<DateBetween, LocalDate> {
 
