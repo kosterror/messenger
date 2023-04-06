@@ -1,5 +1,7 @@
 package ru.tsu.hits.kosterror.messenger.authservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +21,19 @@ public class AccountController {
 
     private final AccountService service;
 
+    @Operation(
+            summary = "Получить информация о профиле",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping
     public PersonDto getAccountInfo(Principal principal) throws NotFoundException {
         return service.getAccountInfo(principal.getName());
     }
 
+    @Operation(
+            summary = "Изменить данные профиля",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @PutMapping
     public PersonDto updateAccount(Principal principal,
                                    @RequestBody @Valid UpdatePersonDto dto) throws NotFoundException {
