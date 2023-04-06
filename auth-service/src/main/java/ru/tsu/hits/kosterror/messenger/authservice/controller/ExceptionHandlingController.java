@@ -1,6 +1,7 @@
 package ru.tsu.hits.kosterror.messenger.authservice.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,6 +12,7 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
+import ru.tsu.hits.kosterror.messenger.authservice.util.constant.HeaderKeys;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -18,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Контроллер для отлавливания исключений, которые идут на rest контроллеры.
+ */
 @ControllerAdvice
 @Slf4j
 public class ExceptionHandlingController {
@@ -49,14 +54,13 @@ public class ExceptionHandlingController {
 
                 });
 
-        return new ResponseEntity<>(
-                new ApiError(
-                        HttpStatus.BAD_REQUEST,
-                        "Тело запроса не прошло валидацию",
-                        messages
-                ),
-                HttpStatus.BAD_REQUEST
+        ApiError error = new ApiError(
+                HttpStatus.BAD_REQUEST,
+                "Тело запроса не прошло валидацию",
+                messages
         );
+
+        return buildResponseEntity(error);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -70,7 +74,7 @@ public class ExceptionHandlingController {
                 exception.getMessage()
         );
 
-        return new ResponseEntity<>(error, error.getHttpStatus());
+        return buildResponseEntity(error);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -82,7 +86,7 @@ public class ExceptionHandlingController {
                 exception.getMessage()
         );
 
-        return new ResponseEntity<>(error, error.getHttpStatus());
+        return buildResponseEntity(error);
     }
 
     @ExceptionHandler(InternalException.class)
@@ -94,7 +98,7 @@ public class ExceptionHandlingController {
                 "Внутрення ошибка сервера"
         );
 
-        return new ResponseEntity<>(error, error.getHttpStatus());
+        return buildResponseEntity(error);
     }
 
     @ExceptionHandler(Exception.class)
@@ -106,7 +110,14 @@ public class ExceptionHandlingController {
                 "Непредвиденная внутрення ошибка сервера"
         );
 
-        return new ResponseEntity<>(error, error.getHttpStatus());
+        return buildResponseEntity(error);
+    }
+
+    private ResponseEntity<ApiError> buildResponseEntity(ApiError error) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set(HeaderKeys.HANDLED_EXCEPTION, "yes");
+
+        return new ResponseEntity<>(error, responseHeaders, error.getHttpStatus());
     }
 
     private void logError(HttpServletRequest request, Exception exception) {

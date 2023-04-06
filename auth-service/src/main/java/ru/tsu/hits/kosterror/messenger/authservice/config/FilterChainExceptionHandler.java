@@ -9,6 +9,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.tsu.hits.kosterror.messenger.authservice.service.servlet.ServletResponseService;
+import ru.tsu.hits.kosterror.messenger.authservice.util.constant.HeaderKeys;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -42,10 +43,15 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
         } catch (ServletException e) {
             servletResponseService.sendError(response, 500, INTERNAL_ERROR_MESSAGE);
         } finally {
-            if (response.getStatus() == 401) {
-                servletResponseService.sendError(response, 401, UNAUTHORIZED_MESSAGE);
-            } else if (response.getStatus() == 403) {
-                servletResponseService.sendError(response, 403, FORBIDDEN_MESSAGE);
+            logger.info("размер: " + response.getBufferSize());
+
+            if (!response.containsHeader(HeaderKeys.HANDLED_EXCEPTION)) {
+                if (response.getStatus() == 401) {
+
+                    servletResponseService.sendError(response, 401, UNAUTHORIZED_MESSAGE);
+                } else if (response.getStatus() == 403) {
+                    servletResponseService.sendError(response, 403, FORBIDDEN_MESSAGE);
+                }
             }
         }
     }

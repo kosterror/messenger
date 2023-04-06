@@ -6,5 +6,6 @@ import lombok.experimental.UtilityClass;
 public class HeaderKeys {
 
     public static final String ACCESS_TOKEN = "access-token";
+    public static final String HANDLED_EXCEPTION = "handled-exception";
 
 }
