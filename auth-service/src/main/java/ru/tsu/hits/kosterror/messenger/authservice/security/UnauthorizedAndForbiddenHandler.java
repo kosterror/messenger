@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.config;
+package ru.tsu.hits.kosterror.messenger.authservice.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
@@ -26,7 +26,7 @@ import java.io.IOException;
  */
 @Component
 @RequiredArgsConstructor
-public class FilterChainExceptionHandler extends OncePerRequestFilter {
+public class UnauthorizedAndForbiddenHandler extends OncePerRequestFilter {
 
     private static final String UNAUTHORIZED_MESSAGE = "Не авторизован";
     private static final String FORBIDDEN_MESSAGE = "Доступ запрещен";
@@ -43,8 +43,6 @@ public class FilterChainExceptionHandler extends OncePerRequestFilter {
         } catch (ServletException e) {
             servletResponseService.sendError(response, 500, INTERNAL_ERROR_MESSAGE);
         } finally {
-            logger.info("размер: " + response.getBufferSize());
-
             if (!response.containsHeader(HeaderKeys.HANDLED_EXCEPTION)) {
                 if (response.getStatus() == 401) {
 

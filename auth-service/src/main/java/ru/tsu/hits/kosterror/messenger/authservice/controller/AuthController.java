@@ -1,5 +1,6 @@
 package ru.tsu.hits.kosterror.messenger.authservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +29,7 @@ public class AuthController {
     private final AuthService service;
 
     @PostMapping("/register")
+    @Operation(summary = "Зарегистрироваться")
     public ResponseEntity<PersonDto> register(@RequestBody @Valid RegisterPersonDto dto) {
         FullPersonDto fullPersonDto = service.register(dto);
 
@@ -40,6 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Аутентифицироваться")
     public ResponseEntity<PersonDto> login(@RequestBody PersonCredentialsDto dto) throws UnauthorizedException {
         FullPersonDto fullPersonDto = service.login(dto);
 

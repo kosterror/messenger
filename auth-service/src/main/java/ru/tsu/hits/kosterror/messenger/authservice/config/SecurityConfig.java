@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import ru.tsu.hits.kosterror.messenger.authservice.security.UnauthorizedAndForbiddenHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -17,7 +18,7 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final FilterChainExceptionHandler filterChainExceptionHandler;
+    private final UnauthorizedAndForbiddenHandler unauthorizedAndForbiddenHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -30,7 +31,7 @@ public class SecurityConfig {
                 .and()
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(filterChainExceptionHandler, LogoutFilter.class);
+                .addFilterBefore(unauthorizedAndForbiddenHandler, LogoutFilter.class);
 
         return http.build();
     }
