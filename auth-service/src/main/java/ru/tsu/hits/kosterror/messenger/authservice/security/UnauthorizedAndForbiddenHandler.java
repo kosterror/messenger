@@ -43,8 +43,6 @@ public class UnauthorizedAndForbiddenHandler extends OncePerRequestFilter {
         } catch (ServletException e) {
             servletResponseService.sendError(response, 500, INTERNAL_ERROR_MESSAGE);
         } finally {
-            logger.info("размер: " + response.getBufferSize());
-
             if (!response.containsHeader(HeaderKeys.HANDLED_EXCEPTION)) {
                 if (response.getStatus() == 401) {
 
