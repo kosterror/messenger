@@ -25,3 +25,6 @@ token:
     secret-key: refresh_secret_key
     lifetime_min: 43200
   issuer: messenger-auth-service
+rsa:
+  public-key: classpath:certs/public.pem
+  private-key: classpath:certs/private.pem

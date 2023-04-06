@@ -11,7 +11,7 @@ import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
-import ru.tsu.hits.kosterror.messenger.authservice.service.jwt.JwtService;
+import ru.tsu.hits.kosterror.messenger.authservice.service.token.TokenServiceImpl;
 
 /**
  * Реализация интерфейса {@link AuthService}.
@@ -23,16 +23,18 @@ public class AuthServiceImpl implements AuthService {
     public static final String INCORRECT_CREDENTIALS = "Неверный логин и/или пароль";
     private final PersonRepository repository;
     private final PersonMapper mapper;
-    private final JwtService jwtService;
+    private final TokenServiceImpl tokenService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public FullPersonDto register(RegisterPersonDto dto) {
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+
         Person person = mapper.registerDtoToEntity(dto);
         person = repository.save(person);
 
         PersonDto personDto = mapper.entityToDto(person);
-        String token = jwtService.generateAccessToken(person.getLogin());
+        String token = tokenService.generateToken(person.getLogin());
 
         return new FullPersonDto(token, personDto);
     }
@@ -48,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         PersonDto personDto = mapper.entityToDto(person);
-        String token = jwtService.generateAccessToken(person.getLogin());
+        String token = tokenService.generateToken(person.getLogin());
 
         return new FullPersonDto(token, personDto);
     }
