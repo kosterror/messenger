@@ -9,10 +9,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
-import ru.tsu.hits.kosterror.messenger.authservice.exception.InternalException;
-import ru.tsu.hits.kosterror.messenger.authservice.exception.NotFoundException;
-import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
 import ru.tsu.hits.kosterror.messenger.authservice.util.constant.HeaderKeys;
+import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

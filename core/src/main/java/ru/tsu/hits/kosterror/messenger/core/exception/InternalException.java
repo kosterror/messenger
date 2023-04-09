@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.exception;
+package ru.tsu.hits.kosterror.messenger.core.exception;
 
 /**
  * Исключение для непредвиденных внутренних ошибок.

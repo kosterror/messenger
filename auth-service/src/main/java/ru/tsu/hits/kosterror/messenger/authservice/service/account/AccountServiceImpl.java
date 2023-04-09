@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
-import ru.tsu.hits.kosterror.messenger.authservice.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 
 /**
  * Класс реализующий интерфейс {@link AccountService}.

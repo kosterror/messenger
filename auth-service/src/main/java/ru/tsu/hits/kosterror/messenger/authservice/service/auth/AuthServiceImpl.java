@@ -8,10 +8,10 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.token.FullPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
-import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
 import ru.tsu.hits.kosterror.messenger.authservice.service.token.TokenServiceImpl;
+import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 
 /**
  * Реализация интерфейса {@link AuthService}.

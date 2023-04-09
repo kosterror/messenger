@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
-import ru.tsu.hits.kosterror.messenger.authservice.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.authservice.service.account.AccountService;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 
 import javax.validation.Valid;
 import java.security.Principal;
