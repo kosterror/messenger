@@ -1,3 +1,13 @@
 server:
   port: 8082
 
+app:
+  security:
+    jwt-token:
+      root-path: /api
+      permit-all-endpoints:
+      secret-key: secret_key
+      expiration-minutes: 15
+    integration:
+      root-path: /integration
+      api-key: 8b7390c8-d6d2-11ed-afa1-0242ac120002
