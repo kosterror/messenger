@@ -8,8 +8,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
 import ru.tsu.hits.kosterror.messenger.authservice.util.constant.HeaderKeys;
+import ru.tsu.hits.kosterror.messenger.core.dto.ApiError;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
@@ -55,7 +55,7 @@ public class ExceptionHandlingController {
                 });
 
         ApiError error = new ApiError(
-                HttpStatus.BAD_REQUEST,
+                HttpStatus.BAD_REQUEST.value(),
                 "Тело запроса не прошло валидацию",
                 messages
         );
@@ -70,7 +70,7 @@ public class ExceptionHandlingController {
         logError(request, exception);
 
         ApiError error = new ApiError(
-                HttpStatus.UNAUTHORIZED,
+                HttpStatus.UNAUTHORIZED.value(),
                 exception.getMessage()
         );
 
@@ -82,7 +82,7 @@ public class ExceptionHandlingController {
         logError(request, exception);
 
         ApiError error = new ApiError(
-                HttpStatus.NOT_FOUND,
+                HttpStatus.NOT_FOUND.value(),
                 exception.getMessage()
         );
 
@@ -94,7 +94,7 @@ public class ExceptionHandlingController {
         logError(request, exception);
 
         ApiError error = new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Внутрення ошибка сервера"
         );
 
@@ -106,7 +106,7 @@ public class ExceptionHandlingController {
         logError(request, exception);
 
         ApiError error = new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Непредвиденная внутрення ошибка сервера"
         );
 
@@ -117,7 +117,7 @@ public class ExceptionHandlingController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(HeaderKeys.HANDLED_EXCEPTION, "yes");
 
-        return new ResponseEntity<>(error, responseHeaders, error.getHttpStatus());
+        return new ResponseEntity<>(error, responseHeaders, error.getStatus());
     }
 
     private void logError(HttpServletRequest request, Exception exception) {

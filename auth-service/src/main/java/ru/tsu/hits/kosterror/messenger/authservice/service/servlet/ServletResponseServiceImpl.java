@@ -2,10 +2,9 @@ package ru.tsu.hits.kosterror.messenger.authservice.service.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
+import ru.tsu.hits.kosterror.messenger.core.dto.ApiError;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -23,7 +22,7 @@ public class ServletResponseServiceImpl implements ServletResponseService {
     @Override
     public void sendError(HttpServletResponse response, int statusCode, String message) throws IOException {
         ApiError error = new ApiError(
-                HttpStatus.valueOf(statusCode),
+                statusCode,
                 message
         );
 
