@@ -25,6 +25,7 @@
         <module>auth-service</module>
         <module>friends-service</module>
         <module>core</module>
+        <module>core-security</module>
     </modules>
 
 </project>
