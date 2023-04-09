@@ -21,4 +21,10 @@
         <java.version>11</java.version>
     </properties>
 
+    <modules>
+        <module>auth-service</module>
+        <module>friends-service</module>
+        <module>core</module>
+    </modules>
+
 </project>
