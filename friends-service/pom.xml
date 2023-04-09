@@ -12,11 +12,12 @@
 
     <groupId>ru.tsu.hits.kosterror.messenger</groupId>
     <artifactId>friends-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>friends-service</name>
-    <description>friends-service</description>
+    <description>Service for managing relationships between users</description>
+
     <properties>
-        <java.version>11</java.version>
+        <java.version>${java.version}</java.version>
     </properties>
 
     <dependencies>
