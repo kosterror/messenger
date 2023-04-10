@@ -6,7 +6,7 @@ app:
     jwt-token:
       root-path: /api
       permit-all-endpoints:
-      secret-key: secret_key
+      secret-key: the_best_secret_key_in_the_world_and_in_the_space
       expiration-minutes: 15
     integration:
       root-path: /integration
