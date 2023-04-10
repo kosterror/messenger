@@ -10,10 +10,11 @@ import java.util.UUID;
  */
 @Getter
 @AllArgsConstructor
-public class JwtUserData {
+public class JwtPersonData {
 
     private final String login;
     private final String fullName;
+    private final String email;
     private UUID id;
 
 }

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.HeaderConstants.API_KEY;
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants.HEADER_API_KEY;
 
 /**
  * Фильтр для проверки интеграционного запроса на основе ключа api-key.
@@ -32,7 +32,7 @@ public class IntegrationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String receivedApiKey = request.getHeader(API_KEY);
+        String receivedApiKey = request.getHeader(HEADER_API_KEY);
 
         if (!securityProperties.getIntegration().getApiKey().equals(receivedApiKey)) {
             errorSender.sendError(response, 401, "Невалидный Api_Key");

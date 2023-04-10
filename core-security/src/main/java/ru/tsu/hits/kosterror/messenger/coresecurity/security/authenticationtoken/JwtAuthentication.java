@@ -1,7 +1,7 @@
 package ru.tsu.hits.kosterror.messenger.coresecurity.security.authenticationtoken;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtUserData;
+import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
 
 /**
  * Класс для аутентификации пользователя по JWT для текущего запроса.
@@ -11,11 +11,11 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
     /**
      * Конструктор.
      *
-     * @param jwtUserData информация о пользователе из payload токена.
+     * @param jwtPersonData информация о пользователе из payload токена.
      */
-    public JwtAuthentication(JwtUserData jwtUserData) {
+    public JwtAuthentication(JwtPersonData jwtPersonData) {
         super(null);
-        super.setDetails(jwtUserData);
+        super.setDetails(jwtPersonData);
 
         setAuthenticated(true);
     }
