@@ -2,11 +2,13 @@ package ru.tsu.hits.kosterror.messenger.authservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import ru.tsu.hits.kosterror.messenger.coresecurity.ImportCoreSecurityApplication;
 
 /**
  * Главный класс микросервиса.
  */
 @SpringBootApplication
+@ImportCoreSecurityApplication
 public class AuthServiceApplication {
 
     /**

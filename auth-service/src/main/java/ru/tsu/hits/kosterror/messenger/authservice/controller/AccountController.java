@@ -10,9 +10,10 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.service.account.AccountService;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
-import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
 
 import javax.validation.Valid;
+
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,7 +29,7 @@ public class AccountController {
     )
     @GetMapping
     public PersonDto getAccountInfo(Authentication authentication) throws NotFoundException {
-        return service.getAccountInfo(((JwtPersonData) authentication).getLogin());
+        return service.getAccountInfo(extractJwtPersonData(authentication).getLogin());
     }
 
     @Operation(
@@ -37,8 +38,9 @@ public class AccountController {
     )
     @PutMapping
     public PersonDto updateAccount(Authentication authentication,
-                                   @RequestBody @Valid UpdatePersonDto dto) throws NotFoundException {
-        return service.updateAccount(((JwtPersonData) authentication).getLogin(), dto);
+                                   @RequestBody @Valid UpdatePersonDto dto
+    ) throws NotFoundException {
+        return service.updateAccount(extractJwtPersonData(authentication).getLogin(), dto);
     }
 
 }
