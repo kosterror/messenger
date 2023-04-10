@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * Интерфейс, предоставляющий методы для генерации токена.
  */
-public interface JwtServiceEncoder {
+public interface JwtEncoderService {
 
     /**
      * Метод для генерации JWT токена.

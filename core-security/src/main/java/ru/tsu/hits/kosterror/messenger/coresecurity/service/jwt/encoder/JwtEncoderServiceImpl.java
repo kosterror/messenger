@@ -17,11 +17,11 @@ import java.util.UUID;
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants.*;
 
 /**
- * Сервис для генерации токенов, реализующий интерфейс {@link JwtServiceEncoder}.
+ * Сервис для генерации токенов, реализующий интерфейс {@link JwtEncoderService}.
  */
 @Service
 @RequiredArgsConstructor
-public class JwtServiceEncoderServiceImpl implements JwtServiceEncoder {
+public class JwtEncoderServiceImpl implements JwtEncoderService {
 
     private final SecurityProperties securityProperties;
 
