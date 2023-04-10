@@ -3,7 +3,7 @@ package ru.tsu.hits.kosterror.messenger.core.exception;
 /**
  * Исключение для тех случаев, когда пользователь не прошел аутентификацию.
  */
-public class UnauthorizedException extends Exception {
+public class UnauthorizedException extends RuntimeException {
 
     /**
      * Конструктор.

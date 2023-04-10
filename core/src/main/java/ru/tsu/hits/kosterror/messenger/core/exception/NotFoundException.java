@@ -3,7 +3,7 @@ package ru.tsu.hits.kosterror.messenger.core.exception;
 /**
  * Исключение для случаев, когда какая-либо информация с заданными параметрами не найдена.
  */
-public class NotFoundException extends Exception {
+public class NotFoundException extends RuntimeException {
 
     /**
      * Конструктор.
