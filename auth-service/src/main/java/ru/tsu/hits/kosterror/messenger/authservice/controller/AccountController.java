@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
@@ -11,10 +12,11 @@ import ru.tsu.hits.kosterror.messenger.authservice.service.account.AccountServic
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 
 import javax.validation.Valid;
-import java.security.Principal;
+
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/users")
 @Tag(name = "Профиль")
 @RequiredArgsConstructor
 public class AccountController {
@@ -26,8 +28,8 @@ public class AccountController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping
-    public PersonDto getAccountInfo(Principal principal) throws NotFoundException {
-        return service.getAccountInfo(principal.getName());
+    public PersonDto getAccountInfo(Authentication authentication) throws NotFoundException {
+        return service.getAccountInfo(extractJwtPersonData(authentication).getLogin());
     }
 
     @Operation(
@@ -35,9 +37,10 @@ public class AccountController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @PutMapping
-    public PersonDto updateAccount(Principal principal,
-                                   @RequestBody @Valid UpdatePersonDto dto) throws NotFoundException {
-        return service.updateAccount(principal.getName(), dto);
+    public PersonDto updateAccount(Authentication authentication,
+                                   @RequestBody @Valid UpdatePersonDto dto
+    ) throws NotFoundException {
+        return service.updateAccount(extractJwtPersonData(authentication).getLogin(), dto);
     }
 
 }

@@ -2,14 +2,13 @@ package ru.tsu.hits.kosterror.messenger.authservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import ru.tsu.hits.kosterror.messenger.authservice.config.RsaKeyProperties;
+import ru.tsu.hits.kosterror.messenger.coresecurity.ImportCoreSecurityApplication;
 
 /**
  * Главный класс микросервиса.
  */
-@EnableConfigurationProperties(RsaKeyProperties.class)
 @SpringBootApplication
+@ImportCoreSecurityApplication
 public class AuthServiceApplication {
 
     /**
