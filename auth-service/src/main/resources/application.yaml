@@ -1,6 +1,18 @@
 server:
   port: 8080
 
+app:
+  name: auth-service
+  security:
+    jwt-token:
+      root-path: /api
+      permit-all-endpoints:
+      secret-key: the_best_secret_key_in_the_world_and_in_the_space
+      expiration-minutes: 15
+    integration:
+      root-path: /integration
+      api-key: 8b7390c8-d6d2-11ed-afa1-0242ac120002
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5400/messenger-auth-db
@@ -17,14 +29,3 @@ spring:
   flyway:
     locations: classpath:migrations
     enabled: true
-token:
-  access:
-    secret-key: access_secret_key
-    lifetime_min: 15
-  refresh:
-    secret-key: refresh_secret_key
-    lifetime_min: 43200
-  issuer: messenger-auth-service
-rsa:
-  public-key: classpath:certs/public.pem
-  private-key: classpath:certs/private.pem

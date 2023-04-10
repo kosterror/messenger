@@ -4,17 +4,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.service.account.AccountService;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
 
 import javax.validation.Valid;
-import java.security.Principal;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/users")
 @Tag(name = "Профиль")
 @RequiredArgsConstructor
 public class AccountController {
@@ -26,8 +27,8 @@ public class AccountController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping
-    public PersonDto getAccountInfo(Principal principal) throws NotFoundException {
-        return service.getAccountInfo(principal.getName());
+    public PersonDto getAccountInfo(Authentication authentication) throws NotFoundException {
+        return service.getAccountInfo(((JwtPersonData) authentication).getLogin());
     }
 
     @Operation(
@@ -35,9 +36,9 @@ public class AccountController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @PutMapping
-    public PersonDto updateAccount(Principal principal,
+    public PersonDto updateAccount(Authentication authentication,
                                    @RequestBody @Valid UpdatePersonDto dto) throws NotFoundException {
-        return service.updateAccount(principal.getName(), dto);
+        return service.updateAccount(((JwtPersonData) authentication).getLogin(), dto);
     }
 
 }

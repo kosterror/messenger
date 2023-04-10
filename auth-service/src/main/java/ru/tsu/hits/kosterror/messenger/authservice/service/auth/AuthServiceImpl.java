@@ -10,8 +10,8 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.token.FullPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
-import ru.tsu.hits.kosterror.messenger.authservice.service.token.TokenServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
+import ru.tsu.hits.kosterror.messenger.coresecurity.service.jwt.encoder.JwtEncoderService;
 
 /**
  * Реализация интерфейса {@link AuthService}.
@@ -23,8 +23,8 @@ public class AuthServiceImpl implements AuthService {
     public static final String INCORRECT_CREDENTIALS = "Неверный логин и/или пароль";
     private final PersonRepository repository;
     private final PersonMapper mapper;
-    private final TokenServiceImpl tokenService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtEncoderService jwtEncoder;
 
     @Override
     public FullPersonDto register(RegisterPersonDto dto) {
@@ -32,9 +32,13 @@ public class AuthServiceImpl implements AuthService {
 
         Person person = mapper.registerDtoToEntity(dto);
         person = repository.save(person);
-
+        String token = jwtEncoder.generateToken(
+                person.getLogin(),
+                person.getId(),
+                person.getEmail(),
+                person.getFullName()
+        );
         PersonDto personDto = mapper.entityToDto(person);
-        String token = tokenService.generateToken(person.getLogin());
 
         return new FullPersonDto(token, personDto);
     }
@@ -49,8 +53,14 @@ public class AuthServiceImpl implements AuthService {
             throw new UnauthorizedException(INCORRECT_CREDENTIALS);
         }
 
+        String token = jwtEncoder.generateToken(
+                person.getLogin(),
+                person.getId(),
+                person.getEmail(),
+                person.getFullName()
+        );
+
         PersonDto personDto = mapper.entityToDto(person);
-        String token = tokenService.generateToken(person.getLogin());
 
         return new FullPersonDto(token, personDto);
     }
