@@ -1,9 +1,9 @@
 package ru.tsu.hits.kosterror.messenger.coresecurity.security.filter;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.tsu.hits.kosterror.messenger.coresecurity.config.SecurityProperties;
 import ru.tsu.hits.kosterror.messenger.coresecurity.security.authenticationtoken.IntegrationAuthentication;
@@ -20,8 +20,8 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants.HEADER
 /**
  * Фильтр для проверки интеграционного запроса на основе ключа api-key.
  */
-@Component
 @RequiredArgsConstructor
+@Slf4j
 public class IntegrationFilter extends OncePerRequestFilter {
 
     private final SecurityProperties securityProperties;
@@ -34,8 +34,13 @@ public class IntegrationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         String receivedApiKey = request.getHeader(HEADER_API_KEY);
 
+        log.info("Проверка ключа '{}' для интеграционных запросов. Запрос '{}', '{}'",
+                receivedApiKey,
+                request.getMethod(),
+                request.getRequestURI()
+        );
         if (!securityProperties.getIntegration().getApiKey().equals(receivedApiKey)) {
-            errorSender.sendError(response, 401, "Невалидный Api_Key");
+            errorSender.sendError(response, 401, "Невалидный Api-Key");
             return;
         }
 
