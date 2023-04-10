@@ -13,13 +13,20 @@
     <groupId>ru.tsu.hits.kosterror.messenger</groupId>
     <artifactId>auth-service</artifactId>
     <version>0.0.1</version>
-    <name>auth-service</name>
+    <name>Service for registration, authentication and account management</name>
+
     <description>auth-service</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>${java.version}</java.version>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>ru.tsu.hits.kosterror.messenger</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

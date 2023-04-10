@@ -1,6 +1,6 @@
 package ru.tsu.hits.kosterror.messenger.authservice.util.validation.datebetween;
 
-import ru.tsu.hits.kosterror.messenger.authservice.exception.InternalException;
+import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

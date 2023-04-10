@@ -3,7 +3,7 @@ package ru.tsu.hits.kosterror.messenger.authservice.service.auth;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonCredentialsDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.token.FullPersonDto;
-import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
+import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 
 /**
  * Сервис для регистрации и аутентификации пользователя.

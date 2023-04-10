@@ -1,6 +1,6 @@
 package ru.tsu.hits.kosterror.messenger.authservice.service.servlet;
 
-import ru.tsu.hits.kosterror.messenger.authservice.dto.ApiError;
+import ru.tsu.hits.kosterror.messenger.core.dto.ApiError;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

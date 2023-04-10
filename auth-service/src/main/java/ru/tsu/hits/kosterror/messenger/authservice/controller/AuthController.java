@@ -14,9 +14,9 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonCredentialsD
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.token.FullPersonDto;
-import ru.tsu.hits.kosterror.messenger.authservice.exception.UnauthorizedException;
 import ru.tsu.hits.kosterror.messenger.authservice.service.auth.AuthService;
 import ru.tsu.hits.kosterror.messenger.authservice.util.constant.HeaderKeys;
+import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 
 import javax.validation.Valid;
 
