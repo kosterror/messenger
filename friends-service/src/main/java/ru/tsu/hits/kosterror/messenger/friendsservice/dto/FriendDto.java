@@ -17,8 +17,7 @@ import java.util.UUID;
 public class FriendDto {
 
     private UUID id;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime addedDate;
     private UUID ownerId;
     private UUID memberId;
     private String memberFullName;
