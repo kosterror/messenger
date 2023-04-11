@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PagingRequest<T> {
+public class PagingFilteringRequest<T> {
 
     private PagingParamsRequest paging;
-    private T content;
+    private T filters;
 
 }
