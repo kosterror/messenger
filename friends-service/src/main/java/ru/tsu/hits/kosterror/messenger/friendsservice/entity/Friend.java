@@ -31,6 +31,9 @@ public class Friend extends BaseEntity {
     @Column(name = "member_full_name")
     private String memberFullName;
 
+    @Column(name = "date_of_addition")
+    private LocalDateTime addedDate;
+
     @Column(name = "date_of_deletion")
     private LocalDateTime deletedDate;
 
