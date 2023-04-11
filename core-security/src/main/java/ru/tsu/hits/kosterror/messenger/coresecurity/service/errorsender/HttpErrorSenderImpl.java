@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import ru.tsu.hits.kosterror.messenger.core.dto.ApiError;
+import ru.tsu.hits.kosterror.messenger.core.response.ApiError;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
