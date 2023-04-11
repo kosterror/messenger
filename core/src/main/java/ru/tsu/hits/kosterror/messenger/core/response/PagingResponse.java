@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PagingResponse<T> {
 
-    private PagingParams pagingParams;
+    private PagingParamsResponse paging;
     private T content;
 
 }

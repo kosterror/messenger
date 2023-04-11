@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO для параметров пагинации.
+ * DTO для параметров пагинации в ответе.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PagingParams {
+public class PagingParamsResponse {
 
     private int totalPage;
     private long totalElement;
