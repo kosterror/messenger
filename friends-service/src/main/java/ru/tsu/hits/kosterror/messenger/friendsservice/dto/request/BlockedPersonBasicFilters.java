@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BlockedPersonBasicFilters {
 
-    private String friendFullName;
+    private String blockedPersonFullName;
 
 }
