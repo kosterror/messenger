@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.core.dto;
+package ru.tsu.hits.kosterror.messenger.core.response;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

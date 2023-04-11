@@ -7,10 +7,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.tsu.hits.kosterror.messenger.core.dto.ApiError;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
+import ru.tsu.hits.kosterror.messenger.core.response.ApiError;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
