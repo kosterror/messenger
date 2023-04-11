@@ -21,7 +21,6 @@ public class PersonDto {
     private LocalDateTime updatedAt;
     private String login;
     private String email;
-    private String password;
     private String fullName;
     private LocalDate birthDate;
     private String phoneNumber;
