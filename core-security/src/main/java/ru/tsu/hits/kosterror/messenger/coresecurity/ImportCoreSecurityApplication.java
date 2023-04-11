@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(CoreSecurityApplication.class)
+@Import(CoreSecurityConfiguration.class)
 public @interface ImportCoreSecurityApplication {
 }
