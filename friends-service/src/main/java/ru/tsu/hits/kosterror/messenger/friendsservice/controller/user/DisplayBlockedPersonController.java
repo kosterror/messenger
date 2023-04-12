@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.friendsservice.controller;
+package ru.tsu.hits.kosterror.messenger.friendsservice.controller.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
