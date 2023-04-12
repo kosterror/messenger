@@ -8,10 +8,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
+import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest;
 import ru.tsu.hits.kosterror.messenger.authservice.service.account.AccountService;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
 import javax.validation.Valid;
+import java.util.List;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
 
@@ -41,6 +44,15 @@ public class AccountController {
                                    @RequestBody @Valid UpdatePersonDto dto
     ) throws NotFoundException {
         return service.updateAccount(extractJwtPersonData(authentication).getLogin(), dto);
+    }
+
+    @Operation(
+            summary = "Получить список пользователей",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping
+    public PagingResponse<List<PersonDto>> getPersons(@RequestBody @Valid PersonPageRequest personPageRequest) {
+        return service.getPersons(personPageRequest);
     }
 
 }

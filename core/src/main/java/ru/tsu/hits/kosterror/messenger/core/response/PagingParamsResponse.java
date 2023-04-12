@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class PagingParamsResponse {
 
     private int totalPage;
-    private long totalElement;
+    private long totalElements;
     private int page;
     private int size;
 

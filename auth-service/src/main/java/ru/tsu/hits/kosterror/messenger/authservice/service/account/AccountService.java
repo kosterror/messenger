@@ -2,7 +2,11 @@ package ru.tsu.hits.kosterror.messenger.authservice.service.account;
 
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
+import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
+
+import java.util.List;
 
 /**
  * Интерфейс для взаимодействия с профилями пользователей.
@@ -28,4 +32,11 @@ public interface AccountService {
      */
     PersonDto updateAccount(String login, UpdatePersonDto dto) throws NotFoundException;
 
+    /**
+     * Метод для получения пользователей с учетом фильтрации, сортировки.
+     *
+     * @param personPageRequest информация о пагинации, фильтрации, сортировки.
+     * @return найденные пользователи с информацией о пагинации, обернутые в {@link PagingResponse}.
+     */
+    PagingResponse<List<PersonDto>> getPersons(PersonPageRequest personPageRequest);
 }
