@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
@@ -63,6 +64,14 @@ public class DisplayBlockedPerson implements DisplayBlockedPersonService {
         );
 
         return new PagingResponse<>(pagingParams, blockedPersonDtos);
+    }
+
+    @Override
+    public BooleanDto personIsBlocked(UUID ownerId, UUID memberId) {
+        return new BooleanDto(
+                blockedPersonRepository
+                        .existsByOwnerIdAndMemberIdAndIsDeleted(ownerId, memberId, false)
+        );
     }
 
     private Page<BlockedPerson> blockedPersonPage(UUID userId,

@@ -42,4 +42,14 @@ public interface BlockedPersonRepository extends JpaRepository<BlockedPerson, UU
      */
     Page<BlockedPerson> getBlockedPersonsByOwnerIdAndIsDeleted(UUID ownerId, Boolean isDeleted, Pageable pageable);
 
+    /**
+     * Метод для проверки нахождения в черном списке у пользователя с
+     * {@code id = ownerId} пользователя с {@code id = memberId}.
+     *
+     * @param ownerId  кто потенциально добавил в черный список.
+     * @param memberId тот, кто потенциально находится там.
+     * @return находится ли пользователь с {@code id = memberId} в черном списке у пользователя с {@code id = ownerId}.
+     */
+    boolean existsByOwnerIdAndMemberIdAndIsDeleted(UUID ownerId, UUID memberId, boolean isDeleted);
+
 }

@@ -1,5 +1,6 @@
 package ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display;
 
+import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
@@ -23,6 +24,19 @@ public interface DisplayBlockedPersonService {
     PagingResponse<List<BlockedPersonDto>> getBlockedPersons(
             UUID userId,
             PagingFilteringRequest<BlockedPersonBasicFilters> request
+    );
+
+    /**
+     * Метод для проверки нахождения в черном списке у пользователя с
+     * {@code id = ownerId} пользователя с {@code id = memberId}.
+     *
+     * @param ownerId  кто потенциально добавил в черный список.
+     * @param memberId тот, кто потенциально находится там.
+     * @return находится ли пользователь с {@code id = memberId} в черном списке у пользователя с {@code id = ownerId}.
+     */
+    BooleanDto personIsBlocked(
+            UUID ownerId,
+            UUID memberId
     );
 
 }
