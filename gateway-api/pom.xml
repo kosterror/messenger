@@ -10,21 +10,29 @@
     </parent>
 
     <groupId>ru.tsu.hits.kosterror.messenger</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>gateway-api</artifactId>
     <version>0.0.1</version>
-    <name>core</name>
-    <description>core</description>
+    <name>gateway-api</name>
+    <description>Gateway for microservices</description>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <java.version>${java.version}</java.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
