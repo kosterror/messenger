@@ -5,6 +5,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
+import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonFilters;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 
 @Mapper(
@@ -16,5 +17,7 @@ public interface PersonMapper {
     Person registerDtoToEntity(RegisterPersonDto dto);
 
     PersonDto entityToDto(Person entity);
+
+    Person filtersToEntity(PersonFilters filters);
 
 }
