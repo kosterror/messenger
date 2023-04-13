@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest;
-import ru.tsu.hits.kosterror.messenger.authservice.service.account.AccountService;
+import ru.tsu.hits.kosterror.messenger.authservice.service.account.PersonService;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
@@ -22,37 +22,47 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExt
 @RequestMapping("/api/users")
 @Tag(name = "Профиль")
 @RequiredArgsConstructor
-public class AccountController {
+public class PersonController {
 
-    private final AccountService service;
+    private final PersonService service;
 
-    @Operation(
-            summary = "Получить информация о профиле",
-            security = @SecurityRequirement(name = "bearerAuth")
-    )
     @GetMapping
-    public PersonDto getAccountInfo(Authentication authentication) throws NotFoundException {
-        return service.getAccountInfo(extractJwtPersonData(authentication).getLogin());
-    }
-
     @Operation(
-            summary = "Изменить данные профиля",
+            summary = "Просмотр информации о себе.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
+    public PersonDto getMyPersonInfo(Authentication authentication) throws NotFoundException {
+        return service.getMyPersonInfo(extractJwtPersonData(authentication).getLogin());
+    }
+
     @PutMapping
-    public PersonDto updateAccount(Authentication authentication,
-                                   @RequestBody @Valid UpdatePersonDto dto
-    ) throws NotFoundException {
-        return service.updateAccount(extractJwtPersonData(authentication).getLogin(), dto);
-    }
-
     @Operation(
-            summary = "Получить список пользователей",
+            summary = "Изменения профиля.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
+    public PersonDto updatePersonInfo(Authentication authentication,
+                                      @RequestBody @Valid UpdatePersonDto dto
+    ) throws NotFoundException {
+        return service.updatePersonInfo(extractJwtPersonData(authentication).getLogin(), dto);
+    }
+
     @PostMapping
+    @Operation(
+            summary = "Список пользователей.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     public PagingResponse<List<PersonDto>> getPersons(@RequestBody @Valid PersonPageRequest personPageRequest) {
         return service.getPersons(personPageRequest);
+    }
+
+    @GetMapping("/{login}")
+    @Operation(
+            summary = "Просмотр профиля пользователя.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public PersonDto getPersonInfo(Authentication auth,
+                                   @PathVariable String login) {
+        return service.getPersonInfo(extractJwtPersonData(auth).getLogin(), login);
     }
 
 }

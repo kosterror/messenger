@@ -1,9 +1,11 @@
 package ru.tsu.hits.kosterror.messenger.authservice.service.account;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.mapping.PropertyReferenceException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
@@ -11,38 +13,46 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
+import ru.tsu.hits.kosterror.messenger.authservice.service.httpsender.HttpSenderService;
+import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
+import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
+import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
+import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.core.response.ApiError;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Класс реализующий интерфейс {@link AccountService}.
+ * Класс реализующий интерфейс {@link PersonService}.
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AccountServiceImpl implements AccountService {
+public class PersonServiceImpl implements PersonService {
 
-    private static final String ACCOUNT_NOT_FOUND_MESSAGE = "Пользователь с логином = '%s' не найден";
-    private final PersonRepository repository;
-
-    private final PersonMapper mapper;
+    private static final String PERSON_NOT_FOUND = "Пользователь с логином = '%s' не найден";
+    private final PersonRepository personRepository;
+    private final PersonMapper personMapper;
+    private final HttpSenderService httpSenderService;
+    private final ObjectMapper objectMapper;
 
     @Override
-    public PersonDto getAccountInfo(String login) throws NotFoundException {
+    public PersonDto getMyPersonInfo(String login) throws NotFoundException {
         Person person = findPerson(login);
 
-        return mapper.entityToDto(person);
+        return personMapper.entityToDto(person);
     }
 
     @Override
-    public PersonDto updateAccount(String login, UpdatePersonDto dto) throws NotFoundException {
+    public PersonDto updatePersonInfo(String login, UpdatePersonDto dto) throws NotFoundException {
         Person person = findPerson(login);
 
         person.setFullName(dto.getFullName());
@@ -50,9 +60,9 @@ public class AccountServiceImpl implements AccountService {
         person.setPhoneNumber(dto.getPhoneNumber());
         person.setCity(dto.getCity());
         person.setAvatarId(dto.getAvatarId());
-        person = repository.save(person);
+        person = personRepository.save(person);
 
-        return mapper.entityToDto(person);
+        return personMapper.entityToDto(person);
     }
 
     @Override
@@ -64,19 +74,19 @@ public class AccountServiceImpl implements AccountService {
             if (personPageRequest.getPersonFilters() != null) {
                 ExampleMatcher exampleMatcher = buildExampleMatcher();
                 Example<Person> personExample = Example.of(
-                        mapper.filtersToEntity(personPageRequest.getPersonFilters()),
+                        personMapper.filtersToEntity(personPageRequest.getPersonFilters()),
                         exampleMatcher
                 );
 
-                personPage = repository.findAll(personExample, pageable);
+                personPage = personRepository.findAll(personExample, pageable);
             } else {
-                personPage = repository.findAll(pageable);
+                personPage = personRepository.findAll(pageable);
             }
 
             List<PersonDto> personDtos = personPage
                     .getContent()
                     .stream()
-                    .map(mapper::entityToDto)
+                    .map(personMapper::entityToDto)
                     .collect(Collectors.toList());
 
             PagingParamsResponse pagingParams = new PagingParamsResponse(
@@ -95,6 +105,43 @@ public class AccountServiceImpl implements AccountService {
                             "сортировки %s",
                     propertyReferenceException.getPropertyName())
             );
+        }
+    }
+
+    @Override
+    public PersonDto getPersonInfo(String askerPersonLogin, String askedPersonLogin) {
+        if (askerPersonLogin.equals(askedPersonLogin)) {
+            log.error("Логины совпали: {} = {}", askerPersonLogin, askedPersonLogin);
+            throw new BadRequestException("Некорректный запрос. Логин пользователя, который запрашивает и того," +
+                    "чью информацию о профиле запрашивают, равны");
+        }
+
+        Person askerPerson = findPerson(askerPersonLogin);
+        Person askedPerson = findPerson(askedPersonLogin);
+        UUID ownerUUID = askedPerson.getId();
+        UUID memberUUID = askerPerson.getId();
+        PairPersonIdDto requestBody = new PairPersonIdDto(ownerUUID, memberUUID);
+
+        var responseEntity = httpSenderService.friendsServicePersonIsBlocked(requestBody);
+        Object responseBody = responseEntity.getBody();
+
+        if (responseBody != null) {
+            if (responseEntity.getStatusCode() == HttpStatus.OK) {
+                BooleanDto convertedBody = objectMapper.convertValue(responseBody, BooleanDto.class);
+                if (!convertedBody.isValue()) {
+                    return personMapper.entityToDto(askedPerson);
+                } else {
+                    throw new ForbiddenException("Пользователь добавил вас в черный список");
+                }
+            }
+            ApiError apiErrorBody = objectMapper.convertValue(responseBody, ApiError.class);
+            log.error("Ошибка при интеграционном запросе. Статус код: '{}'. Текст ошибки: '{}'",
+                    apiErrorBody.getStatus(), apiErrorBody.getMessage());
+            throw new InternalException(String.format("Ошибка при интеграционном запросе в friends-service, " +
+                    "на получение информации находится ли пользователь с логином %s в черном списке" +
+                    "у пользователя с логином %s", askerPersonLogin, askedPersonLogin));
+        } else {
+            throw new InternalException("Ошибка при интеграционном запросе. Тело ответа: null");
         }
     }
 
@@ -137,9 +184,9 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private Person findPerson(String login) throws NotFoundException {
-        return repository
+        return personRepository
                 .findByLogin(login)
-                .orElseThrow(() -> new NotFoundException(String.format(ACCOUNT_NOT_FOUND_MESSAGE, login)));
+                .orElseThrow(() -> new NotFoundException(String.format(PERSON_NOT_FOUND, login)));
     }
 
 }

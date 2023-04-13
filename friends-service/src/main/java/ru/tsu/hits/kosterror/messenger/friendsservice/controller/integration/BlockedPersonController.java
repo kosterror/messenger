@@ -14,7 +14,7 @@ import ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display.DisplayBlockedPersonService;
 
 @RestController
-@RequestMapping("/integration/blocked-persons")
+@RequestMapping("/integration/friends/blocked-persons")
 @RequiredArgsConstructor
 @Tag(name = "Интеграционные запросы")
 public class BlockedPersonController {
