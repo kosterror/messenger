@@ -22,12 +22,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Класс реализующий интерфейс {@link AccountService}.
+ * Класс реализующий интерфейс {@link PersonService}.
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AccountServiceImpl implements AccountService {
+public class PersonServiceImpl implements PersonService {
 
     private static final String ACCOUNT_NOT_FOUND_MESSAGE = "Пользователь с логином = '%s' не найден";
     private final PersonRepository repository;
@@ -35,14 +35,14 @@ public class AccountServiceImpl implements AccountService {
     private final PersonMapper mapper;
 
     @Override
-    public PersonDto getAccountInfo(String login) throws NotFoundException {
+    public PersonDto getMyPersonInfo(String login) throws NotFoundException {
         Person person = findPerson(login);
 
         return mapper.entityToDto(person);
     }
 
     @Override
-    public PersonDto updateAccount(String login, UpdatePersonDto dto) throws NotFoundException {
+    public PersonDto updatePersonInfo(String login, UpdatePersonDto dto) throws NotFoundException {
         Person person = findPerson(login);
 
         person.setFullName(dto.getFullName());

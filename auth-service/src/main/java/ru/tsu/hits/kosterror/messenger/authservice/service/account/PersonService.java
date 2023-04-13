@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Интерфейс для взаимодействия с профилями пользователей.
  */
-public interface AccountService {
+public interface PersonService {
 
     /**
      * Метод для получения пользователя по логину.
@@ -20,7 +20,7 @@ public interface AccountService {
      * @return информация о найденном пользователе.
      * @throws NotFoundException возникает, если пользователя с таким логином не найден.
      */
-    PersonDto getAccountInfo(String login) throws NotFoundException;
+    PersonDto getMyPersonInfo(String login) throws NotFoundException;
 
     /**
      * Метод для обновления профиля пользователя.
@@ -30,7 +30,7 @@ public interface AccountService {
      * @return обновленная информация о пользователе.
      * @throws NotFoundException возникает, если пользователь с таким логином не найден.
      */
-    PersonDto updateAccount(String login, UpdatePersonDto dto) throws NotFoundException;
+    PersonDto updatePersonInfo(String login, UpdatePersonDto dto) throws NotFoundException;
 
     /**
      * Метод для получения пользователей с учетом фильтрации, сортировки.
