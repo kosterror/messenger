@@ -55,4 +55,14 @@ public class PersonController {
         return service.getPersons(personPageRequest);
     }
 
+    @GetMapping("/{login}")
+    @Operation(
+            summary = "Просмотр профиля пользователя.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public PersonDto getPersonInfo(Authentication auth,
+                                   @PathVariable String login) {
+        return service.getPersonInfo(extractJwtPersonData(auth).getLogin(), login);
+    }
+
 }
