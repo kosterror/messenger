@@ -1,5 +1,6 @@
 package ru.tsu.hits.kosterror.messenger.core.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.Map;
  */
 @Data
 @NoArgsConstructor
+@Schema(description = "Объект с информацией об ошибке.")
 public class ApiError {
     private LocalDateTime timestamp;
     private Integer status;

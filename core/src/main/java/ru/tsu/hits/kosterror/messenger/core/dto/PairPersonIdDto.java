@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
@@ -15,8 +16,10 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PairPersonIdDto {
 
+    @NotNull(message = "Идентификатор не может быть null")
     private UUID ownerId;
 
+    @NotNull(message = "Идентификатор не может быть null")
     private UUID memberId;
 
 }
