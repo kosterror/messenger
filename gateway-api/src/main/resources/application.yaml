@@ -5,11 +5,20 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: users
-          uri: http://localhost:8081
+        - id: users1
+          uri: http://localhost:8081/
           predicates:
-            - Path=/
-        - id: friends
-          uri: http://localhost:8082
+            - Path=/api/users/**
+        - id: users2
+          uri: http://localhost:8081/
           predicates:
-            - Path=/
+            - Path=/integration/users/**
+        - id: friends1
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/api/friends/**
+        - id: friends2
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/integration/friends/**
+
