@@ -33,7 +33,7 @@ public class FriendManageController {
      * @param dto  информация о новом друге.
      * @return сохраненная информация о новом друге.
      */
-    @PostMapping
+    @PostMapping("/create")
     @Operation(
             summary = "Добавить друга.",
             security = @SecurityRequirement(name = "bearerAuth")
