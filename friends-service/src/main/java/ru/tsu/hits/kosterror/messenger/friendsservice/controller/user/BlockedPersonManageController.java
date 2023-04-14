@@ -9,37 +9,29 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.FriendManageService;
+import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.manage.BlockedPersonManageService;
 
 import java.util.UUID;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
 
-/**
- * Контроллер с методами для управления друзьями.
- */
 @RestController
-@RequestMapping("/api/friends")
+@RequestMapping("/api/friends/blocked-persons")
 @RequiredArgsConstructor
-@Tag(name = "Взаимодействие с друзьями")
-public class FriendManageController {
+@Tag(name = "Взаимодействие с заблокированными пользователями")
+public class BlockedPersonManageController {
 
-    private final FriendManageService friendManageService;
+    private final BlockedPersonManageService blockedPersonManageService;
 
-    /**
-     * Эндпоинт для удаления друга.
-     *
-     * @param auth     информация об аутентифицированном пользователе.
-     * @param friendId идентификатор друга.
-     */
-    @DeleteMapping("/{friendId}")
+    @DeleteMapping("/{blockedPersonId}")
     @Operation(
-            summary = "Удалить друга.",
+            summary = "Удалить пользователя из черного списка.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public void deleteFriend(Authentication auth,
-                             @PathVariable UUID friendId) {
-        friendManageService.deleteFriend(extractJwtPersonData(auth).getId(), friendId);
+                             @PathVariable UUID blockedPersonId
+    ) {
+        blockedPersonManageService.deleteBlockedPerson(extractJwtPersonData(auth).getId(), blockedPersonId);
     }
 
 }

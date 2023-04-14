@@ -25,7 +25,7 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExt
 @RestController
 @RequestMapping("/api/friends/blocked-persons")
 @RequiredArgsConstructor
-@Tag(name = "Отображение черного списка")
+@Tag(name = "Отображение заблокированных пользователей")
 public class DisplayBlockedPersonController {
 
     private final DisplayBlockedPersonService service;
