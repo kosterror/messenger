@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
+import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepository;
 
@@ -21,6 +24,12 @@ import java.util.UUID;
 public class FriendManageServiceImpl implements FriendManageService {
 
     private final FriendRepository friendRepository;
+
+    @Override
+    public FriendDto createFriend(JwtPersonData owner, CreateFriendDto member) {
+        //TODO: реализовать
+        return null;
+    }
 
     @Override
     @Transactional
