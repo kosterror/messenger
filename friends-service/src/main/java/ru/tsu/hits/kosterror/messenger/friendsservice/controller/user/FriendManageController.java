@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.FriendManageService;
 
 import java.util.UUID;
+
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
 
 /**
  * Контроллер с методами для управления друзьями.
@@ -17,7 +20,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
-public class ManageFriendController {
+public class FriendManageController {
+
+    private final FriendManageService friendManageService;
 
     /**
      * Эндпоинт для удаления друга.
@@ -32,7 +37,7 @@ public class ManageFriendController {
     )
     public void deleteFriend(Authentication auth,
                              @PathVariable UUID friendId) {
-        //TODO: вызвать сервис с методом для удаления друга
+        friendManageService.deleteFriend(extractJwtPersonData(auth).getId(), friendId);
     }
 
 }

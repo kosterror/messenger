@@ -5,12 +5,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Интерфейс для взаимодействия с сущностями {@link Friend} из БД.
  */
 public interface FriendRepository extends JpaRepository<Friend, UUID> {
+
+    /**
+     * Метод для получения сущности друга по обоим участникам.
+     *
+     * @param ownerId  владелец дружбы.
+     * @param memberId подписчик дружбы.
+     * @return сущность друга.
+     */
+    Optional<Friend> findFriendByOwnerIdAndMemberId(UUID ownerId, UUID memberId);
 
     /**
      * Метод для получения списка друзей, который в своем ФИО имеют подстроку {@code memberFullName}
