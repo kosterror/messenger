@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -13,6 +14,15 @@ import java.util.UUID;
  */
 @Repository
 public interface BlockedPersonRepository extends JpaRepository<BlockedPerson, UUID> {
+
+    /**
+     * Метод для получения сущности заблокированного пользователя.
+     *
+     * @param ownerId  пользователь, который добавил в черный список.
+     * @param memberId пользователь, который находится в черном списке.
+     * @return сущность заблокированного пользователя.
+     */
+    Optional<BlockedPerson> findBlockedPersonByOwnerIdAndMemberId(UUID ownerId, UUID memberId);
 
     /**
      * Метод для получения списка заблокированных пользователей, которые в своем
