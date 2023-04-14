@@ -18,11 +18,15 @@ public interface BlockedPersonRepository extends JpaRepository<BlockedPerson, UU
     /**
      * Метод для получения сущности заблокированного пользователя.
      *
-     * @param ownerId  пользователь, который добавил в черный список.
-     * @param memberId пользователь, который находится в черном списке.
+     * @param ownerId   пользователь, который добавил в черный список.
+     * @param memberId  пользователь, который находится в черном списке.
+     * @param isDeleted удалена ли {@code memberId} из черного списка {@code ownerId}.
      * @return сущность заблокированного пользователя.
      */
-    Optional<BlockedPerson> findBlockedPersonByOwnerIdAndMemberId(UUID ownerId, UUID memberId);
+    Optional<BlockedPerson> findBlockedPersonByOwnerIdAndMemberIdAndIsDeleted(UUID ownerId,
+                                                                              UUID memberId,
+                                                                              boolean isDeleted
+    );
 
     /**
      * Метод для получения списка заблокированных пользователей, которые в своем
