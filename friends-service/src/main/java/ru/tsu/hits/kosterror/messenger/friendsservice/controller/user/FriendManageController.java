@@ -2,6 +2,7 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.controller.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExt
 @RestController
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
+@Tag(name = "Взаимодействие с друзьями")
 public class FriendManageController {
 
     private final FriendManageService friendManageService;
