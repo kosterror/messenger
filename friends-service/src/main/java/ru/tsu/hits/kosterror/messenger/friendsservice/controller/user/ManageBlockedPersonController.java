@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateBlockedPersonDto;
-import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.manage.BlockedPersonManageService;
+import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.manage.ManageBlockedPersonService;
 
 import javax.validation.Valid;
 import java.util.UUID;
@@ -22,9 +22,9 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExt
 @RequestMapping("/api/friends/blocked-persons")
 @RequiredArgsConstructor
 @Tag(name = "Взаимодействие с заблокированными пользователями")
-public class BlockedPersonManageController {
+public class ManageBlockedPersonController {
 
-    private final BlockedPersonManageService blockedPersonManageService;
+    private final ManageBlockedPersonService manageBlockedPersonService;
 
     /**
      * Метод для добавления пользователя в чёрный список.
@@ -41,7 +41,7 @@ public class BlockedPersonManageController {
     public BlockedPersonDto createBlockedPerson(Authentication auth,
                                                 @RequestBody @Valid CreateBlockedPersonDto dto
     ) {
-        return blockedPersonManageService.createBlockedPerson(extractJwtPersonData(auth).getId(), dto);
+        return manageBlockedPersonService.createBlockedPerson(extractJwtPersonData(auth).getId(), dto);
     }
 
     /**
@@ -58,7 +58,7 @@ public class BlockedPersonManageController {
     public void deleteBlockedPerson(Authentication auth,
                                     @PathVariable UUID blockedPersonId
     ) {
-        blockedPersonManageService.deleteBlockedPerson(extractJwtPersonData(auth).getId(), blockedPersonId);
+        manageBlockedPersonService.deleteBlockedPerson(extractJwtPersonData(auth).getId(), blockedPersonId);
     }
 
 }
