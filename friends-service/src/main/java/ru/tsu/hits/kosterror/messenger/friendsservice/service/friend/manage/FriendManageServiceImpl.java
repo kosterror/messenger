@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
+import ru.tsu.hits.kosterror.messenger.core.exception.ConflictException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
@@ -90,8 +91,14 @@ public class FriendManageServiceImpl implements FriendManageService {
             Friend friend2 = makeFriendDeleted(optionalMemberFriend.get());
             friendRepository.save(friend2);
         } else {
-            throw new BadRequestException("Вы не являетесь друзьями с этим пользователем");
+            throw new ConflictException("Вы не являетесь друзьями с этим пользователем");
         }
+    }
+
+    @Override
+    public boolean isFriends(UUID firstId, UUID secondId) {
+        return friendRepository.existsByOwnerIdAndMemberIdAndIsDeleted(firstId, secondId, false)
+                || friendRepository.existsByOwnerIdAndMemberIdAndIsDeleted(secondId, firstId, false);
     }
 
     /**

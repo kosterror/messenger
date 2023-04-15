@@ -48,4 +48,14 @@ public interface FriendRepository extends JpaRepository<Friend, UUID> {
      */
     Page<Friend> getFriendsByOwnerIdAndIsDeleted(UUID ownerId, Boolean isDeleted, Pageable pageable);
 
+    /**
+     * Метод для проверки существования друга с заданными параметрами.
+     *
+     * @param ownerId   целевой пользователь.
+     * @param memberId  внешний пользователь.
+     * @param isDeleted удален ли друг.
+     * @return информацию о существовании такой записи.
+     */
+    boolean existsByOwnerIdAndMemberIdAndIsDeleted(UUID ownerId, UUID memberId, boolean isDeleted);
+
 }

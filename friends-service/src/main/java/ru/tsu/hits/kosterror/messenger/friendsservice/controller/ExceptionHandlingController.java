@@ -88,7 +88,9 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ApiError> handleForbiddenException(HttpServletRequest request, ForbiddenException exception) {
+    public ResponseEntity<ApiError> handleForbiddenException(HttpServletRequest request,
+                                                             ForbiddenException exception
+    ) {
         logError(request, exception);
 
         ApiError error = new ApiError(
@@ -100,11 +102,25 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFoundException(HttpServletRequest request, NotFoundException exception) {
+    public ResponseEntity<ApiError> handleNotFoundException(HttpServletRequest request,
+                                                            NotFoundException exception) {
         logError(request, exception);
 
         ApiError error = new ApiError(
                 HttpStatus.NOT_FOUND.value(),
+                exception.getMessage()
+        );
+
+        return buildResponseEntity(error);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ApiError> handleConflictException(HttpServletRequest request,
+                                                            ConflictException exception) {
+        logError(request, exception);
+
+        ApiError error = new ApiError(
+                HttpStatus.CONFLICT.value(),
                 exception.getMessage()
         );
 
