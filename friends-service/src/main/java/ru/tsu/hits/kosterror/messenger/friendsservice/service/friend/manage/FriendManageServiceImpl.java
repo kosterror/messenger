@@ -95,6 +95,12 @@ public class FriendManageServiceImpl implements FriendManageService {
         }
     }
 
+    @Override
+    public boolean isFriends(UUID firstId, UUID secondId) {
+        return friendRepository.existsByOwnerIdAndMemberIdAndIsDeleted(firstId, secondId, false)
+                || friendRepository.existsByOwnerIdAndMemberIdAndIsDeleted(secondId, firstId, false);
+    }
+
     /**
      * Метод для назначения параметров или создания сущности друга во время добавления его в друзья.
      *

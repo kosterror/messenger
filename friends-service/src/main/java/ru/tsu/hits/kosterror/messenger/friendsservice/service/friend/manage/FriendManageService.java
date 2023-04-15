@@ -28,4 +28,12 @@ public interface FriendManageService {
      */
     void deleteFriend(UUID ownerId, UUID memberId);
 
+    /**
+     * Метод для проверки существования дружбы хотя бы с одной стороны.
+     *
+     * @param firstId  идентификатор первого пользователя.
+     * @param secondId идентификатор другого пользователя.
+     * @return существует ли сущность дружбы хотя бы с одной стороны.
+     */
+    boolean isFriends(UUID firstId, UUID secondId);
 }
