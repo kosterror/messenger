@@ -16,6 +16,15 @@ import java.util.UUID;
 public interface BlockedPersonRepository extends JpaRepository<BlockedPerson, UUID> {
 
     /**
+     * Метод для получения сущности заблокированного пользователя, без учета статуса блокировки.
+     *
+     * @param ownerId  идентификатор пользователя, который заблокировал.
+     * @param memberId идентификатор пользователя, которого заблокировали.
+     * @return сущность заблокированного пользователя.
+     */
+    Optional<BlockedPerson> findBlockedPersonByOwnerIdAndMemberId(UUID ownerId, UUID memberId);
+
+    /**
      * Метод для получения сущности заблокированного пользователя.
      *
      * @param ownerId   пользователь, который добавил в черный список.
