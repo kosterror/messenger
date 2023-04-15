@@ -17,7 +17,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.display.Dis
 
 import java.util.List;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
 
 /**
  * Контроллер для отображения друзей.
@@ -46,7 +46,7 @@ public class DisplayFriendController {
                                                       @RequestBody
                                                       PagingFilteringRequest<FriendBasicFilters> pagingFilteringRequest
     ) {
-        return service.getFriends(extractJwtPersonData(auth).getId(), pagingFilteringRequest);
+        return service.getFriends(extractPersonData(auth).getId(), pagingFilteringRequest);
     }
 
 }

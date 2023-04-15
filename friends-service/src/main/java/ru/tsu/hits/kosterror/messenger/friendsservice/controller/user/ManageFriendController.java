@@ -13,7 +13,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.Mana
 import javax.validation.Valid;
 import java.util.UUID;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
 
 /**
  * Контроллер с методами для управления друзьями.
@@ -40,7 +40,7 @@ public class ManageFriendController {
     )
     public FriendDto createFriend(Authentication auth,
                                   @RequestBody @Valid CreateFriendDto dto) {
-        return manageFriendService.createFriend(extractJwtPersonData(auth), dto);
+        return manageFriendService.createFriend(extractPersonData(auth), dto);
     }
 
     /**
@@ -56,7 +56,7 @@ public class ManageFriendController {
     )
     public void deleteFriend(Authentication auth,
                              @PathVariable UUID friendId) {
-        manageFriendService.deleteFriend(extractJwtPersonData(auth).getId(), friendId);
+        manageFriendService.deleteFriend(extractPersonData(auth).getId(), friendId);
     }
 
 }

@@ -16,7 +16,7 @@ import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import javax.validation.Valid;
 import java.util.List;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
 
 @RestController
 @RequestMapping("/api/users")
@@ -32,7 +32,7 @@ public class PersonController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public PersonDto getMyPersonInfo(Authentication authentication) throws NotFoundException {
-        return service.getMyPersonInfo(extractJwtPersonData(authentication).getLogin());
+        return service.getMyPersonInfo(extractPersonData(authentication).getLogin());
     }
 
     @PutMapping
@@ -43,7 +43,7 @@ public class PersonController {
     public PersonDto updatePersonInfo(Authentication authentication,
                                       @RequestBody @Valid UpdatePersonDto dto
     ) throws NotFoundException {
-        return service.updatePersonInfo(extractJwtPersonData(authentication).getLogin(), dto);
+        return service.updatePersonInfo(extractPersonData(authentication).getLogin(), dto);
     }
 
     @PostMapping
@@ -62,7 +62,7 @@ public class PersonController {
     )
     public PersonDto getPersonInfo(Authentication auth,
                                    @PathVariable String login) {
-        return service.getPersonInfo(extractJwtPersonData(auth).getLogin(), login);
+        return service.getPersonInfo(extractPersonData(auth).getLogin(), login);
     }
 
 }

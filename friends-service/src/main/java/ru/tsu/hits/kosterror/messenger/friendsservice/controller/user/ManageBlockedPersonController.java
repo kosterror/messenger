@@ -13,7 +13,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.mana
 import javax.validation.Valid;
 import java.util.UUID;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
 
 /**
  * Контроллер с эндпоинтами для управления пользователями из черного списка.
@@ -41,7 +41,7 @@ public class ManageBlockedPersonController {
     public BlockedPersonDto createBlockedPerson(Authentication auth,
                                                 @RequestBody @Valid CreateBlockedPersonDto dto
     ) {
-        return manageBlockedPersonService.createBlockedPerson(extractJwtPersonData(auth).getId(), dto);
+        return manageBlockedPersonService.createBlockedPerson(extractPersonData(auth).getId(), dto);
     }
 
     /**
@@ -58,7 +58,7 @@ public class ManageBlockedPersonController {
     public void deleteBlockedPerson(Authentication auth,
                                     @PathVariable UUID blockedPersonId
     ) {
-        manageBlockedPersonService.deleteBlockedPerson(extractJwtPersonData(auth).getId(), blockedPersonId);
+        manageBlockedPersonService.deleteBlockedPerson(extractPersonData(auth).getId(), blockedPersonId);
     }
 
 }

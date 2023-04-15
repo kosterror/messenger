@@ -17,7 +17,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.disp
 
 import java.util.List;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
 
 /**
  * Контроллер для черного списка.
@@ -47,7 +47,7 @@ public class DisplayBlockedPersonController {
                                                                     PagingFilteringRequest<BlockedPersonBasicFilters>
                                                                             pagingFilteringRequest
     ) {
-        return service.getBlockedPersons(extractJwtPersonData(auth).getId(), pagingFilteringRequest);
+        return service.getBlockedPersons(extractPersonData(auth).getId(), pagingFilteringRequest);
     }
 
 }
