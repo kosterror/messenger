@@ -15,7 +15,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.FriendMapper;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepository;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display.DisplayBlockedPersonService;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -119,14 +119,14 @@ public class ManageFriendServiceImpl implements ManageFriendService {
             ownerFriend = friendOptional.get();
             ownerFriend.setIsDeleted(false);
             ownerFriend.setDeletedDate(null);
-            ownerFriend.setAddedDate(LocalDateTime.now());
+            ownerFriend.setAddedDate(LocalDate.now());
             ownerFriend.setMemberFullName(member.getMemberFullName());
         } else {
             ownerFriend = new Friend(
                     owner.getMemberId(),
                     member.getMemberId(),
                     member.getMemberFullName(),
-                    LocalDateTime.now(),
+                    LocalDate.now(),
                     null,
                     false
             );
@@ -144,7 +144,7 @@ public class ManageFriendServiceImpl implements ManageFriendService {
      */
     private Friend makeFriendDeleted(Friend friend) {
         friend.setIsDeleted(true);
-        friend.setDeletedDate(LocalDateTime.now());
+        friend.setDeletedDate(LocalDate.now());
 
         return friend;
     }
