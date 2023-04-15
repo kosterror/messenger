@@ -14,7 +14,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.BlockedPersonMapper
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.BlockedPersonRepository;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.ManageFriendService;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,7 +56,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
                         " заблокировал пользователя с id = '%s'", ownerId, memberId)));
 
         blockedPerson.setIsDeleted(true);
-        blockedPerson.setDeleteDate(LocalDateTime.now());
+        blockedPerson.setDeleteDate(LocalDate.now());
         blockedPersonRepository.save(blockedPerson);
     }
 
@@ -83,7 +83,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
                 );
             }
             blockedPerson.setMemberFullName(memberDto.getMemberFullName());
-            blockedPerson.setAddedDate(LocalDateTime.now());
+            blockedPerson.setAddedDate(LocalDate.now());
             blockedPerson.setDeleteDate(null);
             blockedPerson.setIsDeleted(false);
         } else {
@@ -91,7 +91,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
                     ownerId,
                     memberDto.getMemberId(),
                     memberDto.getMemberFullName(),
-                    LocalDateTime.now(),
+                    LocalDate.now(),
                     null,
                     false
             );

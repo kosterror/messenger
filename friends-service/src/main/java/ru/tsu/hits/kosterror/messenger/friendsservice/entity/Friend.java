@@ -8,7 +8,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -32,10 +32,10 @@ public class Friend extends BaseEntity {
     private String memberFullName;
 
     @Column(name = "date_of_addition")
-    private LocalDateTime addedDate;
+    private LocalDate addedDate;
 
     @Column(name = "date_of_deletion")
-    private LocalDateTime deletedDate;
+    private LocalDate deletedDate;
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;

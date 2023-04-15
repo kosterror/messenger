@@ -32,6 +32,9 @@ public class Person extends BaseEntity {
     @Column(name = "full_name")
     private String fullName;
 
+    @Column(name = "date_of_registration")
+    private LocalDate registerDate;
+
     @Column(name = "date_of_birth")
     private LocalDate birthDate;
 

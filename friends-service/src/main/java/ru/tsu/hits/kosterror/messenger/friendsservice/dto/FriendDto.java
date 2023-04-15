@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -17,7 +17,7 @@ import java.util.UUID;
 public class FriendDto {
 
     private UUID id;
-    private LocalDateTime addedDate;
+    private LocalDate addedDate;
     private UUID ownerId;
     private UUID memberId;
     private String memberFullName;

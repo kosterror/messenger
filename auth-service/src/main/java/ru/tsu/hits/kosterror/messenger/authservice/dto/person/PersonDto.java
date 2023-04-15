@@ -22,6 +22,7 @@ public class PersonDto {
     private String login;
     private String email;
     private String fullName;
+    private LocalDate registerDate;
     private LocalDate birthDate;
     private String phoneNumber;
     private String city;

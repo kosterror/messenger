@@ -13,6 +13,8 @@ import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
 import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 import ru.tsu.hits.kosterror.messenger.coresecurity.service.jwt.encoder.JwtEncoderService;
 
+import java.time.LocalDate;
+
 /**
  * Реализация интерфейса {@link AuthService}.
  */
@@ -31,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         Person person = mapper.registerDtoToEntity(dto);
+        person.setRegisterDate(LocalDate.now());
         person = repository.save(person);
         String token = jwtEncoder.generateToken(
                 person.getLogin(),
