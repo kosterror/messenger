@@ -6,14 +6,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
-import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.FriendManageService;
+import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.ManageFriendService;
 
 import javax.validation.Valid;
 import java.util.UUID;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
 
 /**
  * Контроллер с методами для управления друзьями.
@@ -22,9 +23,9 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExt
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
 @Tag(name = "Взаимодействие с друзьями")
-public class FriendManageController {
+public class ManageFriendController {
 
-    private final FriendManageService friendManageService;
+    private final ManageFriendService manageFriendService;
 
     /**
      * Эндпоинт для добавления друга.
@@ -40,7 +41,7 @@ public class FriendManageController {
     )
     public FriendDto createFriend(Authentication auth,
                                   @RequestBody @Valid CreateFriendDto dto) {
-        return friendManageService.createFriend(extractJwtPersonData(auth), dto);
+        return manageFriendService.createFriend(extractPersonData(auth), dto);
     }
 
     /**
@@ -56,7 +57,7 @@ public class FriendManageController {
     )
     public void deleteFriend(Authentication auth,
                              @PathVariable UUID friendId) {
-        friendManageService.deleteFriend(extractJwtPersonData(auth).getId(), friendId);
+        manageFriendService.deleteFriend(JwtExtractor.extractId(auth), friendId);
     }
 
 }

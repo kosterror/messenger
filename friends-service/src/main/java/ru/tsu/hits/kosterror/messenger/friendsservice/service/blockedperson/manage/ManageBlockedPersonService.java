@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Интерфейс с методами для управления черным списком.
  */
-public interface BlockedPersonManageService {
+public interface ManageBlockedPersonService {
 
     /**
      * Метод для добавления пользователя в чёрный список.

@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
+import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendBasicFilters;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.display.DisplayFriendService;
 
 import java.util.List;
-
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtPersonDataExtractor.extractJwtPersonData;
 
 /**
  * Контроллер для отображения друзей.
@@ -46,7 +45,7 @@ public class DisplayFriendController {
                                                       @RequestBody
                                                       PagingFilteringRequest<FriendBasicFilters> pagingFilteringRequest
     ) {
-        return service.getFriends(extractJwtPersonData(auth).getId(), pagingFilteringRequest);
+        return service.getFriends(JwtExtractor.extractId(auth), pagingFilteringRequest);
     }
 
 }
