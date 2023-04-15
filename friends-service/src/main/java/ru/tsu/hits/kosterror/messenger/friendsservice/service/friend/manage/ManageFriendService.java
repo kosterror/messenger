@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Интерфейс с методами для управления друзьями.
  */
-public interface FriendManageService {
+public interface ManageFriendService {
 
     /**
      * Метод для добавления пользователя в друзья.
@@ -36,4 +36,5 @@ public interface FriendManageService {
      * @return существует ли сущность дружбы хотя бы с одной стороны.
      */
     boolean isFriends(UUID firstId, UUID secondId);
+
 }

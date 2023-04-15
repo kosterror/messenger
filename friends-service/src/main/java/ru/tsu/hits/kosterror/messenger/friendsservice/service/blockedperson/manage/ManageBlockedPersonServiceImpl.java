@@ -12,29 +12,29 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateBlockedPersonDto
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.BlockedPersonMapper;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.BlockedPersonRepository;
-import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.FriendManageService;
+import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.ManageFriendService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Класс, реализующий интерфейс {@link BlockedPersonManageService}
+ * Класс, реализующий интерфейс {@link ManageBlockedPersonService}
  */
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class BlockedPersonManageServiceImpl implements BlockedPersonManageService {
+public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonService {
 
     private final BlockedPersonRepository blockedPersonRepository;
-    private final FriendManageService friendManageService;
+    private final ManageFriendService manageFriendService;
     private final BlockedPersonMapper blockedPersonMapper;
 
     @Override
     @Transactional
     public BlockedPersonDto createBlockedPerson(UUID ownerId, CreateBlockedPersonDto memberDto) {
-        if (friendManageService.isFriends(ownerId, memberDto.getMemberId())) {
-            friendManageService.deleteFriend(ownerId, memberDto.getMemberId());
+        if (manageFriendService.isFriends(ownerId, memberDto.getMemberId())) {
+            manageFriendService.deleteFriend(ownerId, memberDto.getMemberId());
             log.info("Пользователь {} дружит с пользователем {}", ownerId, memberDto.getMemberId());
         } else {
             log.info("Пользователи не дружат");

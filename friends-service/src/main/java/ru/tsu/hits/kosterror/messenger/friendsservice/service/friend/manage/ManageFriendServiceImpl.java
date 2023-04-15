@@ -20,12 +20,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Класс, реализующий интерфейс {@link FriendManageService}
+ * Класс, реализующий интерфейс {@link ManageFriendService}
  */
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class FriendManageServiceImpl implements FriendManageService {
+public class ManageFriendServiceImpl implements ManageFriendService {
 
     private final FriendRepository friendRepository;
     private final FriendMapper friendMapper;
