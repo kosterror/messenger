@@ -10,12 +10,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import ru.tsu.hits.kosterror.messenger.coresecurity.model.Endpoint;
 import ru.tsu.hits.kosterror.messenger.coresecurity.security.filter.IntegrationFilter;
 import ru.tsu.hits.kosterror.messenger.coresecurity.security.filter.JwtFilter;
 import ru.tsu.hits.kosterror.messenger.coresecurity.service.errorsender.HttpErrorSender;
 import ru.tsu.hits.kosterror.messenger.coresecurity.service.jwt.decoder.JwtDecoderService;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -51,7 +52,8 @@ public class SecurityConfig {
         http
                 .requestMatcher(
                         filterPredicate(
-                                properties.getIntegration().getRootPath()
+                                properties.getIntegration().getRootPath(),
+                                properties.getJwtToken().getPermitAllEndpoints()
                         )
                 )
                 .addFilterBefore(
@@ -73,10 +75,20 @@ public class SecurityConfig {
                 .build();
     }
 
-    private RequestMatcher filterPredicate(String rootPath, String... ignore) {
-        return request -> Objects.nonNull(request.getServletPath())
-                && request.getServletPath().startsWith(rootPath)
-                && Arrays.stream(ignore).noneMatch(item -> request.getServletPath().startsWith(item));
+    private RequestMatcher filterPredicate(String rootPath, List<Endpoint> endpoints) {
+        return request -> {
+            if (Objects.nonNull(request.getServletPath())
+                    && request.getServletPath().startsWith(rootPath)) {
+                for (Endpoint endpoint : endpoints) {
+                    if (request.getServletPath().equals(endpoint.getRoute()) &&
+                            Objects.equals(request.getMethod(), endpoint.getMethod())) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        };
     }
 
     private JwtFilter buildJwtFilter() {
