@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.ManageFriendService;
@@ -56,7 +57,7 @@ public class ManageFriendController {
     )
     public void deleteFriend(Authentication auth,
                              @PathVariable UUID friendId) {
-        manageFriendService.deleteFriend(extractPersonData(auth).getId(), friendId);
+        manageFriendService.deleteFriend(JwtExtractor.extractId(auth), friendId);
     }
 
 }

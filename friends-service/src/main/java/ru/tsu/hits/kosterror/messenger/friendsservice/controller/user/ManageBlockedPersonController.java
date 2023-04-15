@@ -6,14 +6,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateBlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.manage.ManageBlockedPersonService;
 
 import javax.validation.Valid;
 import java.util.UUID;
-
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
 
 /**
  * Контроллер с эндпоинтами для управления пользователями из черного списка.
@@ -41,7 +40,7 @@ public class ManageBlockedPersonController {
     public BlockedPersonDto createBlockedPerson(Authentication auth,
                                                 @RequestBody @Valid CreateBlockedPersonDto dto
     ) {
-        return manageBlockedPersonService.createBlockedPerson(extractPersonData(auth).getId(), dto);
+        return manageBlockedPersonService.createBlockedPerson(JwtExtractor.extractId(auth), dto);
     }
 
     /**
@@ -58,7 +57,7 @@ public class ManageBlockedPersonController {
     public void deleteBlockedPerson(Authentication auth,
                                     @PathVariable UUID blockedPersonId
     ) {
-        manageBlockedPersonService.deleteBlockedPerson(extractPersonData(auth).getId(), blockedPersonId);
+        manageBlockedPersonService.deleteBlockedPerson(JwtExtractor.extractId(auth), blockedPersonId);
     }
 
 }
