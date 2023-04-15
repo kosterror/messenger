@@ -1,6 +1,9 @@
 package ru.tsu.hits.kosterror.messenger.coresecurity.config;
 
 import lombok.Data;
+import ru.tsu.hits.kosterror.messenger.coresecurity.model.Endpoint;
+
+import java.util.List;
 
 /**
  * Класс для хранения свойств JWT токена из application.yaml.
@@ -10,7 +13,7 @@ public class SecurityJwtProperties {
 
     private String rootPath;
 
-    private String[] permitAllEndpoints;
+    private List<Endpoint> permitAllEndpoints;
 
     private String secretKey;
 
