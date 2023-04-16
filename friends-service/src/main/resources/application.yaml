@@ -2,7 +2,8 @@ server:
   port: 8082
 
 app:
-  name: friends-service
+  integration-endpoints:
+    get-person-info: http://localhost:8080/integration/users/{personId}
   security:
     jwt-token:
       root-path: /api
