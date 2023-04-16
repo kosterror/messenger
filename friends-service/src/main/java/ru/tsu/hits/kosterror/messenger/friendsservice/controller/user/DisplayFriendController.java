@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
@@ -17,6 +14,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendBasicFil
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.display.DisplayFriendService;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Контроллер для отображения друзей.
@@ -28,6 +26,17 @@ import java.util.List;
 public class DisplayFriendController {
 
     private final DisplayFriendService service;
+
+    @GetMapping("/{friendId}")
+    @Operation(
+            summary = "Просмотр профиля друга.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public FriendDto getFriend(Authentication auth,
+                               @PathVariable UUID friendId) {
+        //TODO вызов сервиса
+        return null;
+    }
 
     /**
      * Эндпоинт для получения списка друзей текущего пользователя.
