@@ -14,6 +14,16 @@ import java.util.UUID;
 public interface DisplayFriendService {
 
     /**
+     * Метод для получения информации о друге целевого пользователя.
+     *
+     * @param ownerId  идентификатор целевого пользователя.
+     * @param memberId идентификатор внешнего пользователя.
+     * @return информация о внешнем пользователе.
+     */
+    FriendDto getFriend(UUID ownerId,
+                        UUID memberId);
+
+    /**
      * Метод для получения друзей пользователя.
      *
      * @param userId  идентификатор пользователя.

@@ -6,6 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
+import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
@@ -14,6 +17,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendBasicFil
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.FriendMapper;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepository;
+import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display.DisplayBlockedPersonService;
 import ru.tsu.hits.kosterror.messenger.friendsservice.util.PageableBuilder;
 
 import java.util.List;
@@ -29,9 +33,28 @@ import java.util.stream.Collectors;
 public class DisplayFriendServiceImpl implements DisplayFriendService {
 
     private static final String FULL_NAME = "memberFullName";
+    private final DisplayBlockedPersonService displayBlockedPersonService;
     private final FriendRepository friendRepository;
     private final FriendMapper friendMapper;
     private final PageableBuilder pageableBuilder;
+
+    @Override
+    public FriendDto getFriend(UUID ownerId,
+                               UUID memberId) {
+        if (ownerId.equals(memberId)) {
+            throw new BadRequestException("Некорректные входные данные, идентификаторы пользователей совпадают");
+        }
+
+        if (displayBlockedPersonService.personIsBlocked(memberId, ownerId).isValue()) {
+            throw new ForbiddenException("Пользователь вас добавил в черный список.");
+        }
+
+        Friend friend = friendRepository
+                .findFriendByOwnerIdAndMemberIdAndIsDeleted(ownerId, memberId, false)
+                .orElseThrow(() -> new NotFoundException("Друг с заданным идентификатором не найден."));
+
+        return friendMapper.entityToDto(friend);
+    }
 
     @Override
     public PagingResponse<List<FriendDto>> getFriends(UUID userId,
