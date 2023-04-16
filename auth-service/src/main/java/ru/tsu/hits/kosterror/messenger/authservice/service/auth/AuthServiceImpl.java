@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonCredentialsDto;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.token.FullPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 import ru.tsu.hits.kosterror.messenger.coresecurity.service.jwt.encoder.JwtEncoderService;
 

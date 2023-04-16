@@ -3,7 +3,7 @@ package ru.tsu.hits.kosterror.messenger.authservice.dto.token;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 
 @Data
 @AllArgsConstructor

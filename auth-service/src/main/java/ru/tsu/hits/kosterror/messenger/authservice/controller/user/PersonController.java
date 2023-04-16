@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest;
 import ru.tsu.hits.kosterror.messenger.authservice.service.person.PersonService;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
