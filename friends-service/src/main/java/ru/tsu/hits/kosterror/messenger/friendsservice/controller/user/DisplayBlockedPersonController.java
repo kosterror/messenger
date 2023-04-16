@@ -12,6 +12,7 @@ import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonBasicFilters;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonFilters;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display.DisplayBlockedPersonService;
 
 import javax.validation.Valid;
@@ -64,6 +65,26 @@ public class DisplayBlockedPersonController {
                                                                             pagingFilteringRequest
     ) {
         return service.getBlockedPersons(JwtExtractor.extractId(auth), pagingFilteringRequest);
+    }
+
+    /**
+     * Эндпоинт для поиска пользователя, среди черного списка..
+     *
+     * @param auth                   информация о текущем пользователе.
+     * @param pagingFilteringRequest параметры пагинации и фильтрации.
+     * @return список пользователей с информацией о пагинации.
+     */
+    @PostMapping("/search")
+    @Operation(
+            summary = "Поиск по черному списку.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public PagingResponse<List<BlockedPersonDto>> searchFriends(Authentication auth,
+                                                                @RequestBody @Valid
+                                                                PagingFilteringRequest<BlockedPersonFilters>
+                                                                        pagingFilteringRequest
+    ) {
+        return service.searchBlockedPersons(JwtExtractor.extractId(auth), pagingFilteringRequest);
     }
 
     /**

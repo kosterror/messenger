@@ -2,19 +2,19 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.dis
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
+import ru.tsu.hits.kosterror.messenger.core.request.PagingParamsRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonBasicFilters;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonFilters;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.BlockedPersonMapper;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.BlockedPersonRepository;
@@ -56,36 +56,18 @@ public class DisplayBlockedPersonServiceImpl implements DisplayBlockedPersonServ
     }
 
     @Override
-
     public PagingResponse<List<BlockedPersonDto>> getBlockedPersons(
             UUID userId,
             PagingFilteringRequest<BlockedPersonBasicFilters> request
     ) {
-        Pageable pageable = pageableBuilder.build(request.getPaging().getPage(),
-                request.getPaging().getSize(),
-                Sort.Direction.ASC,
-                FULL_NAME
-        );
+        Pageable pageable = buildPageable(request.getPaging());
 
         Page<BlockedPerson> blockedPersonPage = blockedPersonPage(userId,
                 request,
                 pageable
         );
 
-        List<BlockedPersonDto> blockedPersonDtos = blockedPersonPage
-                .getContent()
-                .stream()
-                .map(blockedPersonMapper::entityToDto)
-                .collect(Collectors.toList());
-
-        PagingParamsResponse pagingParams = new PagingParamsResponse(
-                blockedPersonPage.getTotalPages(),
-                blockedPersonPage.getTotalElements(),
-                blockedPersonPage.getNumber(),
-                blockedPersonDtos.size()
-        );
-
-        return new PagingResponse<>(pagingParams, blockedPersonDtos);
+        return buildPagingResponse(blockedPersonPage);
     }
 
     @Override
@@ -96,6 +78,42 @@ public class DisplayBlockedPersonServiceImpl implements DisplayBlockedPersonServ
         );
     }
 
+    @Override
+    public PagingResponse<List<BlockedPersonDto>> searchBlockedPersons(UUID userId,
+                                                                       PagingFilteringRequest<BlockedPersonFilters>
+                                                                               request
+    ) {
+        BlockedPersonFilters filters = request.getFilters();
+        if (filters.getMemberFullName() != null) {
+            filters.setMemberFullName(filters.getMemberFullName().toLowerCase());
+        }
+
+        BlockedPerson exampleBlockedPerson = new BlockedPerson();
+        exampleBlockedPerson.setOwnerId(userId);
+        exampleBlockedPerson.setMemberFullName(filters.getMemberFullName());
+        exampleBlockedPerson.setAddedDate(filters.getAddedDate());
+        exampleBlockedPerson.setIsDeleted(false);
+
+        ExampleMatcher exampleMatcher = ExampleMatcher
+                .matchingAll()
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<BlockedPerson> exampleEntity = Example.of(exampleBlockedPerson, exampleMatcher);
+        Pageable pageable = buildPageable(request.getPaging());
+        Page<BlockedPerson> blockedPersonPage = blockedPersonRepository.findAll(exampleEntity, pageable);
+        return buildPagingResponse(blockedPersonPage);
+    }
+
+    /**
+     * Метод для получения страницы заблокированных пользователей с учетом фильтрации и пагинации.
+     *
+     * @param userId   идентификатор целевого пользователя.
+     * @param request  запрос с фильтрацией и пагинацией.
+     * @param pageable объект, содержащий информацию о запрошенной странице (номер страницы, размер страницы и т.д.).
+     * @return - страница заблокированных пользователей с учетом заданных параметров фильтрации и пагинации.
+     */
     private Page<BlockedPerson> blockedPersonPage(UUID userId,
                                                   PagingFilteringRequest<BlockedPersonBasicFilters> request,
                                                   Pageable pageable) {
@@ -120,6 +138,44 @@ public class DisplayBlockedPersonServiceImpl implements DisplayBlockedPersonServ
         }
 
         return blockedPersonPage;
+    }
+
+    /**
+     * Метод для построения объекта {@link Pageable} на основе {@code request}.
+     *
+     * @param request объект, содержащий информацию о странице, размере и т.д.
+     * @return объект {@link Pageable}, созданный с учетом входных параметров.
+     */
+    private Pageable buildPageable(PagingParamsRequest request) {
+        return pageableBuilder.build(request.getPage(),
+                request.getSize(),
+                Sort.Direction.ASC,
+                FULL_NAME
+        );
+    }
+
+    /**
+     * Метод для построения объекта PagingResponse, содержащего информацию о запрошенной странице.
+     *
+     * @param blockedPersonPage объект Page, содержащий информацию о запрошенной странице,
+     *                          полученный в результате запроса на фильтрацию друзей.
+     * @return объект PagingResponse, содержащий информацию о запрошенной странице, с заданными параметрами.
+     */
+    private PagingResponse<List<BlockedPersonDto>> buildPagingResponse(Page<BlockedPerson> blockedPersonPage) {
+        List<BlockedPersonDto> friendDtos = blockedPersonPage
+                .getContent()
+                .stream()
+                .map(blockedPersonMapper::entityToDto)
+                .collect(Collectors.toList());
+
+        PagingParamsResponse pagingParams = new PagingParamsResponse(
+                blockedPersonPage.getTotalPages(),
+                blockedPersonPage.getTotalElements(),
+                blockedPersonPage.getNumber(),
+                friendDtos.size()
+        );
+
+        return new PagingResponse<>(pagingParams, friendDtos);
     }
 
 }
