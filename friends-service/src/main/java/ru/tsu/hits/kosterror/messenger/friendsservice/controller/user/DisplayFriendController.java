@@ -27,6 +27,13 @@ public class DisplayFriendController {
 
     private final DisplayFriendService service;
 
+    /**
+     * Эндпоинт для получения информации о друге.
+     *
+     * @param auth     информация о целевом пользователе.
+     * @param friendId идентификатор внешнего пользователя (друга).
+     * @return информация о друге.
+     */
     @GetMapping("/{friendId}")
     @Operation(
             summary = "Просмотр профиля друга.",
@@ -34,8 +41,7 @@ public class DisplayFriendController {
     )
     public FriendDto getFriend(Authentication auth,
                                @PathVariable UUID friendId) {
-        //TODO вызов сервиса
-        return null;
+        return service.getFriend(JwtExtractor.extractId(auth), friendId);
     }
 
     /**
