@@ -22,7 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
-@Tag(name = "Отображение друзей")
+@Tag(name = "Друзья")
 public class DisplayFriendController {
 
     private final DisplayFriendService service;

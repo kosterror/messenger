@@ -22,7 +22,7 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.ext
 @RestController
 @RequestMapping("/api/friends")
 @RequiredArgsConstructor
-@Tag(name = "Взаимодействие с друзьями")
+@Tag(name = "Друзья")
 public class ManageFriendController {
 
     private final ManageFriendService manageFriendService;
