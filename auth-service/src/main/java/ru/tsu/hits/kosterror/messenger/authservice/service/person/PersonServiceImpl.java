@@ -45,6 +45,15 @@ public class PersonServiceImpl implements PersonService {
     private final ObjectMapper objectMapper;
 
     @Override
+    public PersonDto getPersonInfo(UUID personId) {
+        Person person = personRepository
+                .findById(personId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        return personMapper.entityToDto(person);
+    }
+
+    @Override
     public PersonDto getMyPersonInfo(String login) throws NotFoundException {
         Person person = findPerson(login);
 
