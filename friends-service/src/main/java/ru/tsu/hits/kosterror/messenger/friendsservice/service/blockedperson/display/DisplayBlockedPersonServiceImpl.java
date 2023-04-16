@@ -2,9 +2,7 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.dis
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
@@ -16,6 +14,7 @@ import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonBasicFilters;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonFilters;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.BlockedPersonMapper;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.BlockedPersonRepository;
@@ -77,6 +76,34 @@ public class DisplayBlockedPersonServiceImpl implements DisplayBlockedPersonServ
                 blockedPersonRepository
                         .existsByOwnerIdAndMemberIdAndIsDeleted(ownerId, memberId, false)
         );
+    }
+
+    @Override
+    public PagingResponse<List<BlockedPersonDto>> searchBlockedPersons(UUID userId,
+                                                                       PagingFilteringRequest<BlockedPersonFilters>
+                                                                               request
+    ) {
+        BlockedPersonFilters filters = request.getFilters();
+        if (filters.getMemberFullName() != null) {
+            filters.setMemberFullName(filters.getMemberFullName().toLowerCase());
+        }
+
+        BlockedPerson exampleBlockedPerson = new BlockedPerson();
+        exampleBlockedPerson.setOwnerId(userId);
+        exampleBlockedPerson.setMemberFullName(filters.getMemberFullName());
+        exampleBlockedPerson.setAddedDate(filters.getAddedDate());
+        exampleBlockedPerson.setIsDeleted(false);
+
+        ExampleMatcher exampleMatcher = ExampleMatcher
+                .matchingAll()
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<BlockedPerson> exampleEntity = Example.of(exampleBlockedPerson, exampleMatcher);
+        Pageable pageable = buildPageable(request.getPaging());
+        Page<BlockedPerson> blockedPersonPage = blockedPersonRepository.findAll(exampleEntity, pageable);
+        return buildPagingResponse(blockedPersonPage);
     }
 
     /**

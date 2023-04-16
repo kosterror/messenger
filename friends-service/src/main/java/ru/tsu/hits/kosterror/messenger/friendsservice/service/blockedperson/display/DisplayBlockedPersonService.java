@@ -5,6 +5,7 @@ import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonBasicFilters;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonFilters;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,4 +42,13 @@ public interface DisplayBlockedPersonService {
             UUID memberId
     );
 
+    /**
+     * Метод для поиска пользователей, среди черного списка.
+     *
+     * @param userId  идентификатор целевого пользователя.
+     * @param request информация о пагинации и фильтрации.
+     * @return список заблокированных пользователей с информацией о пагинации.
+     */
+    PagingResponse<List<BlockedPersonDto>> searchBlockedPersons(UUID userId,
+                                                                PagingFilteringRequest<BlockedPersonFilters> request);
 }
