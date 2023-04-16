@@ -14,6 +14,8 @@ import java.util.UUID;
  */
 public interface DisplayBlockedPersonService {
 
+    BlockedPersonDto getBlockedPerson(UUID ownerId, UUID memberId);
+
     /**
      * Метод для получения списка заблокированных пользователей.
      *
