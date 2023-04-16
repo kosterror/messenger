@@ -4,6 +4,7 @@ import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendBasicFilters;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendFilters;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,4 +33,14 @@ public interface DisplayFriendService {
      */
     PagingResponse<List<FriendDto>> getFriends(UUID userId, PagingFilteringRequest<FriendBasicFilters> request);
 
+    /**
+     * Метод для поиска по друзьям пользователя.
+     *
+     * @param userId  идентификатор пользователя.
+     * @param request информация о фильтрации и пагинации.
+     * @return список друзей с информацией о пагинации.
+     */
+    PagingResponse<List<FriendDto>> searchFriends(UUID userId,
+                                                  PagingFilteringRequest<FriendFilters> request
+    );
 }

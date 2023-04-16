@@ -11,8 +11,10 @@ import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendBasicFilters;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendFilters;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.display.DisplayFriendService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,10 +59,28 @@ public class DisplayFriendController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public PagingResponse<List<FriendDto>> getFriends(Authentication auth,
-                                                      @RequestBody
+                                                      @RequestBody @Valid
                                                       PagingFilteringRequest<FriendBasicFilters> pagingFilteringRequest
     ) {
         return service.getFriends(JwtExtractor.extractId(auth), pagingFilteringRequest);
     }
 
+    /**
+     * Эндпоинт для поиска пользователя, среди друзей.
+     *
+     * @param auth                   информация о текущем пользователе.
+     * @param pagingFilteringRequest параметры пагинации и фильтрации.
+     * @return список друзей с информацией о пагинации.
+     */
+    @PostMapping("/search")
+    @Operation(
+            summary = "Поиск по друзьям.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public PagingResponse<List<FriendDto>> searchFriends(Authentication auth,
+                                                         @RequestBody @Valid
+                                                         PagingFilteringRequest<FriendFilters> pagingFilteringRequest
+    ) {
+        return service.searchFriends(JwtExtractor.extractId(auth), pagingFilteringRequest);
+    }
 }

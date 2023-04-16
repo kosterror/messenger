@@ -2,18 +2,18 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.display;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
+import ru.tsu.hits.kosterror.messenger.core.request.PagingParamsRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendBasicFilters;
+import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.FriendFilters;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.FriendMapper;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepository;
@@ -60,33 +60,54 @@ public class DisplayFriendServiceImpl implements DisplayFriendService {
     public PagingResponse<List<FriendDto>> getFriends(UUID userId,
                                                       PagingFilteringRequest<FriendBasicFilters> request
     ) {
-        Pageable pageable = pageableBuilder.build(request.getPaging().getPage(),
-                request.getPaging().getSize(),
-                Sort.Direction.ASC,
-                FULL_NAME
-        );
+        Pageable pageable = buildPageable(request.getPaging());
 
         Page<Friend> friendsPage = getFriendPage(userId,
                 request,
                 pageable
         );
 
-        List<FriendDto> friendDtos = friendsPage
-                .getContent()
-                .stream()
-                .map(friendMapper::entityToDto)
-                .collect(Collectors.toList());
-
-        PagingParamsResponse pagingParams = new PagingParamsResponse(
-                friendsPage.getTotalPages(),
-                friendsPage.getTotalElements(),
-                friendsPage.getNumber(),
-                friendDtos.size()
-        );
-
-        return new PagingResponse<>(pagingParams, friendDtos);
+        return buildPagingResponse(friendsPage);
     }
 
+    @Override
+    public PagingResponse<List<FriendDto>> searchFriends(UUID userId,
+                                                         PagingFilteringRequest<FriendFilters> request
+    ) {
+        FriendFilters filters = request.getFilters();
+
+        if (filters.getMemberFullName() != null) {
+            filters.setMemberFullName(filters.getMemberFullName().toLowerCase());
+        }
+
+        Friend exampleFriend = new Friend();
+        exampleFriend.setOwnerId(userId);
+        exampleFriend.setMemberFullName(request.getFilters().getMemberFullName());
+        exampleFriend.setAddedDate(filters.getAddedDate());
+        exampleFriend.setIsDeleted(false);
+
+        ExampleMatcher exampleMatcher = ExampleMatcher
+                .matchingAll()
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<Friend> exampleEntity = Example.of(exampleFriend, exampleMatcher);
+        Pageable pageable = buildPageable(request.getPaging());
+
+        Page<Friend> friendPage = friendRepository.findAll(exampleEntity, pageable);
+
+        return buildPagingResponse(friendPage);
+    }
+
+    /**
+     * Метод для получения страницы друзей пользователя с учетом фильтрации и пагинации.
+     *
+     * @param userId   идентификатор пользователя, чьих друзей необходимо получить.
+     * @param request  запрос на фильтрацию друзей.
+     * @param pageable объект, содержащий информацию о запрошенной странице (номер страницы, размер страницы и т.д.).
+     * @return - страница друзей пользователя с учетом заданных параметров фильтрации и пагинации.
+     */
     private Page<Friend> getFriendPage(UUID userId,
                                        PagingFilteringRequest<FriendBasicFilters> request,
                                        Pageable pageable) {
@@ -111,6 +132,44 @@ public class DisplayFriendServiceImpl implements DisplayFriendService {
         }
 
         return friendsPage;
+    }
+
+    /**
+     * Метод для построения объекта {@link Pageable} на основе {@code request}.
+     *
+     * @param request объект, содержащий информацию о странице, размере и т.д.
+     * @return объект {@link Pageable}, созданный с учетом входных параметров.
+     */
+    private Pageable buildPageable(PagingParamsRequest request) {
+        return pageableBuilder.build(request.getPage(),
+                request.getSize(),
+                Sort.Direction.ASC,
+                FULL_NAME
+        );
+    }
+
+    /**
+     * Метод для построения объекта PagingResponse, содержащего информацию о запрошенной странице.
+     *
+     * @param friendsPage объект Page, содержащий информацию о запрошенной странице,
+     *                    полученный в результате запроса на фильтрацию друзей.
+     * @return объект PagingResponse, содержащий информацию о запрошенной странице, с заданными параметрами.
+     */
+    private PagingResponse<List<FriendDto>> buildPagingResponse(Page<Friend> friendsPage) {
+        List<FriendDto> friendDtos = friendsPage
+                .getContent()
+                .stream()
+                .map(friendMapper::entityToDto)
+                .collect(Collectors.toList());
+
+        PagingParamsResponse pagingParams = new PagingParamsResponse(
+                friendsPage.getTotalPages(),
+                friendsPage.getTotalElements(),
+                friendsPage.getNumber(),
+                friendDtos.size()
+        );
+
+        return new PagingResponse<>(pagingParams, friendDtos);
     }
 
 }
