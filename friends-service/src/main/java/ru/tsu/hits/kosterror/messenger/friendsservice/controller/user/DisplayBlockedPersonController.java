@@ -30,6 +30,24 @@ public class DisplayBlockedPersonController {
     private final DisplayBlockedPersonService service;
 
     /**
+     * Получение информации о заблокированном пользователе.
+     *
+     * @param auth            аутентификационные данные пользователя.
+     * @param blockedPersonId идентификатор пользователя, данные, о котором нужно получить.
+     * @return данные о профиле заблокированном пользователе.
+     */
+    @GetMapping("/{blockedPersonId}")
+    @Operation(
+            summary = "Просмотр профиля пользователя из черного списка.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public BlockedPersonDto getBlockedPerson(Authentication auth,
+                                             @PathVariable UUID blockedPersonId) {
+        //TODO вызвать метод сервиса
+        return null;
+    }
+
+    /**
      * Эндпоинт для получения списка заблокированных пользователей текущего пользователя.
      *
      * @param auth                   информация о текущем пользователе.
