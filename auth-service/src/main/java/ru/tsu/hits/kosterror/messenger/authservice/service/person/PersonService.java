@@ -1,16 +1,25 @@
-package ru.tsu.hits.kosterror.messenger.authservice.service.account;
+package ru.tsu.hits.kosterror.messenger.authservice.service.person;
 
-import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Интерфейс для взаимодействия с профилями пользователей.
  */
 public interface PersonService {
+
+    /**
+     * Метод для получения информации о пользователе.
+     *
+     * @param personId идентификатор пользователя.
+     * @return объект {@link PersonDto} с информацией о пользователе.
+     */
+    PersonDto getPersonInfo(UUID personId);
 
     /**
      * Метод для получения пользователя по логину.

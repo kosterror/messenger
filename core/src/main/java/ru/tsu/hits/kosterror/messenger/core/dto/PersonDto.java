@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.dto.person;
+package ru.tsu.hits.kosterror.messenger.core.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

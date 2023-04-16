@@ -24,7 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/friends/blocked-persons")
 @RequiredArgsConstructor
-@Tag(name = "Отображение заблокированных пользователей")
+@Tag(name = "Черный список")
 public class DisplayBlockedPersonController {
 
     private final DisplayBlockedPersonService service;

@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.service.account;
+package ru.tsu.hits.kosterror.messenger.authservice.service.person;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,6 @@ import org.springframework.data.domain.*;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
@@ -16,6 +15,7 @@ import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
 import ru.tsu.hits.kosterror.messenger.authservice.service.httpsender.HttpSenderService;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
@@ -43,6 +43,15 @@ public class PersonServiceImpl implements PersonService {
     private final PersonMapper personMapper;
     private final HttpSenderService httpSenderService;
     private final ObjectMapper objectMapper;
+
+    @Override
+    public PersonDto getPersonInfo(UUID personId) {
+        Person person = personRepository
+                .findById(personId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        return personMapper.entityToDto(person);
+    }
 
     @Override
     public PersonDto getMyPersonInfo(String login) throws NotFoundException {

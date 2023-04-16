@@ -20,7 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/friends/blocked-persons")
 @RequiredArgsConstructor
-@Tag(name = "Взаимодействие с заблокированными пользователями")
+@Tag(name = "Черный список")
 public class ManageBlockedPersonController {
 
     private final ManageBlockedPersonService manageBlockedPersonService;

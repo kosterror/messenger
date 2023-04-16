@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -67,5 +68,13 @@ public interface FriendRepository extends JpaRepository<Friend, UUID> {
      * @return информацию о существовании такой записи.
      */
     boolean existsByOwnerIdAndMemberIdAndIsDeleted(UUID ownerId, UUID memberId, boolean isDeleted);
+
+    /**
+     * Метод для поиска всех друзей по идентификатору внешнего пользователя.
+     *
+     * @param memberId идентификатор внешнего пользователя.
+     * @return список друзей с заданным идентификатором внешнего пользователя.
+     */
+    List<Friend> findAllByMemberId(UUID memberId);
 
 }

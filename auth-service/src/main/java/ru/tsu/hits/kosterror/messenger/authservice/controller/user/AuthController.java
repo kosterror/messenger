@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.controller;
+package ru.tsu.hits.kosterror.messenger.authservice.controller.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonCredentialsDto;
-import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.token.FullPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.service.auth.AuthService;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 
 import javax.validation.Valid;
