@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.service.account;
+package ru.tsu.hits.kosterror.messenger.authservice.service.person;
 
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.PersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;

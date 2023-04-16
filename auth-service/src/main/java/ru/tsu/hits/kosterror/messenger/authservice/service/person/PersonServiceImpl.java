@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.service.account;
+package ru.tsu.hits.kosterror.messenger.authservice.service.person;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
