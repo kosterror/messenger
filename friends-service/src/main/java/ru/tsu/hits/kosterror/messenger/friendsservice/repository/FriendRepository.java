@@ -23,6 +23,16 @@ public interface FriendRepository extends JpaRepository<Friend, UUID> {
     Optional<Friend> findFriendByOwnerIdAndMemberId(UUID ownerId, UUID memberId);
 
     /**
+     * Метод для получения сущности друга по идентификаторам участников и статусу дружбы.
+     *
+     * @param ownerId   владелец дружбы.
+     * @param memberId  подписчик дружбы.
+     * @param isDeleted статус дружбы.
+     * @return сущность друга.
+     */
+    Optional<Friend> findFriendByOwnerIdAndMemberIdAndIsDeleted(UUID ownerId, UUID memberId, boolean isDeleted);
+
+    /**
      * Метод для получения списка друзей, который в своем ФИО имеют подстроку {@code memberFullName}
      * без учёта регистра.
      *
