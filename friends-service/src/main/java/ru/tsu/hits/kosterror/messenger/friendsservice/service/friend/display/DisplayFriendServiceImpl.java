@@ -82,7 +82,7 @@ public class DisplayFriendServiceImpl implements DisplayFriendService {
 
         Friend exampleFriend = new Friend();
         exampleFriend.setOwnerId(userId);
-        exampleFriend.setMemberFullName(request.getFilters().getMemberFullName());
+        exampleFriend.setMemberFullName(filters.getMemberFullName());
         exampleFriend.setAddedDate(filters.getAddedDate());
         exampleFriend.setIsDeleted(false);
 
