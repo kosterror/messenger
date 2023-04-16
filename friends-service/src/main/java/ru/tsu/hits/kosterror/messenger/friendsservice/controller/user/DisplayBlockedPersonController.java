@@ -5,10 +5,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
@@ -16,7 +14,9 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.request.BlockedPersonBasicFilters;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display.DisplayBlockedPersonService;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Контроллер для черного списка.
@@ -47,6 +47,22 @@ public class DisplayBlockedPersonController {
                                                                             pagingFilteringRequest
     ) {
         return service.getBlockedPersons(JwtExtractor.extractId(auth), pagingFilteringRequest);
+    }
+
+    /**
+     * Эндпоинт для проверки нахождения в черном списке целевого пользователя у внешнего.
+     *
+     * @param auth информация о целевом пользователе.
+     * @param id   идентификатор внешнего пользователя.
+     * @return находится ли целевой пользователь у внешнего в черном списке.
+     */
+    @GetMapping("/is-blocked/{id}")
+    @Operation(
+            summary = "Проверка нахождения в черном списке"
+    )
+    public BooleanDto personIsBlocked(Authentication auth,
+                                      @PathVariable @Valid UUID id) {
+        return service.personIsBlocked(id, JwtExtractor.extractId(auth));
     }
 
 }

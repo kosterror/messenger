@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class DisplayBlockedPerson implements DisplayBlockedPersonService {
+public class DisplayBlockedPersonServiceImpl implements DisplayBlockedPersonService {
 
     private static final String FULL_NAME = "memberFullName";
     private final BlockedPersonRepository blockedPersonRepository;
