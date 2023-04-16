@@ -7,6 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
+import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
+import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
@@ -35,6 +38,25 @@ public class DisplayBlockedPersonServiceImpl implements DisplayBlockedPersonServ
     private final PageableBuilder pageableBuilder;
 
     @Override
+    public BlockedPersonDto getBlockedPerson(UUID ownerId, UUID memberId) {
+        if (ownerId.equals(memberId)) {
+            throw new BadRequestException("Некорректный входные данные, " +
+                    "идентификаторы пользователей совпадают");
+        }
+
+        if (blockedPersonRepository.existsByOwnerIdAndMemberIdAndIsDeleted(memberId, ownerId, false)) {
+            throw new ForbiddenException("Пользователь добавил вас в чёрный список");
+        }
+
+        BlockedPerson blockedPerson = blockedPersonRepository
+                .findBlockedPersonByOwnerIdAndMemberIdAndIsDeleted(ownerId, memberId, false)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден в черном списке"));
+
+        return blockedPersonMapper.entityToDto(blockedPerson);
+    }
+
+    @Override
+
     public PagingResponse<List<BlockedPersonDto>> getBlockedPersons(
             UUID userId,
             PagingFilteringRequest<BlockedPersonBasicFilters> request

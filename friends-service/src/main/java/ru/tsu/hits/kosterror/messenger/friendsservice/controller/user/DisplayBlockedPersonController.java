@@ -43,8 +43,7 @@ public class DisplayBlockedPersonController {
     )
     public BlockedPersonDto getBlockedPerson(Authentication auth,
                                              @PathVariable UUID blockedPersonId) {
-        //TODO вызвать метод сервиса
-        return null;
+        return service.getBlockedPerson(JwtExtractor.extractId(auth), blockedPersonId);
     }
 
     /**
