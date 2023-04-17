@@ -5,22 +5,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.data.mapping.PropertyReferenceException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
-import ru.tsu.hits.kosterror.messenger.authservice.service.httpsender.HttpSenderService;
+import ru.tsu.hits.kosterror.messenger.authservice.service.integration.friendsservice.FriendsIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
-import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
-import ru.tsu.hits.kosterror.messenger.core.response.ApiError;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
@@ -41,7 +39,7 @@ public class PersonServiceImpl implements PersonService {
     private static final String PERSON_NOT_FOUND = "Пользователь с логином = '%s' не найден";
     private final PersonRepository personRepository;
     private final PersonMapper personMapper;
-    private final HttpSenderService httpSenderService;
+    private final FriendsIntegrationService friendsIntegrationService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -129,28 +127,16 @@ public class PersonServiceImpl implements PersonService {
         Person askedPerson = findPerson(askedPersonLogin);
         UUID ownerUUID = askedPerson.getId();
         UUID memberUUID = askerPerson.getId();
-        PairPersonIdDto requestBody = new PairPersonIdDto(ownerUUID, memberUUID);
 
-        var responseEntity = httpSenderService.friendsServicePersonIsBlocked(requestBody);
-        Object responseBody = responseEntity.getBody();
-
-        if (responseBody != null) {
-            if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                BooleanDto convertedBody = objectMapper.convertValue(responseBody, BooleanDto.class);
-                if (!convertedBody.isValue()) {
-                    return personMapper.entityToDto(askedPerson);
-                } else {
-                    throw new ForbiddenException("Пользователь добавил вас в черный список");
-                }
+        try {
+            BooleanDto isBlocked = friendsIntegrationService.checkPersonIsBlocked(ownerUUID, memberUUID);
+            if (!isBlocked.isValue()) {
+                return personMapper.entityToDto(askedPerson);
+            } else {
+                throw new ForbiddenException("Пользователь добавил вас в черным список");
             }
-            ApiError apiErrorBody = objectMapper.convertValue(responseBody, ApiError.class);
-            log.error("Ошибка при интеграционном запросе. Статус код: '{}'. Текст ошибки: '{}'",
-                    apiErrorBody.getStatus(), apiErrorBody.getMessage());
-            throw new InternalException(String.format("Ошибка при интеграционном запросе в friends-service, " +
-                    "на получение информации находится ли пользователь с логином %s в черном списке" +
-                    "у пользователя с логином %s", askerPersonLogin, askedPersonLogin));
-        } else {
-            throw new InternalException("Ошибка при интеграционном запросе. Тело ответа: null");
+        } catch (RestClientException exception) {
+            throw new InternalException("Ошибка во время выполнения интеграционного запроса", exception);
         }
     }
 
