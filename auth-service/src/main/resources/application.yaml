@@ -16,7 +16,12 @@ app:
     integration:
       root-path: /integration
       api-key: 8b7390c8-d6d2-11ed-afa1-0242ac120002
-
+  logging-requests:
+    include-client-info: true
+    include-query-string: true
+    include-payload: true
+    include-headers: true
+    max-payload-length: 1000
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5400/messenger-auth-db

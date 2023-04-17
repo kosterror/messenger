@@ -2,6 +2,7 @@ package ru.tsu.hits.kosterror.messenger.authservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import ru.tsu.hits.kosterror.messenger.core.requestlogger.ImportRequestLoggingFilter;
 import ru.tsu.hits.kosterror.messenger.coresecurity.ImportCoreSecurityApplication;
 
 /**
@@ -9,6 +10,7 @@ import ru.tsu.hits.kosterror.messenger.coresecurity.ImportCoreSecurityApplicatio
  */
 @SpringBootApplication
 @ImportCoreSecurityApplication
+@ImportRequestLoggingFilter
 public class AuthServiceApplication {
 
     /**
