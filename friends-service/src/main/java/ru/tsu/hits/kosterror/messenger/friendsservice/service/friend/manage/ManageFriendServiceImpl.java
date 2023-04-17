@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ConflictException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
+import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
@@ -16,6 +17,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepositor
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display.DisplayBlockedPersonService;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,25 +41,55 @@ public class ManageFriendServiceImpl implements ManageFriendService {
                 jwtOwnerData.getFullName()
         );
 
-        if (jwtOwnerData.getId() == member.getMemberId()) {
+        if (jwtOwnerData.getId().equals(member.getId())) {
             throw new BadRequestException("Идентификаторы совпадают, нельзя добавить себя в друзья");
         }
-
-        if (displayBlockedPersonService.personIsBlocked(member.getMemberId(), owner.getMemberId()).isValue()) {
+        if (displayBlockedPersonService.personIsBlocked(owner.getId(), member.getId()).isValue()) {
             throw new BadRequestException("Нельзя добавить пользователя, который находится в черном списке");
         }
-
-        if (displayBlockedPersonService.personIsBlocked(owner.getMemberId(), member.getMemberId()).isValue()) {
+        if (displayBlockedPersonService.personIsBlocked(member.getId(), owner.getId()).isValue()) {
             throw new ForbiddenException("Пользователь добавил вас в черный список");
         }
 
         Optional<Friend> ownerFriendOptional = friendRepository
-                .findFriendByOwnerIdAndMemberId(jwtOwnerData.getId(), member.getMemberId());
+                .findFriendByOwnerIdAndMemberId(owner.getId(), member.getId());
         Optional<Friend> memberFriendOptional = friendRepository
-                .findFriendByOwnerIdAndMemberId(member.getMemberId(), jwtOwnerData.getId());
+                .findFriendByOwnerIdAndMemberId(member.getId(), owner.getId());
 
-        Friend ownerFriend = makeFriend(ownerFriendOptional, owner, member);
-        Friend memberFriend = makeFriend(memberFriendOptional, member, owner);
+        Friend ownerFriend;
+        Friend memberFriend;
+
+        if (ownerFriendOptional.isPresent() && memberFriendOptional.isPresent()) {
+            ownerFriend = ownerFriendOptional.get();
+            memberFriend = memberFriendOptional.get();
+
+            ownerFriend.setOwnerId(owner.getId());
+            ownerFriend.setMemberId(member.getId());
+
+            if (Objects.equals(ownerFriend.getIsDeleted(), memberFriend.getIsDeleted())) {
+                if (Boolean.TRUE.equals(ownerFriend.getIsDeleted())) {
+                    ownerFriend.setIsDeleted(false);
+                    memberFriend.setIsDeleted(false);
+                    ownerFriend.setAddedDate(LocalDate.now());
+                    memberFriend.setAddedDate(LocalDate.now());
+                    ownerFriend.setDeletedDate(null);
+                    memberFriend.setDeletedDate(null);
+                } else {
+                    throw new BadRequestException("Вы уже являетесь друзьями");
+                }
+            } else {
+                throw new InternalException(String.format("Нарушена целостность данных. Связь дружбы является" +
+                                " односторонней для пользователей: '%s', '%s'", ownerFriend.getOwnerId(),
+                        memberFriend.getOwnerId()));
+            }
+        } else if (ownerFriendOptional.isEmpty() && memberFriendOptional.isEmpty()) {
+            ownerFriend = buildFriend(owner.getId(), member);
+            memberFriend = buildFriend(member.getId(), owner);
+        } else {
+            throw new InternalException(String.format("Нарушена целостность данных. Связь дружбы является" +
+                            " односторонней для пользователей: '%s', '%s'", owner.getId(),
+                    member.getId()));
+        }
 
         ownerFriend = friendRepository.save(ownerFriend);
         friendRepository.save(memberFriend);
@@ -102,40 +134,6 @@ public class ManageFriendServiceImpl implements ManageFriendService {
     }
 
     /**
-     * Метод для назначения параметров или создания сущности друга во время добавления его в друзья.
-     *
-     * @param friendOptional информация о сохраненной сущности друга.
-     * @param owner          информация о целевом пользователе.
-     * @param member         информация о внешнем пользователе.
-     * @return актуальную сущность {@link Friend}.
-     */
-    private Friend makeFriend(Optional<Friend> friendOptional,
-                              CreateFriendDto owner,
-                              CreateFriendDto member
-    ) {
-        Friend ownerFriend;
-
-        if (friendOptional.isPresent()) {
-            ownerFriend = friendOptional.get();
-            ownerFriend.setIsDeleted(false);
-            ownerFriend.setDeletedDate(null);
-            ownerFriend.setAddedDate(LocalDate.now());
-            ownerFriend.setMemberFullName(member.getMemberFullName());
-        } else {
-            ownerFriend = new Friend(
-                    owner.getMemberId(),
-                    member.getMemberId(),
-                    member.getMemberFullName(),
-                    LocalDate.now(),
-                    null,
-                    false
-            );
-        }
-
-        return friendRepository.save(ownerFriend);
-    }
-
-    /**
      * Метод для назначения параметров для сущности друга. <strong>Изменяет входящий объект и возвращает на
      * него ссылку.</strong>
      *
@@ -145,6 +143,25 @@ public class ManageFriendServiceImpl implements ManageFriendService {
     private Friend makeFriendDeleted(Friend friend) {
         friend.setIsDeleted(true);
         friend.setDeletedDate(LocalDate.now());
+
+        return friend;
+    }
+
+    /**
+     * Метод для создания {@link Friend} на основе входных параметров.
+     *
+     * @param ownerId идентификатор целевого пользователя.
+     * @param dto     информация о внешнем пользователе.
+     * @return новый объект {@link Friend}.
+     */
+    private Friend buildFriend(UUID ownerId, CreateFriendDto dto) {
+        Friend friend = new Friend();
+        friend.setOwnerId(ownerId);
+        friend.setMemberId(dto.getId());
+        friend.setMemberFullName(dto.getFullName());
+        friend.setDeletedDate(null);
+        friend.setIsDeleted(false);
+        friend.setAddedDate(LocalDate.now());
 
         return friend;
     }
