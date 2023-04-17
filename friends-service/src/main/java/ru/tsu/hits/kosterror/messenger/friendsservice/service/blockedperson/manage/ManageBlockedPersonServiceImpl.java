@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
-import ru.tsu.hits.kosterror.messenger.core.exception.ConflictException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateBlockedPersonDto;
@@ -33,14 +32,31 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
     @Override
     @Transactional
     public BlockedPersonDto createBlockedPerson(UUID ownerId, CreateBlockedPersonDto memberDto) {
-        if (manageFriendService.isFriends(ownerId, memberDto.getId())) {
-            manageFriendService.deleteFriend(ownerId, memberDto.getId());
-            log.info("Пользователь {} дружит с пользователем {}", ownerId, memberDto.getId());
-        } else {
-            log.info("Пользователи не дружат");
+        if (ownerId.equals(memberDto.getId())) {
+            throw new BadRequestException("Некорректный запрос, идентификаторы совпадают");
         }
 
-        BlockedPerson blockedPerson = makeBlockedPerson(ownerId, memberDto);
+        if (manageFriendService.isFriends(ownerId, memberDto.getId())) {
+            manageFriendService.deleteFriend(ownerId, memberDto.getId());
+        }
+
+        BlockedPerson blockedPerson;
+        Optional<BlockedPerson> blockedPersonOptional = blockedPersonRepository
+                .findBlockedPersonByOwnerIdAndMemberId(ownerId, memberDto.getId());
+
+        if (blockedPersonOptional.isPresent()) {
+            blockedPerson = blockedPersonOptional.get();
+            if (Boolean.TRUE.equals(blockedPerson.getIsDeleted())) {
+                makeEntityBlocked(blockedPerson, memberDto);
+            } else {
+                throw new BadRequestException("Пользователь уже заблокирован");
+            }
+        } else {
+            blockedPerson = new BlockedPerson();
+            blockedPerson.setOwnerId(ownerId);
+            makeEntityBlocked(blockedPerson, memberDto);
+        }
+
         blockedPerson = blockedPersonRepository.save(blockedPerson);
         return blockedPersonMapper.entityToDto(blockedPerson);
     }
@@ -61,43 +77,17 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
     }
 
     /**
-     * Создает объект {@link BlockedPerson} на основе переданных параметров. Если пользователь
-     * с заданным идентификатором уже находится в чёрном списке, то обновляет его данные.
-     * Если запись о нём была помечена как удаленная, то создает новую запись.
+     * Метод, чтобы сделать сущность {@link BlockedPerson} активированной.
      *
-     * @param ownerId   идентификатор пользователя, который добавляет в чёрный список.
-     * @param memberDto DTO с информацией о пользователе, которого нужно заблокировать.
-     * @return объект {@link BlockedPerson}.
+     * @param entity сущность.
+     * @param dto    информация о заблокированном пользователе.
      */
-    private BlockedPerson makeBlockedPerson(UUID ownerId, CreateBlockedPersonDto memberDto) {
-        Optional<BlockedPerson> blockedPersonOptional =
-                blockedPersonRepository.findBlockedPersonByOwnerIdAndMemberId(ownerId, memberDto.getId());
-
-        BlockedPerson blockedPerson;
-
-        if (blockedPersonOptional.isPresent()) {
-            blockedPerson = blockedPersonOptional.get();
-            if (Boolean.FALSE.equals(blockedPerson.getIsDeleted())) {
-                throw new ConflictException(String.format("Пользователь с id '%s' уже в чёрном списке",
-                        memberDto.getId())
-                );
-            }
-            blockedPerson.setMemberFullName(memberDto.getFullName());
-            blockedPerson.setAddedDate(LocalDate.now());
-            blockedPerson.setDeleteDate(null);
-            blockedPerson.setIsDeleted(false);
-        } else {
-            blockedPerson = new BlockedPerson(
-                    ownerId,
-                    memberDto.getId(),
-                    memberDto.getFullName(),
-                    LocalDate.now(),
-                    null,
-                    false
-            );
-        }
-
-        return blockedPerson;
+    private void makeEntityBlocked(BlockedPerson entity, CreateBlockedPersonDto dto) {
+        entity.setMemberId(dto.getId());
+        entity.setMemberFullName(dto.getFullName());
+        entity.setAddedDate(LocalDate.now());
+        entity.setIsDeleted(false);
+        entity.setDeleteDate(null);
     }
 
 }
