@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.friendsservice.service.integrationservice.authservice;
+package ru.tsu.hits.kosterror.messenger.friendsservice.service.integration.authservice;
 
 import org.springframework.http.ResponseEntity;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;

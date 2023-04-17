@@ -11,7 +11,7 @@ import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.response.ApiError;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepository;
-import ru.tsu.hits.kosterror.messenger.friendsservice.service.integrationservice.authservice.AuthIntegrationService;
+import ru.tsu.hits.kosterror.messenger.friendsservice.service.integration.authservice.AuthIntegrationService;
 
 import java.util.List;
 import java.util.UUID;
