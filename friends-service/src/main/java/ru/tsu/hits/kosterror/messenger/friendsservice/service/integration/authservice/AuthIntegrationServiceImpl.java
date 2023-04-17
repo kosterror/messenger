@@ -2,12 +2,14 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.service.integration.auths
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants;
+import ru.tsu.hits.kosterror.messenger.friendsservice.service.integration.common.CommonIntegrationService;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,13 +22,12 @@ public class AuthIntegrationServiceImpl implements AuthIntegrationService {
     @Value("${app.integration-endpoints.get-person-info}")
     private String personInfoUrl;
 
-    @Value("${app.security.integration.api-key}")
-    private String apiKey;
+    private final CommonIntegrationService commonIntegrationService;
 
     @Override
     public ResponseEntity<Object> getPersonInfo(UUID personId) {
         RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders header = buildHeaders();
+        HttpHeaders header = commonIntegrationService.buildHeaders();
         HttpEntity<Object> request = new HttpEntity<>(header);
         return restTemplate.exchange(
                 personInfoUrl,
@@ -35,20 +36,6 @@ public class AuthIntegrationServiceImpl implements AuthIntegrationService {
                 Object.class,
                 personId
         );
-    }
-
-    /**
-     * Метод для создания HttpHeaders с заданными параметрами.
-     *
-     * @return HttpHeaders с заданным Content-Type, Accept и заголовком API-ключа.
-     */
-    private HttpHeaders buildHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
-        headers.set(Constants.HEADER_API_KEY, apiKey);
-
-        return headers;
     }
 
 }
