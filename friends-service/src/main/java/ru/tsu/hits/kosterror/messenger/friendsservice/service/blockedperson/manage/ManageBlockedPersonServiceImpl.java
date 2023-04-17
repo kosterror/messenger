@@ -33,9 +33,9 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
     @Override
     @Transactional
     public BlockedPersonDto createBlockedPerson(UUID ownerId, CreateBlockedPersonDto memberDto) {
-        if (manageFriendService.isFriends(ownerId, memberDto.getMemberId())) {
-            manageFriendService.deleteFriend(ownerId, memberDto.getMemberId());
-            log.info("Пользователь {} дружит с пользователем {}", ownerId, memberDto.getMemberId());
+        if (manageFriendService.isFriends(ownerId, memberDto.getId())) {
+            manageFriendService.deleteFriend(ownerId, memberDto.getId());
+            log.info("Пользователь {} дружит с пользователем {}", ownerId, memberDto.getId());
         } else {
             log.info("Пользователи не дружат");
         }
@@ -71,7 +71,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
      */
     private BlockedPerson makeBlockedPerson(UUID ownerId, CreateBlockedPersonDto memberDto) {
         Optional<BlockedPerson> blockedPersonOptional =
-                blockedPersonRepository.findBlockedPersonByOwnerIdAndMemberId(ownerId, memberDto.getMemberId());
+                blockedPersonRepository.findBlockedPersonByOwnerIdAndMemberId(ownerId, memberDto.getId());
 
         BlockedPerson blockedPerson;
 
@@ -79,18 +79,18 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
             blockedPerson = blockedPersonOptional.get();
             if (Boolean.FALSE.equals(blockedPerson.getIsDeleted())) {
                 throw new ConflictException(String.format("Пользователь с id '%s' уже в чёрном списке",
-                        memberDto.getMemberId())
+                        memberDto.getId())
                 );
             }
-            blockedPerson.setMemberFullName(memberDto.getMemberFullName());
+            blockedPerson.setMemberFullName(memberDto.getFullName());
             blockedPerson.setAddedDate(LocalDate.now());
             blockedPerson.setDeleteDate(null);
             blockedPerson.setIsDeleted(false);
         } else {
             blockedPerson = new BlockedPerson(
                     ownerId,
-                    memberDto.getMemberId(),
-                    memberDto.getMemberFullName(),
+                    memberDto.getId(),
+                    memberDto.getFullName(),
                     LocalDate.now(),
                     null,
                     false
