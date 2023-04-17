@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
-import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateBlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
@@ -63,12 +62,12 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
 
     @Override
     public void deleteBlockedPerson(UUID ownerId, UUID memberId) {
-        if (ownerId == memberId) {
+        if (ownerId.equals(memberId)) {
             throw new BadRequestException("Некорректный запрос. Идентификаторы совпадают.");
         }
         BlockedPerson blockedPerson = blockedPersonRepository
                 .findBlockedPersonByOwnerIdAndMemberIdAndIsDeleted(ownerId, memberId, false)
-                .orElseThrow(() -> new NotFoundException(String.format("Пользователь с id = '%s' не" +
+                .orElseThrow(() -> new BadRequestException(String.format("Пользователь с id = '%s' не" +
                         " заблокировал пользователя с id = '%s'", ownerId, memberId)));
 
         blockedPerson.setIsDeleted(true);
