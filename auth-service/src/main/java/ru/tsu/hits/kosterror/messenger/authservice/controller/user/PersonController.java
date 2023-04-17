@@ -10,7 +10,6 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.person.UpdatePersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest;
 import ru.tsu.hits.kosterror.messenger.authservice.service.person.PersonService;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
-import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
 import javax.validation.Valid;
@@ -18,6 +17,9 @@ import java.util.List;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
 
+/**
+ * Контроллер с эндпоинтами для пользоватлея.
+ */
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Профиль")
@@ -26,15 +28,28 @@ public class PersonController {
 
     private final PersonService service;
 
+    /**
+     * Эндпоинт для получения информации о своем профиле.
+     *
+     * @param authentication данные об аутентифицированном пользователе.
+     * @return объект {@link PersonDto}.
+     */
     @GetMapping
     @Operation(
             summary = "Просмотр информации о себе.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    public PersonDto getMyPersonInfo(Authentication authentication) throws NotFoundException {
+    public PersonDto getMyPersonInfo(Authentication authentication) {
         return service.getMyPersonInfo(extractPersonData(authentication).getLogin());
     }
 
+    /**
+     * Эндпоинт для изменения профиля пользователя.
+     *
+     * @param authentication данные об аутентифицированном пользователе.
+     * @param dto            новые данные о пользователе.
+     * @return объект {@link PersonDto}.
+     */
     @PutMapping
     @Operation(
             summary = "Изменения профиля.",
@@ -42,10 +57,16 @@ public class PersonController {
     )
     public PersonDto updatePersonInfo(Authentication authentication,
                                       @RequestBody @Valid UpdatePersonDto dto
-    ) throws NotFoundException {
+    ) {
         return service.updatePersonInfo(extractPersonData(authentication).getLogin(), dto);
     }
 
+    /**
+     * Эндпоинт для получения списка пользователей.
+     *
+     * @param personPageRequest информации о пагинации, фильтрации, сортировки.
+     * @return список {@link PersonDto} с информацией о пагинации.
+     */
     @PostMapping
     @Operation(
             summary = "Список пользователей.",
@@ -55,6 +76,13 @@ public class PersonController {
         return service.getPersons(personPageRequest);
     }
 
+    /**
+     * Эндпоинт для просмотра профиля пользователя.
+     *
+     * @param auth  данные об аутентифицированном пользователе.
+     * @param login логин пользователя.
+     * @return информация о пользователе.
+     */
     @GetMapping("/{login}")
     @Operation(
             summary = "Просмотр профиля пользователя.",

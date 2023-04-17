@@ -13,6 +13,9 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.service.integration.authse
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Класс, реализующий интерфейс {@link SynchronizeFriendsService}.
+ */
 @Service
 @RequiredArgsConstructor
 public class SynchronizeFriendsServiceImpl implements SynchronizeFriendsService {
