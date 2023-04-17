@@ -20,10 +20,10 @@ public class CreateBlockedPersonDto {
 
     @NotNull(message = "Идентификатор не может быть null")
     @Schema(description = "Идентификатор пользователя, которого нужно заблокировать.")
-    private UUID memberId;
+    private UUID id;
 
     @NotBlank(message = "ФИО не может быть пустым")
     @Schema(description = "ФИО пользователя, которого нужно заблокировать.")
-    private String memberFullName;
+    private String fullName;
 
 }
