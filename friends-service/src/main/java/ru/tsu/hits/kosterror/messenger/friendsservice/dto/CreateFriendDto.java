@@ -20,10 +20,10 @@ public class CreateFriendDto {
 
     @NotNull(message = "Идентификатор нового друга не может быть null")
     @Schema(description = "Идентификатор нового друга.")
-    private UUID memberId;
+    private UUID id;
 
     @NotBlank(message = "ФИО нового друга не может быть пустым")
     @Schema(description = "ФИО нового друга.")
-    private String memberFullName;
+    private String fullName;
 
 }
