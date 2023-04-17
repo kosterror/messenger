@@ -1,6 +1,5 @@
 package ru.tsu.hits.kosterror.messenger.authservice.service.person;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -40,7 +39,6 @@ public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
     private final PersonMapper personMapper;
     private final FriendsIntegrationService friendsIntegrationService;
-    private final ObjectMapper objectMapper;
 
     @Override
     public PersonDto getPersonInfo(UUID personId) {
@@ -140,6 +138,11 @@ public class PersonServiceImpl implements PersonService {
         }
     }
 
+    /**
+     * Метод для создания объекта {@link ExampleMatcher}.
+     *
+     * @return объект {@link ExampleMatcher}.
+     */
     private ExampleMatcher buildExampleMatcher() {
         return ExampleMatcher
                 .matchingAll()
@@ -148,6 +151,12 @@ public class PersonServiceImpl implements PersonService {
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
     }
 
+    /**
+     * Метод для создания объекта {@link Pageable}.
+     *
+     * @param personPageRequest объект с информацией о пагинации и сортировки.
+     * @return объект {@link Pageable}.
+     */
     private Pageable buildPageable(PersonPageRequest personPageRequest) {
         int page = personPageRequest.getPagingParams().getPage();
         int size = personPageRequest.getPagingParams().getSize();
@@ -178,7 +187,13 @@ public class PersonServiceImpl implements PersonService {
         return pageRequest;
     }
 
-    private Person findPerson(String login) throws NotFoundException {
+    /**
+     * Метод для поиска пользователя по логину.
+     *
+     * @param login логин пользователя.
+     * @return объект {@link Person}.
+     */
+    private Person findPerson(String login) {
         return personRepository
                 .findByLogin(login)
                 .orElseThrow(() -> new NotFoundException(String.format(PERSON_NOT_FOUND, login)));

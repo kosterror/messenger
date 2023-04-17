@@ -15,12 +15,14 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.token.FullPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.service.auth.AuthService;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
-import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 
 import javax.validation.Valid;
 
 import static ru.tsu.hits.kosterror.messenger.authservice.util.constant.Constants.HEADER_ACCESS_TOKEN;
 
+/**
+ * Контроллер с эндпоинтами для аутентификации и авторизации.
+ */
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Авторизация, аутентификация, логаут")
@@ -29,6 +31,12 @@ public class AuthController {
 
     private final AuthService service;
 
+    /**
+     * Эндпоинт для регистрации.
+     *
+     * @param dto данные о пользователе.
+     * @return в теле ответа объект {@link PersonDto} и access токен в хэдере.
+     */
     @PostMapping("/register")
     @Operation(summary = "Зарегистрироваться")
     public ResponseEntity<PersonDto> register(@RequestBody @Valid RegisterPersonDto dto) {
@@ -42,9 +50,15 @@ public class AuthController {
         return new ResponseEntity<>(personDto, responseHeaders, HttpStatus.OK);
     }
 
+    /**
+     * Эндпоинт для аутентификации.
+     *
+     * @param dto данные для аутентификации.
+     * @return в теле ответа объект {@link PersonDto} и access токен в хэдере.
+     */
     @PostMapping("/login")
     @Operation(summary = "Аутентифицироваться")
-    public ResponseEntity<PersonDto> login(@RequestBody PersonCredentialsDto dto) throws UnauthorizedException {
+    public ResponseEntity<PersonDto> login(@RequestBody PersonCredentialsDto dto) {
         FullPersonDto fullPersonDto = service.login(dto);
 
         PersonDto personDto = fullPersonDto.getPersonDto();
