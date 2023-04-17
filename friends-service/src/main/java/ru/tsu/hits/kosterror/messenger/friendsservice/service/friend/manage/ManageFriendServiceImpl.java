@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
-import ru.tsu.hits.kosterror.messenger.core.exception.ConflictException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
@@ -29,6 +28,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ManageFriendServiceImpl implements ManageFriendService {
 
+    private static final String FRIEND_RELATION_ONE_DIRECTION = "Нарушена целостность данных. Связь дружбы является" +
+            " односторонней для пользователей: '%s', '%s'";
     private final FriendRepository friendRepository;
     private final FriendMapper friendMapper;
     private final DisplayBlockedPersonService displayBlockedPersonService;
@@ -78,17 +79,25 @@ public class ManageFriendServiceImpl implements ManageFriendService {
                     throw new BadRequestException("Вы уже являетесь друзьями");
                 }
             } else {
-                throw new InternalException(String.format("Нарушена целостность данных. Связь дружбы является" +
-                                " односторонней для пользователей: '%s', '%s'", ownerFriend.getOwnerId(),
-                        memberFriend.getOwnerId()));
+                throw new InternalException(
+                        String.format(
+                                FRIEND_RELATION_ONE_DIRECTION,
+                                ownerFriend.getOwnerId(),
+                                memberFriend.getOwnerId()
+                        )
+                );
             }
         } else if (ownerFriendOptional.isEmpty() && memberFriendOptional.isEmpty()) {
             ownerFriend = buildFriend(owner.getId(), member);
             memberFriend = buildFriend(member.getId(), owner);
         } else {
-            throw new InternalException(String.format("Нарушена целостность данных. Связь дружбы является" +
-                            " односторонней для пользователей: '%s', '%s'", owner.getId(),
-                    member.getId()));
+            throw new InternalException(
+                    String.format(
+                            FRIEND_RELATION_ONE_DIRECTION,
+                            owner.getId(),
+                            member.getId()
+                    )
+            );
         }
 
         ownerFriend = friendRepository.save(ownerFriend);
@@ -100,31 +109,48 @@ public class ManageFriendServiceImpl implements ManageFriendService {
     @Override
     @Transactional
     public void deleteFriend(UUID ownerId, UUID memberId) {
-        if (ownerId == memberId) {
+        if (ownerId.equals(memberId)) {
             throw new BadRequestException("Некорректный запрос. Идентификаторы совпадают.");
         }
 
         Optional<Friend> optionalOwnerFriend = friendRepository.findFriendByOwnerIdAndMemberId(ownerId, memberId);
         Optional<Friend> optionalMemberFriend = friendRepository.findFriendByOwnerIdAndMemberId(memberId, ownerId);
+        Friend ownerFriend;
+        Friend memberFriend;
 
         if (optionalOwnerFriend.isPresent() && optionalMemberFriend.isPresent()) {
-            Friend ownerFriend = makeFriendDeleted(optionalOwnerFriend.get());
-            Friend memberFriend = makeFriendDeleted(optionalMemberFriend.get());
-            friendRepository.save(ownerFriend);
-            friendRepository.save(memberFriend);
-        } else if (optionalOwnerFriend.isPresent()) {
-            log.error("Нарушена целостность данных. Пользователь {} имеет друга {}, но не наоборот",
-                    ownerId, memberId);
-            Friend ownerFriend = makeFriendDeleted(optionalOwnerFriend.get());
-            friendRepository.save(ownerFriend);
-        } else if (optionalMemberFriend.isPresent()) {
-            log.error("Нарушена целостность данных. Пользователь {} имеет друга {}, но не наоборот",
-                    memberId, ownerId);
-            Friend friend2 = makeFriendDeleted(optionalMemberFriend.get());
-            friendRepository.save(friend2);
+            ownerFriend = optionalOwnerFriend.get();
+            memberFriend = optionalMemberFriend.get();
+
+            if (Boolean.FALSE.equals(ownerFriend.getIsDeleted())
+                    && Boolean.FALSE.equals(memberFriend.getIsDeleted())) {
+                makeFriendDeleted(ownerFriend);
+                makeFriendDeleted(memberFriend);
+            } else if (ownerFriend.getIsDeleted() && memberFriend.getIsDeleted()) {
+                throw new BadRequestException("Вы не являетесь друзьями");
+            } else {
+                throw new InternalException(
+                        String.format(
+                                FRIEND_RELATION_ONE_DIRECTION,
+                                ownerFriend.getOwnerId(),
+                                memberFriend.getOwnerId()
+                        )
+                );
+            }
+        } else if (optionalOwnerFriend.isEmpty() && optionalMemberFriend.isEmpty()) {
+            throw new BadRequestException("Вы не являетесь друзьями");
         } else {
-            throw new ConflictException("Вы не являетесь друзьями с этим пользователем");
+            throw new InternalException(
+                    String.format(
+                            FRIEND_RELATION_ONE_DIRECTION,
+                            ownerId,
+                            memberId
+                    )
+            );
         }
+
+        friendRepository.save(ownerFriend);
+        friendRepository.save(memberFriend);
     }
 
     @Override
@@ -134,17 +160,13 @@ public class ManageFriendServiceImpl implements ManageFriendService {
     }
 
     /**
-     * Метод для назначения параметров для сущности друга. <strong>Изменяет входящий объект и возвращает на
-     * него ссылку.</strong>
+     * Метод для назначения параметров для сущности друга. <strong>Изменяет входящий объект</strong>.
      *
      * @param friend сущность друга.
-     * @return ссылка на измененный входящий объект.
      */
-    private Friend makeFriendDeleted(Friend friend) {
+    private void makeFriendDeleted(Friend friend) {
         friend.setIsDeleted(true);
         friend.setDeletedDate(LocalDate.now());
-
-        return friend;
     }
 
     /**
