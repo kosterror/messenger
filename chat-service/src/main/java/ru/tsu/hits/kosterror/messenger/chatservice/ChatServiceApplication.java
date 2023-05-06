@@ -2,11 +2,13 @@ package ru.tsu.hits.kosterror.messenger.chatservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import ru.tsu.hits.kosterror.messenger.coresecurity.ImportCoreSecurityApplication;
 
 /**
  * Класс с точкой входа в программу.
  */
 @SpringBootApplication
+@ImportCoreSecurityApplication
 public class ChatServiceApplication {
 
     /**
