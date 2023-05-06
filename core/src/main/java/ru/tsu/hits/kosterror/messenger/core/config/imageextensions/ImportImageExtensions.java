@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(Extensions.class)
+@Import(FileExtensions.class)
 @ConfigurationPropertiesScan("ru.tsu.hits.kosterror.messenger.coresecurity")
 @EnableConfigurationProperties
 public @interface ImportImageExtensions {

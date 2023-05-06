@@ -10,9 +10,9 @@ import java.util.List;
 @Slf4j
 @ConfigurationProperties("app.file.extensions")
 @Data
-public class Extensions {
+public class FileExtensions {
 
-    private List<String> image;
+    private List<String> imageExtensions;
 
     @PostConstruct
     private void init() {

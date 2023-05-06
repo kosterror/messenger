@@ -28,6 +28,7 @@
         <springdoc-openapi-ui.version>1.6.15</springdoc-openapi-ui.version>
         <spring-cloud.version>2021.0.6</spring-cloud.version>
         <spring-gateway.version>3.1.6</spring-gateway.version>
+        <commons-io.version>2.11.0</commons-io.version>
     </properties>
 
     <dependencyManagement>
@@ -96,6 +97,12 @@
                 <artifactId>spring-cloud-starter-gateway</artifactId>
                 <version>${spring-gateway.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
