@@ -4,11 +4,12 @@ import lombok.*;
 import ru.tsu.hits.kosterror.messenger.chatservice.enumeration.ChatType;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * Класс, представляющий собой сущность чата в БД.
+ * Класс, представляющий собой сущность чата.
  */
 @Entity
 @Table(name = "chat")
@@ -20,19 +21,30 @@ import java.util.UUID;
 public class Chat extends BaseEntity {
 
     @Column(name = "type")
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private ChatType type;
 
-    @Column(name = "chat_name")
-    private String chatName;
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "admin_id")
     private UUID adminId;
 
     @Column(name = "date_of_creation")
-    private LocalDate createdDate;
+    private LocalDateTime creationDate;
 
     @Column(name = "avatar_id")
     private UUID avatarId;
+
+    @OneToMany(mappedBy = "chat")
+    private List<Message> messages;
+
+    @ManyToMany
+    @JoinTable(
+            name = "chat_person",
+            joinColumns = @JoinColumn(name = "chat_id"),
+            inverseJoinColumns = @JoinColumn(name = "relation_person_id")
+    )
+    private List<RelationPerson> members;
 
 }
