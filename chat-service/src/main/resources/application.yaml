@@ -1,6 +1,22 @@
 server:
   port: 8081
 
+app:
+  name: chat-service
+  security:
+    jwt-token:
+      root-path: /api
+      secret-key: the_best_secret_key_in_the_world_and_in_the_space
+    integration:
+      root-path: /integration
+      api-key: 8b7390c8-d6d2-11ed-afa1-0242ac120002
+  logging-requests:
+    include-client-info: true
+    include-query-string: true
+    include-payload: true
+    include-headers: true
+    max-payload-length: 1000
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5402/messenger-chat-db
