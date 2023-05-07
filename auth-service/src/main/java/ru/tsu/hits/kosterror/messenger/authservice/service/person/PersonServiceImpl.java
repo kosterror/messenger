@@ -128,7 +128,7 @@ public class PersonServiceImpl implements PersonService {
 
         try {
             BooleanDto isBlocked = friendsIntegrationService.checkPersonIsBlocked(ownerUUID, memberUUID);
-            if (!isBlocked.isValue()) {
+            if (Boolean.FALSE.equals(isBlocked.getValue())) {
                 return personMapper.entityToDto(askedPerson);
             } else {
                 throw new ForbiddenException("Пользователь добавил вас в черным список");

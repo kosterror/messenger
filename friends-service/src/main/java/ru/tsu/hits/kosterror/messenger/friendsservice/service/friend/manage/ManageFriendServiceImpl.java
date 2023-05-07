@@ -45,10 +45,10 @@ public class ManageFriendServiceImpl implements ManageFriendService {
         if (jwtOwnerData.getId().equals(member.getId())) {
             throw new BadRequestException("Идентификаторы совпадают, нельзя добавить себя в друзья");
         }
-        if (displayBlockedPersonService.personIsBlocked(owner.getId(), member.getId()).isValue()) {
+        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(owner.getId(), member.getId()).getValue())) {
             throw new BadRequestException("Нельзя добавить пользователя, который находится в черном списке");
         }
-        if (displayBlockedPersonService.personIsBlocked(member.getId(), owner.getId()).isValue()) {
+        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(member.getId(), owner.getId()).getValue())) {
             throw new ForbiddenException("Пользователь добавил вас в черный список");
         }
 
