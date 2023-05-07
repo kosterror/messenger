@@ -18,6 +18,6 @@ public class BooleanDto {
 
     @NotNull(message = "Значение не может быть null")
     @Schema(description = "Булево значение.")
-    private boolean value;
+    private Boolean value;
 
 }
