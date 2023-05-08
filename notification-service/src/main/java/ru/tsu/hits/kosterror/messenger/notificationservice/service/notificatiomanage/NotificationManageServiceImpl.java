@@ -12,6 +12,7 @@ import ru.tsu.hits.kosterror.messenger.notificationservice.service.notifiocation
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -30,7 +31,7 @@ public class NotificationManageServiceImpl implements NotificationManageService 
             throw new ForbiddenException("Какое-то уведомление принадлежит не вам");
         }
 
-        if (Boolean.TRUE.equals(dto.getIsChecked())) {
+        if (Objects.equals(Boolean.TRUE, dto.getIsChecked())) {
             setChecked(notifications);
         } else {
             setUnchecked(notifications);
