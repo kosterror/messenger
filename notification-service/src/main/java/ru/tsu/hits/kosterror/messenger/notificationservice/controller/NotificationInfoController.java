@@ -13,7 +13,7 @@ import ru.tsu.hits.kosterror.messenger.notificationservice.service.notifiocation
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
 
 @RestController
-@RequestMapping("/api/notification/")
+@RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 public class NotificationInfoController {
 
