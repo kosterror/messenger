@@ -12,6 +12,7 @@ import ru.tsu.hits.kosterror.messenger.notificationservice.dto.NotificationDto;
 import ru.tsu.hits.kosterror.messenger.notificationservice.dto.NotificationFilters;
 import ru.tsu.hits.kosterror.messenger.notificationservice.service.notifiocationinfo.NotificationInfoService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
@@ -37,9 +38,10 @@ public class NotificationInfoController {
             summary = "Получить список уведомлений.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    public List<PagingResponse<NotificationDto>> getNotifications(Authentication auth,
-                                                                  @RequestBody PagingFilteringRequest<NotificationFilters> request) {
-        return service.getNotifications(extractId(auth), request.getFilters());
+    public PagingResponse<List<NotificationDto>> getNotifications(Authentication auth,
+                                                                  @RequestBody @Valid
+                                                                  PagingFilteringRequest<NotificationFilters> request) {
+        return service.getNotifications(extractId(auth), request);
     }
 
 }
