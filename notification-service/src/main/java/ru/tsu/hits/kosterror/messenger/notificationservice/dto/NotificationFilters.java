@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.tsu.hits.kosterror.messenger.notificationservice.enumeration.NotificationType;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,6 +14,6 @@ import java.util.List;
 public class NotificationFilters {
     List<NotificationType> notificationTypes;
     private LocalDateTime startDate;
-    private LocalDate finishDate;
+    private LocalDateTime finishDate;
     private String message;
 }
