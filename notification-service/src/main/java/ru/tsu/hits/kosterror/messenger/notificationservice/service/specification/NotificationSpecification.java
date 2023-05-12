@@ -8,9 +8,14 @@ import ru.tsu.hits.kosterror.messenger.notificationservice.enumeration.Notificat
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @UtilityClass
 public class NotificationSpecification {
+
+    public static Specification<Notification> personId(UUID id) {
+        return (notification, query, builder) -> builder.equal(notification.get(Notification_.PERSON_ID), id);
+    }
 
     public static Specification<Notification> messageContainsSubstring(String substring) {
         return ((notification, query, builder) ->
