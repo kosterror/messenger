@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants;
+import ru.tsu.hits.kosterror.messenger.core.util.HeaderValues;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.synchronize.SynchronizeFriendsService;
 
@@ -30,7 +30,7 @@ public class IntegrationFriendController {
     @PatchMapping("/{friendId}")
     @Operation(
             summary = "Синхронизировать ФИО внешнего пользователя",
-            security = @SecurityRequirement(name = Constants.HEADER_API_KEY)
+            security = @SecurityRequirement(name = HeaderValues.HEADER_API_KEY)
     )
     public void synchronizeFriendFullName(@PathVariable UUID friendId) {
         synchronizeFriendsService.syncFriendFullName(friendId);

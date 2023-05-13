@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants.HEADER_API_KEY;
+import static ru.tsu.hits.kosterror.messenger.core.util.HeaderValues.HEADER_API_KEY;
 
 /**
  * Фильтр для проверки интеграционного запроса на основе ключа api-key.
