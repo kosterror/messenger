@@ -3,8 +3,6 @@ package ru.tsu.hits.kosterror.messenger.chatservice.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-import ru.tsu.hits.kosterror.messenger.chatservice.validation.fileformat.ImageFormat;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -19,8 +17,7 @@ public class CreateChatDto {
     private String chatName;
 
     @NotNull
-    @ImageFormat
-    private MultipartFile avatar;
+    private UUID avatarId;
 
     @NotNull
     private List<UUID> membersId;
