@@ -11,13 +11,13 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
-import ru.tsu.hits.kosterror.messenger.authservice.service.integration.friendsservice.FriendsIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
@@ -38,7 +38,7 @@ public class PersonServiceImpl implements PersonService {
     private static final String PERSON_NOT_FOUND = "Пользователь с логином = '%s' не найден";
     private final PersonRepository personRepository;
     private final PersonMapper personMapper;
-    private final FriendsIntegrationService friendsIntegrationService;
+    private final FriendIntegrationService friendIntegrationService;
 
     @Override
     public PersonDto getPersonInfo(UUID personId) {
@@ -127,7 +127,7 @@ public class PersonServiceImpl implements PersonService {
         UUID memberUUID = askerPerson.getId();
 
         try {
-            BooleanDto isBlocked = friendsIntegrationService.checkPersonIsBlocked(ownerUUID, memberUUID);
+            BooleanDto isBlocked = friendIntegrationService.checkPersonInfoIsBlocked(ownerUUID, memberUUID);
             if (Boolean.FALSE.equals(isBlocked.getValue())) {
                 return personMapper.entityToDto(askedPerson);
             } else {

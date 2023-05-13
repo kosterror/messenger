@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.authservice.service.integration.friendsservice;
+package ru.tsu.hits.kosterror.messenger.core.integration.friends;
 
 import org.springframework.web.client.RestClientException;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Интерфейс с интеграционными запросами в friends-service.
  */
-public interface FriendsIntegrationService {
+public interface FriendIntegrationService {
 
     /**
      * Метод для проверки нахождения в черном списке.
@@ -18,6 +18,6 @@ public interface FriendsIntegrationService {
      * @return объект с информацией о том, находится ли пользователь memberId в черном списке у ownerId.
      * @throws RestClientException возникает при некорректном запросе.
      */
-    BooleanDto checkPersonIsBlocked(UUID ownerId, UUID memberId);
+    BooleanDto checkPersonInfoIsBlocked(UUID ownerId, UUID memberId);
 
 }
