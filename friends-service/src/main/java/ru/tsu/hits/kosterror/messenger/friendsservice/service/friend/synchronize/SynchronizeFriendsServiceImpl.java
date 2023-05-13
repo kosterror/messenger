@@ -6,9 +6,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.PersonInfoService;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepository;
-import ru.tsu.hits.kosterror.messenger.friendsservice.service.integration.authservice.AuthIntegrationService;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,12 +21,12 @@ import java.util.UUID;
 public class SynchronizeFriendsServiceImpl implements SynchronizeFriendsService {
 
     private final FriendRepository friendRepository;
-    private final AuthIntegrationService authIntegrationService;
+    private final PersonInfoService personInfoService;
 
     @Override
     public void syncFriendFullName(UUID friendId) {
         try {
-            PersonDto person = authIntegrationService.getPersonInfo(friendId);
+            PersonDto person = personInfoService.getPersonInfo(friendId);
             List<Friend> friends = friendRepository.findAllByMemberId(person.getId());
             friends.forEach(friend -> friend.setMemberFullName(person.getFullName()));
 
