@@ -23,6 +23,12 @@ public class IntegrationBlockedPersonController {
     private final DisplayBlockedPersonService displayBlockedPersonService;
     private final SynchronizeBlockedPersonsService synchronizeBlockedPersonsService;
 
+    /**
+     * Эндпоинт для проверки нахождения в черном списке.
+     *
+     * @param pairPersonId dto с идентификаторами пользователей.
+     * @return добавил ли пользователь с {@code id = ownerId} в черный список пользователя с {@code id = memberId}.
+     */
     @PostMapping
     @Operation(
             summary = "Проверить нахождение в черном списке",
