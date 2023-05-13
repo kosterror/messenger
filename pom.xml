@@ -29,6 +29,8 @@
         <spring-cloud.version>2021.0.6</spring-cloud.version>
         <spring-gateway.version>3.1.6</spring-gateway.version>
         <hibernate-jpamodelgen.version>5.6.15.Final</hibernate-jpamodelgen.version>
+        <spring-cloud-stream.version>3.2.6</spring-cloud-stream.version>
+        <spring-cloud-amqp.version>2.7.9</spring-cloud-amqp.version>
     </properties>
 
     <dependencyManagement>
@@ -102,6 +104,27 @@
                 <artifactId>hibernate-jpamodelgen</artifactId>
                 <version>${hibernate-jpamodelgen.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-amqp</artifactId>
+                <version>${spring-cloud-amqp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-stream</artifactId>
+                <version>${spring-cloud-stream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+                <version>${spring-cloud-stream.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-stream-rabbit</artifactId>
+                <version>${spring-cloud-stream.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

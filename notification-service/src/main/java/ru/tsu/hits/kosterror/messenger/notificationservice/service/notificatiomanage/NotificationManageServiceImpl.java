@@ -1,8 +1,10 @@
 package ru.tsu.hits.kosterror.messenger.notificationservice.service.notificatiomanage;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tsu.hits.kosterror.messenger.core.dto.NewNotificationDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.NumberDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.notificationservice.dto.NotificationsStatusDto;
@@ -17,10 +19,16 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationManageServiceImpl implements NotificationManageService {
 
     private final NotificationRepository repository;
     private final NotificationInfoService notificationInfoService;
+
+    @Override
+    public void createNotification(NewNotificationDto dto) {
+        log.info(dto.toString());
+    }
 
     @Override
     @Transactional
