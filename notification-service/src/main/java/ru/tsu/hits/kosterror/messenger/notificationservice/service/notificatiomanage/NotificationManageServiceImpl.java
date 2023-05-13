@@ -6,9 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.kosterror.messenger.core.dto.NewNotificationDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.NumberDto;
+import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.notificationservice.dto.NotificationsStatusDto;
 import ru.tsu.hits.kosterror.messenger.notificationservice.entity.Notification;
+import ru.tsu.hits.kosterror.messenger.notificationservice.mapper.NotificationMapper;
 import ru.tsu.hits.kosterror.messenger.notificationservice.repository.NotificationRepository;
 import ru.tsu.hits.kosterror.messenger.notificationservice.service.notifiocationinfo.NotificationInfoService;
 
@@ -24,10 +26,18 @@ public class NotificationManageServiceImpl implements NotificationManageService 
 
     private final NotificationRepository repository;
     private final NotificationInfoService notificationInfoService;
+    private final NotificationMapper mapper;
 
     @Override
     public void createNotification(NewNotificationDto dto) {
-        log.info(dto.toString());
+        Notification notification = buildNotification(dto);
+
+        if (dto.getPersonId() == null || dto.getType() == null) {
+            throw new BadRequestException("Не удалось создать новое уведомление из-за некорректных данных: " + dto);
+        }
+
+        notification = repository.save(notification);
+        log.info("Уведомление {} создано успешно из {}", notification, dto);
     }
 
     @Override
@@ -47,6 +57,14 @@ public class NotificationManageServiceImpl implements NotificationManageService 
 
         repository.saveAll(notifications);
         return notificationInfoService.countUncheckedNotifications(personId);
+    }
+
+    private Notification buildNotification(NewNotificationDto dto) {
+        Notification notification = mapper.newDtoToEntity(dto);
+        notification.setIsChecked(false);
+        notification.setReceivedDate(LocalDateTime.now());
+
+        return notification;
     }
 
     private void setChecked(List<Notification> notifications) {
