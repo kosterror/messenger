@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
-import ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants;
+import ru.tsu.hits.kosterror.messenger.core.util.HeaderValues;
 
 /**
  * Класс конфигурации для сваггера
@@ -20,9 +20,9 @@ import ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants;
         scheme = "Bearer"
 )
 @SecurityScheme(
-        name = Constants.HEADER_API_KEY,
+        name = HeaderValues.HEADER_API_KEY,
         type = SecuritySchemeType.APIKEY,
-        scheme = Constants.HEADER_API_KEY,
+        scheme = HeaderValues.HEADER_API_KEY,
         in = SecuritySchemeIn.HEADER
 )
 public class SwaggerConfig {

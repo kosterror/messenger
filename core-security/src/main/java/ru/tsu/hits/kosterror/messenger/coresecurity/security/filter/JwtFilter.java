@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
+import ru.tsu.hits.kosterror.messenger.core.util.HeaderValues;
 import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
 import ru.tsu.hits.kosterror.messenger.coresecurity.security.authenticationtoken.JwtAuthentication;
 import ru.tsu.hits.kosterror.messenger.coresecurity.service.errorsender.HttpErrorSender;
@@ -36,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        String token = request.getHeader(Constants.HEADER_JWT);
+        String token = request.getHeader(HeaderValues.HEADER_JWT);
         log.info(
                 "Верификация токена: '{}'. На запрос: '{}' '{}' ",
                 token,
