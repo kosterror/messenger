@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.notificationservice.enumeration;
+package ru.tsu.hits.kosterror.messenger.core.enumeration;
 
 /**
  * Перечисление, которое представляет собой тип уведомления.

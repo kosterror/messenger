@@ -63,6 +63,8 @@ public class AuthServiceImpl implements AuthService {
                 person.getFullName()
         );
 
+        //TODO: отправить уведомление в notification-service об успешном логине
+
         PersonDto personDto = mapper.entityToDto(person);
 
         return new FullPersonDto(token, personDto);

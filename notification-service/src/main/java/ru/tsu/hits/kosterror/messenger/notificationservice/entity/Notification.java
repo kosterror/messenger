@@ -1,10 +1,7 @@
 package ru.tsu.hits.kosterror.messenger.notificationservice.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import ru.tsu.hits.kosterror.messenger.notificationservice.enumeration.NotificationType;
+import lombok.*;
+import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +18,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Notification extends BaseEntity {
 
     @Column(name = "person_id")

@@ -2,9 +2,9 @@ package ru.tsu.hits.kosterror.messenger.notificationservice.service.specificatio
 
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
+import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 import ru.tsu.hits.kosterror.messenger.notificationservice.entity.Notification;
 import ru.tsu.hits.kosterror.messenger.notificationservice.entity.Notification_;
-import ru.tsu.hits.kosterror.messenger.notificationservice.enumeration.NotificationType;
 
 import java.time.LocalDateTime;
 import java.util.List;
