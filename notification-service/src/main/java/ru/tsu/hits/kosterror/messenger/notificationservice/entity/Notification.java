@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.tsu.hits.kosterror.messenger.notificationservice.enumeration.NotificationType;
+import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.tsu.hits.kosterror.messenger.notificationservice.enumeration.NotificationType;
+import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
