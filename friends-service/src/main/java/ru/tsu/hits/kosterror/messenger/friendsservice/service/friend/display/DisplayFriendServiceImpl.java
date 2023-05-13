@@ -45,7 +45,7 @@ public class DisplayFriendServiceImpl implements DisplayFriendService {
             throw new BadRequestException("Некорректные входные данные, идентификаторы пользователей совпадают");
         }
 
-        if (displayBlockedPersonService.personIsBlocked(memberId, ownerId).isValue()) {
+        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(memberId, ownerId).getValue())) {
             throw new ForbiddenException("Пользователь вас добавил в черный список.");
         }
 

@@ -1,20 +1,13 @@
 server:
-  port: 8081
+  port: 8084
 
 app:
-  name: auth-service
-  integration-endpoints:
-    person-is-blocked: http://localhost:8080/integration/friends/blocked-persons
+  name: notification-service
   security:
     jwt-token:
       root-path: /api
       permit-all-endpoints:
-        - route: "/api/users/register"
-          method: "POST"
-        - route: "/api/users/login"
-          method: "POST"
       secret-key: the_best_secret_key_in_the_world_and_in_the_space
-      expiration-minutes: 15
     integration:
       root-path: /integration
       api-key: 8b7390c8-d6d2-11ed-afa1-0242ac120002
@@ -24,9 +17,10 @@ app:
     include-payload: true
     include-headers: true
     max-payload-length: 1000
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5400/messenger-auth-db
+    url: jdbc:postgresql://localhost:5403/messenger-notification-db
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -46,5 +40,5 @@ spring:
     username: rmq-user
     password: rmq-pass
   cloud.stream.bindings:
-    createNotification-out-0:
+    createNotification-in-0:
       destination: CREATE_NOTIFICATION
