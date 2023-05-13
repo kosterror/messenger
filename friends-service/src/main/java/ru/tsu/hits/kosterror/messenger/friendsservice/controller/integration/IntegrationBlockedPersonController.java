@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
-import ru.tsu.hits.kosterror.messenger.coresecurity.util.Constants;
+import ru.tsu.hits.kosterror.messenger.core.util.HeaderValues;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display.DisplayBlockedPersonService;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.synchronize.SynchronizeBlockedPersonsService;
@@ -26,7 +26,7 @@ public class IntegrationBlockedPersonController {
     @PostMapping
     @Operation(
             summary = "Проверить нахождение в черном списке",
-            security = @SecurityRequirement(name = Constants.HEADER_API_KEY)
+            security = @SecurityRequirement(name = HeaderValues.HEADER_API_KEY)
     )
     public BooleanDto checkBlockingPerson(@RequestBody PairPersonIdDto pairPersonId) {
         return displayBlockedPersonService.personIsBlocked(pairPersonId.getOwnerId(), pairPersonId.getMemberId());
@@ -40,7 +40,7 @@ public class IntegrationBlockedPersonController {
     @PatchMapping("/{blockedPersonId}")
     @Operation(
             summary = "Синхронизировать ФИО пользователя, среди заблокированных пользователей.",
-            security = @SecurityRequirement(name = Constants.HEADER_API_KEY)
+            security = @SecurityRequirement(name = HeaderValues.HEADER_API_KEY)
     )
     public void synchronizeBlockedPersonFullName(@PathVariable UUID blockedPersonId) {
         synchronizeBlockedPersonsService.syncBlockedPersonIdFullName(blockedPersonId);

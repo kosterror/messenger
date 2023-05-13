@@ -8,10 +8,6 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Constants {
 
-    public static final String HEADER_JWT = "Authorization";
-
-    public static final String HEADER_API_KEY = "Api-Key";
-
     public static final String CLAIM_ID = "id";
 
     public static final String CLAIM_EMAIL = "email";
