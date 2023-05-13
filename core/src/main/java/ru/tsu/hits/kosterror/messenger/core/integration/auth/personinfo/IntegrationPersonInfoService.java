@@ -8,7 +8,7 @@ import java.util.UUID;
  * Интерфейс с методами для получения информации о пользователе с помощью отправки интеграционных
  * запросов в auth-service.
  */
-public interface PersonInfoService {
+public interface IntegrationPersonInfoService {
 
     /**
      * Метод для отправки интеграционного запроса на получение информации о профиле пользователя.

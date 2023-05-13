@@ -12,7 +12,7 @@ import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegration
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class PersonInfoServiceImpl implements PersonInfoService {
+public class IntegrationPersonInfoServiceImpl implements IntegrationPersonInfoService {
 
     private final CommonIntegrationService commonIntegrationService;
     @Value("${app.integration-endpoints.get-person-info}")

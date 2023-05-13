@@ -2,8 +2,8 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.PersonInfoService;
-import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.PersonInfoServiceImpl;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationServiceImpl;
 
@@ -24,13 +24,13 @@ public class ApplicationConfig {
     }
 
     /**
-     * Метод для создания бина {@link PersonInfoService}.
+     * Метод для создания бина {@link IntegrationPersonInfoService}.
      *
-     * @return бин {@link PersonInfoService}.
+     * @return бин {@link IntegrationPersonInfoService}.
      */
     @Bean
-    public PersonInfoService personInfoService() {
-        return new PersonInfoServiceImpl(commonIntegrationService());
+    public IntegrationPersonInfoService personInfoService() {
+        return new IntegrationPersonInfoServiceImpl(commonIntegrationService());
     }
 
 }

@@ -7,7 +7,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
-import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.PersonInfoService;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.BlockedPersonRepository;
 
@@ -23,12 +23,12 @@ import java.util.UUID;
 public class SynchronizeBlockedPersonsServiceImpl implements SynchronizeBlockedPersonsService {
 
     private final BlockedPersonRepository blockedPersonRepository;
-    private final PersonInfoService personInfoService;
+    private final IntegrationPersonInfoService integrationPersonInfoService;
 
     @Override
     public void syncBlockedPersonIdFullName(UUID blockedPersonId) {
         try {
-            PersonDto personDto = personInfoService.getPersonInfo(blockedPersonId);
+            PersonDto personDto = integrationPersonInfoService.getPersonInfo(blockedPersonId);
             List<BlockedPerson> blockedPersons = blockedPersonRepository.findAllByMemberId(personDto.getId());
             blockedPersons.forEach(blockedPerson -> blockedPerson.setMemberFullName(personDto.getFullName()));
 
