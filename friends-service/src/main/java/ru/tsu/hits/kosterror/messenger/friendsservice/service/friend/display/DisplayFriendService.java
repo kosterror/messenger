@@ -1,5 +1,6 @@
 package ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.display;
 
+import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
@@ -13,6 +14,15 @@ import java.util.UUID;
  * Интерфейс, который предоставляет методы для получения друзей какого-то пользователя.
  */
 public interface DisplayFriendService {
+
+    /**
+     * Метод для проверки существования двунаправленной связи дружбы между пользователями.
+     *
+     * @param ownerId  идентификатор первого пользователя.
+     * @param memberId идентификатор второго пользователя.
+     * @return существует ли связь дружбы.
+     */
+    BooleanDto isFriends(UUID ownerId, UUID memberId);
 
     /**
      * Метод для получения информации о друге целевого пользователя.

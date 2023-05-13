@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
@@ -21,6 +22,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.disp
 import ru.tsu.hits.kosterror.messenger.friendsservice.util.PageableBuilder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,23 @@ public class DisplayFriendServiceImpl implements DisplayFriendService {
     private final FriendRepository friendRepository;
     private final FriendMapper friendMapper;
     private final PageableBuilder pageableBuilder;
+
+    @Override
+    public BooleanDto isFriends(UUID ownerId,
+                                UUID memberId) {
+        Optional<Friend> ownerFriend = friendRepository.findFriendByOwnerIdAndMemberId(ownerId, memberId);
+        Optional<Friend> memberFriend = friendRepository.findFriendByOwnerIdAndMemberId(memberId, ownerId);
+
+        if (ownerFriend.isPresent() && memberFriend.isPresent()) {
+            return new BooleanDto(true);
+        } else if (ownerFriend.isEmpty() && memberFriend.isEmpty()) {
+            return new BooleanDto(false);
+        } else {
+            log.warn("Аномалия данных. Связь дружбы однонаправленная для пользователей: {}, {}", ownerId, memberId);
+            return new BooleanDto(false);
+        }
+
+    }
 
     @Override
     public FriendDto getFriend(UUID ownerId,
