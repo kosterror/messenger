@@ -12,6 +12,7 @@ import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
+import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
@@ -127,7 +128,8 @@ public class PersonServiceImpl implements PersonService {
         UUID memberUUID = askerPerson.getId();
 
         try {
-            BooleanDto isBlocked = friendIntegrationService.checkPersonInfoIsBlocked(ownerUUID, memberUUID);
+            PairPersonIdDto pairPersonIdDto = new PairPersonIdDto(ownerUUID, memberUUID);
+            BooleanDto isBlocked = friendIntegrationService.checkPersonInfoIsBlocked(pairPersonIdDto);
             if (Boolean.FALSE.equals(isBlocked.getValue())) {
                 return personMapper.entityToDto(askedPerson);
             } else {

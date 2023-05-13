@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
@@ -26,6 +27,16 @@ public class ApplicationConfig {
     }
 
     /**
+     * Создает бин {@link RestTemplate}.
+     *
+     * @return бин {@link RestTemplate}.
+     */
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    /**
      * Метод для создания бина {@link CommonIntegrationService}.
      *
      * @return бин {@link CommonIntegrationService}.
@@ -42,7 +53,7 @@ public class ApplicationConfig {
      */
     @Bean
     public FriendIntegrationService friendIntegrationService() {
-        return new FriendIntegrationServiceImpl(commonIntegrationService());
+        return new FriendIntegrationServiceImpl(restTemplate(), commonIntegrationService());
     }
 
 }
