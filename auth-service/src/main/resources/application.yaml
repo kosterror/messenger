@@ -40,3 +40,11 @@ spring:
   flyway:
     locations: classpath:migrations
     enabled: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: rmq-user
+    password: rmq-pass
+  cloud.stream.bindings:
+    createNotification-out-0:
+      destination: CREATE_NOTIFICATION
