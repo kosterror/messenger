@@ -5,9 +5,12 @@ minio:
   access-key: access-key-value
   secret-key: secret-key-value
   bucket: messenger-file-storage
-  url: http://localhost:9000
+  url: http://localhost:9900
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
   datasource:
     url: jdbc:postgresql://localhost:5404/messenger-file-storage-db
     username: postgres
@@ -23,3 +26,21 @@ spring:
   flyway:
     locations: classpath:migrations
     enabled: true
+
+app:
+  integration-endpoints:
+  security:
+    jwt-token:
+      root-path: /api
+      permit-all-endpoints:
+      secret-key: the_best_secret_key_in_the_world_and_in_the_space
+      expiration-minutes: 15
+    integration:
+      root-path: /integration
+      api-key: 8b7390c8-d6d2-11ed-afa1-0242ac120002
+  logging-requests:
+    include-client-info: true
+    include-query-string: true
+    include-payload: true
+    include-headers: true
+    max-payload-length: 1000
