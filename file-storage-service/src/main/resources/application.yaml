@@ -1,1 +1,8 @@
+server:
+  port: 8085
 
+minio:
+  access-key: access-key-value
+  secret-key: secret-key-value
+  bucket: messenger-file-storage
+  url: http://localhost:9000
