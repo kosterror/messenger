@@ -18,19 +18,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ChatInfoServiceImpl implements ChatInfoService {
 
+    private static final String NO_ACCESS_TO_THE_CHAT_MESSAGE = "Нет доступа к чату";
+    private static final String CHAT_NOT_FOUND = "Чат с таким идентификатором не найден";
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
 
     @Override
-    public ChatDto findChatById(UUID personId, UUID chatId) {
+    public Chat findChatEntityById(UUID personId, UUID chatId) {
         Chat chat = chatRepository
                 .findById(chatId)
-                .orElseThrow(() -> new NotFoundException("Чат с таким идентификатором не найден"));
+                .orElseThrow(() -> new NotFoundException(CHAT_NOT_FOUND));
 
         if (!hasAccessToChat(personId, chat)) {
-            throw new ForbiddenException("Нет прав на просмотр чата.");
+            throw new ForbiddenException(NO_ACCESS_TO_THE_CHAT_MESSAGE);
         }
 
+        return chat;
+    }
+
+    @Override
+    public ChatDto findChatById(UUID personId, UUID chatId) {
+        Chat chat = findChatEntityById(personId, chatId);
         return chatMapper.entityToDto(chat);
     }
 
