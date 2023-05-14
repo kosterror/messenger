@@ -6,3 +6,20 @@ minio:
   secret-key: secret-key-value
   bucket: messenger-file-storage
   url: http://localhost:9000
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5404/messenger-file-storage-db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    locations: classpath:migrations
+    enabled: true

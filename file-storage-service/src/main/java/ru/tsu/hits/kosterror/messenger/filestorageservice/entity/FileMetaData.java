@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "file-meta-data")
+@Table(name = "file_meta_data")
 @Getter
 @Setter
 @Builder
