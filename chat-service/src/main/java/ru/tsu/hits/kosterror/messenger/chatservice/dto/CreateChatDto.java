@@ -16,7 +16,6 @@ public class CreateChatDto {
     @NotNull
     private String chatName;
 
-    @NotNull
     private UUID avatarId;
 
     @NotNull
