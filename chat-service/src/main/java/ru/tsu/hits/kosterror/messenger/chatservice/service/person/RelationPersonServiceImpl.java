@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.RelationPerson;
 import ru.tsu.hits.kosterror.messenger.chatservice.repository.RelationPersonRepository;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,13 @@ import java.util.UUID;
 public class RelationPersonServiceImpl implements RelationPersonService {
 
     private final RelationPersonRepository repository;
+
+    @Override
+    public RelationPerson findRelationPersonEntity(UUID personId) {
+        return repository
+                .findByPersonId(personId)
+                .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден"));
+    }
 
     @Override
     @Transactional
