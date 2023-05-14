@@ -1,9 +1,7 @@
-package ru.tsu.hits.kosterror.messenger.authservice.config;
+package ru.tsu.hits.kosterror.messenger.chatservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.client.RestTemplate;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationServiceImpl;
@@ -15,16 +13,6 @@ import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegratio
  */
 @Configuration
 public class ApplicationConfig {
-
-    /**
-     * Создает бин PasswordEncoder с использованием алгоритма BCrypt.
-     *
-     * @return объект PasswordEncoder
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     /**
      * Создает бин {@link RestTemplate}.

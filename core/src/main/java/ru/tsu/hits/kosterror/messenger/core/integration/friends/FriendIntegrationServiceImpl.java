@@ -10,25 +10,39 @@ import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 
-import java.util.UUID;
-
 @RequiredArgsConstructor
 public class FriendIntegrationServiceImpl implements FriendIntegrationService {
 
+    private final RestTemplate restTemplate;
     private final CommonIntegrationService commonIntegrationService;
 
     @Value("${app.integration-endpoints.person-is-blocked}")
     private String personIsBlocked;
 
+    @Value("${app.integration-endpoints.is-friends}")
+    private String personsIfFriends;
+
     @Override
-    public BooleanDto checkPersonInfoIsBlocked(UUID ownerId, UUID memberId) {
-        RestTemplate restTemplate = new RestTemplate();
-        PairPersonIdDto idPair = new PairPersonIdDto(ownerId, memberId);
+    public BooleanDto checkPersonInfoIsBlocked(PairPersonIdDto dto) {
         HttpHeaders headers = commonIntegrationService.buildHeaders();
-        HttpEntity<PairPersonIdDto> request = new HttpEntity<>(idPair, headers);
+        HttpEntity<PairPersonIdDto> request = new HttpEntity<>(dto, headers);
         ResponseEntity<BooleanDto> response = restTemplate
                 .postForEntity(
                         personIsBlocked,
+                        request,
+                        BooleanDto.class
+                );
+
+        return response.getBody();
+    }
+
+    @Override
+    public BooleanDto checkIsFriends(PairPersonIdDto dto) {
+        HttpHeaders headers = commonIntegrationService.buildHeaders();
+        HttpEntity<PairPersonIdDto> request = new HttpEntity<>(dto, headers);
+        ResponseEntity<BooleanDto> response = restTemplate
+                .postForEntity(
+                        personsIfFriends,
                         request,
                         BooleanDto.class
                 );

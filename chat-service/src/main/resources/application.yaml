@@ -3,9 +3,13 @@ server:
 
 app:
   name: chat-service
+  integration-endpoints:
+    person-is-blocked: http://localhost:8080/integration/friends/blocked-persons
+    is-friends: http://localhost:8080/integration/friends
   security:
     jwt-token:
       root-path: /api
+      permit-all-endpoints:
       secret-key: the_best_secret_key_in_the_world_and_in_the_space
     integration:
       root-path: /integration
@@ -16,6 +20,15 @@ app:
     include-payload: true
     include-headers: true
     max-payload-length: 1000
+  file:
+    extensions:
+      image:
+        - png
+        - jpeg
+        - jpg
+        - svg
+        - tiff
+        - jp2
 
 spring:
   datasource:

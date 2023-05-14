@@ -21,7 +21,7 @@ public class SecurityProperties {
 
     @PostConstruct
     private void init() {
-        log.info("SecurityProperties созданы: {}", this);
+        log.info("SecurityProperties: {}", this);
     }
 
 }
