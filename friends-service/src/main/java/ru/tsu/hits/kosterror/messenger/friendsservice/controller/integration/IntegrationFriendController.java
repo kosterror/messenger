@@ -15,7 +15,7 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.synchronize
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/integration/friends/")
+@RequestMapping("/integration/friends")
 @RequiredArgsConstructor
 @Tag(name = "Интеграционные запросы")
 public class IntegrationFriendController {
