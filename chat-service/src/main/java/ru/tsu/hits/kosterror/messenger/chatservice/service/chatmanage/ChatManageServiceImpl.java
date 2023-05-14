@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.ChatDto;
-import ru.tsu.hits.kosterror.messenger.chatservice.dto.CreateChatDto;
+import ru.tsu.hits.kosterror.messenger.chatservice.dto.CreateUpdateChatDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.Chat;
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.RelationPerson;
 import ru.tsu.hits.kosterror.messenger.chatservice.enumeration.ChatType;
@@ -35,7 +35,7 @@ public class ChatManageServiceImpl implements ChatManageService {
     private final ChatMapper chatMapper;
 
     @Override
-    public ChatDto createGroupChat(UUID adminId, CreateChatDto dto) {
+    public ChatDto createGroupChat(UUID adminId, CreateUpdateChatDto dto) {
         List<UUID> memberIds = dto.getMembersId().stream().distinct().collect(Collectors.toList());
 
         if (memberIds.contains(adminId)) {

@@ -5,14 +5,13 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.tsu.hits.kosterror.messenger.chatservice.dto.CreateChatDto;
+import org.springframework.web.bind.annotation.*;
+import ru.tsu.hits.kosterror.messenger.chatservice.dto.ChatDto;
+import ru.tsu.hits.kosterror.messenger.chatservice.dto.CreateUpdateChatDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatmanage.ChatManageService;
 
 import javax.validation.Valid;
+import java.util.UUID;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
 
@@ -29,7 +28,7 @@ public class ChatController {
             summary = "Создать беседу.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    public Object createChat(Authentication auth, @RequestBody @Valid CreateChatDto dto) {
+    public ChatDto createChat(Authentication auth, @RequestBody @Valid CreateUpdateChatDto dto) {
         return service.createGroupChat(extractId(auth), dto);
     }
 

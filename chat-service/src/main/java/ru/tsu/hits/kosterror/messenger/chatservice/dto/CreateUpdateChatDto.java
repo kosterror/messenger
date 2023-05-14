@@ -11,7 +11,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateChatDto {
+public class CreateUpdateChatDto {
 
     @NotNull
     private String chatName;
