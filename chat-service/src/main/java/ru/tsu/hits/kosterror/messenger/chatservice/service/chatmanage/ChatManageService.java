@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface ChatManageService {
     ChatDto createGroupChat(UUID adminId, CreateUpdateChatDto dto);
 
+    ChatDto updateGroupChat(UUID adminId, UUID chatId, CreateUpdateChatDto dto);
+
 }

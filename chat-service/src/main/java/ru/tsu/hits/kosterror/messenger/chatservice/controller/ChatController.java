@@ -32,4 +32,14 @@ public class ChatController {
         return service.createGroupChat(extractId(auth), dto);
     }
 
+    @PutMapping("/group/{chatId}")
+    @Operation(
+            summary = "Изменить беседу.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public ChatDto updateChat(Authentication auth,
+                              @PathVariable UUID chatId,
+                              @RequestBody @Valid CreateUpdateChatDto dto) {
+        return service.updateGroupChat(extractId(auth), chatId, dto);
+    }
 }
