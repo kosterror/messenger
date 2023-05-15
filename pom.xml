@@ -32,6 +32,8 @@
         <spring-cloud-stream.version>3.2.6</spring-cloud-stream.version>
         <spring-cloud-amqp.version>2.7.9</spring-cloud-amqp.version>
         <io.minio.version>8.5.2</io.minio.version>
+        <icu4j.version>73.1</icu4j.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
     </properties>
 
     <dependencyManagement>
@@ -129,6 +131,16 @@
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${io.minio.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>${icu4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -4,15 +4,18 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.tsu.hits.kosterror.messenger.core.dto.FileMetaDataDto;
-import ru.tsu.hits.kosterror.messenger.filestorageservice.service.FileStorageService;
+import ru.tsu.hits.kosterror.messenger.core.util.HeaderValues;
+import ru.tsu.hits.kosterror.messenger.filestorageservice.service.filestorage.FileStorageService;
+
+import java.util.UUID;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
 
@@ -36,6 +39,32 @@ public class FileStorageController {
     public FileMetaDataDto uploadFile(Authentication auth,
                                       @RequestParam("file") MultipartFile file) {
         return fileStorageService.uploadFile(extractId(auth), file);
+    }
+
+    @GetMapping(value = "/download/{fileId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @Operation(
+            summary = "Скачать файл.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public ResponseEntity<byte[]> downloadFile(@PathVariable @NonNull UUID fileId) {
+        Pair<String, byte[]> fileAndFilename = fileStorageService.downloadFileAndFilename(fileId);
+
+        return ResponseEntity
+                .ok()
+                .header(
+                        HeaderValues.HEADER_CONTENT_DISPOSITION,
+                        String.format("filename=%s", fileAndFilename.getFirst())
+                )
+                .body(fileAndFilename.getSecond());
+    }
+
+    @GetMapping(value = "/{fileId}")
+    @Operation(
+            summary = "Получить метаинформацию о файле.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public FileMetaDataDto getFileMetaDataDto(@PathVariable @NonNull UUID fileId) {
+        return fileStorageService.getFileMetaData(fileId);
     }
 
 }
