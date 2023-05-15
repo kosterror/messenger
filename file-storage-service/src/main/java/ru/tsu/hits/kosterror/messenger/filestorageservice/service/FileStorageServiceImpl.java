@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.tsu.hits.kosterror.messenger.core.dto.FileMetaDataDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.filestorageservice.config.MinioConfig;
 import ru.tsu.hits.kosterror.messenger.filestorageservice.entity.FileMetaData;
 import ru.tsu.hits.kosterror.messenger.filestorageservice.mapper.FileMetaDataMapper;
@@ -27,7 +28,6 @@ public class FileStorageServiceImpl implements FileStorageService {
     private final FileMetaDataRepository fileMetaDataRepository;
     private final MinioClient minioClient;
     private final MinioConfig minioConfig;
-
     private final FileMetaDataMapper fileMetaDataMapper;
 
     @Override
@@ -45,6 +45,15 @@ public class FileStorageServiceImpl implements FileStorageService {
             log.error("Ошибка во время загрузки файла в S3", exception);
             throw new InternalException("Ошибка во время загрузки файла в S3", exception);
         }
+    }
+
+    @Override
+    public FileMetaDataDto getFileMetaData(@NonNull UUID fileId) {
+        FileMetaData fileMetaData = fileMetaDataRepository
+                .findById(fileId)
+                .orElseThrow(() -> new NotFoundException(String.format("Файл с id = '%s' не найден", fileId)));
+
+        return fileMetaDataMapper.entityToDto(fileMetaData);
     }
 
     private FileMetaData buildFileMetaData(UUID authorId, String filename) {
