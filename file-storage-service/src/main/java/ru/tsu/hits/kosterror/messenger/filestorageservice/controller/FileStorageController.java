@@ -2,6 +2,7 @@ package ru.tsu.hits.kosterror.messenger.filestorageservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
@@ -23,6 +24,7 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.ext
 @RequestMapping("/api/file-storage")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Пользовательские запросы")
 public class FileStorageController {
 
     private final FileStorageService fileStorageService;
