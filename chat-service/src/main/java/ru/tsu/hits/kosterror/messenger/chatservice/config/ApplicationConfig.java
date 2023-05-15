@@ -3,6 +3,7 @@ package ru.tsu.hits.kosterror.messenger.chatservice.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import ru.tsu.hits.kosterror.messenger.core.config.SwaggerConfig;
 import ru.tsu.hits.kosterror.messenger.core.controller.ExceptionHandlingController;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationServiceImpl;
@@ -53,6 +54,16 @@ public class ApplicationConfig {
     @Bean
     public ExceptionHandlingController exceptionHandlingController() {
         return new ExceptionHandlingController();
+    }
+
+    /**
+     * Создает бин с конфигом для сваггера.
+     *
+     * @return бин {@link SwaggerConfig}.
+     */
+    @Bean
+    SwaggerConfig swaggerConfig() {
+        return new SwaggerConfig();
     }
 
 }

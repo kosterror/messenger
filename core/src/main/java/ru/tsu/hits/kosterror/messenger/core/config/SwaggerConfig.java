@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.chatservice.config;
+package ru.tsu.hits.kosterror.messenger.core.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
