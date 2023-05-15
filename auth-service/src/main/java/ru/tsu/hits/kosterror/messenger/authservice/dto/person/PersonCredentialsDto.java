@@ -13,6 +13,7 @@ public class PersonCredentialsDto {
 
     @NotBlank(message = "Логин не может быть пустым")
     private String login;
+
     @NotBlank(message = "Пароль не может быть пустым")
     private String password;
 
