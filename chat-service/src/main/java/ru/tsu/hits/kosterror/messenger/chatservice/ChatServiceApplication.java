@@ -2,7 +2,6 @@ package ru.tsu.hits.kosterror.messenger.chatservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import ru.tsu.hits.kosterror.messenger.core.config.imageextensions.ImportImageExtensions;
 import ru.tsu.hits.kosterror.messenger.coresecurity.ImportCoreSecurityApplication;
 
 /**
@@ -10,7 +9,6 @@ import ru.tsu.hits.kosterror.messenger.coresecurity.ImportCoreSecurityApplicatio
  */
 @SpringBootApplication
 @ImportCoreSecurityApplication
-@ImportImageExtensions
 public class ChatServiceApplication {
 
     /**

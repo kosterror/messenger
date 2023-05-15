@@ -1,19 +1,14 @@
-package ru.tsu.hits.kosterror.messenger.filestorageservice.config;
+package ru.tsu.hits.kosterror.messenger.notificationservice.config;
 
-import com.ibm.icu.text.Transliterator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.tsu.hits.kosterror.messenger.core.controller.ExceptionHandlingController;
 
+/**
+ * Класс с конфигурацией для сервиса.
+ */
 @Configuration
 public class ApplicationConfig {
-
-    private static final String CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
-
-    @Bean
-    Transliterator cyrillicTransliterator() {
-        return Transliterator.getInstance(CYRILLIC_TO_LATIN);
-    }
 
     /**
      * Создает бин, которые будет отлавливать исключения во время HTTP запросов.

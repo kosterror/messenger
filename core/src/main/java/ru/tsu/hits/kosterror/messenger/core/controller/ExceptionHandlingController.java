@@ -1,4 +1,4 @@
-package ru.tsu.hits.kosterror.messenger.friendsservice.controller;
+package ru.tsu.hits.kosterror.messenger.core.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -88,9 +88,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ApiError> handleForbiddenException(HttpServletRequest request,
-                                                             ForbiddenException exception
-    ) {
+    public ResponseEntity<ApiError> handleForbiddenException(HttpServletRequest request, ForbiddenException exception) {
         logError(request, exception);
 
         ApiError error = new ApiError(
@@ -102,8 +100,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFoundException(HttpServletRequest request,
-                                                            NotFoundException exception) {
+    public ResponseEntity<ApiError> handleNotFoundException(HttpServletRequest request, NotFoundException exception) {
         logError(request, exception);
 
         ApiError error = new ApiError(

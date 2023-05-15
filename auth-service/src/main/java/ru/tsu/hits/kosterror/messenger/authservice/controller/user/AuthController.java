@@ -58,7 +58,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "Аутентифицироваться")
-    public ResponseEntity<PersonDto> login(@RequestBody PersonCredentialsDto dto) {
+    public ResponseEntity<PersonDto> login(@RequestBody @Valid PersonCredentialsDto dto) {
         FullPersonDto fullPersonDto = service.login(dto);
 
         PersonDto personDto = fullPersonDto.getPersonDto();
