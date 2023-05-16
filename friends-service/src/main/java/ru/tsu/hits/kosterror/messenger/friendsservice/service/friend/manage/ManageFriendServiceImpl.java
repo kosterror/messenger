@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
 import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
@@ -33,6 +36,7 @@ public class ManageFriendServiceImpl implements ManageFriendService {
     private final FriendRepository friendRepository;
     private final FriendMapper friendMapper;
     private final DisplayBlockedPersonService displayBlockedPersonService;
+    private final IntegrationPersonInfoService integrationPersonInfoService;
 
     @Override
     @Transactional
@@ -42,15 +46,7 @@ public class ManageFriendServiceImpl implements ManageFriendService {
                 jwtOwnerData.getFullName()
         );
 
-        if (jwtOwnerData.getId().equals(member.getId())) {
-            throw new BadRequestException("Идентификаторы совпадают, нельзя добавить себя в друзья");
-        }
-        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(owner.getId(), member.getId()).getValue())) {
-            throw new BadRequestException("Нельзя добавить пользователя, который находится в черном списке");
-        }
-        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(member.getId(), owner.getId()).getValue())) {
-            throw new ForbiddenException("Пользователь добавил вас в черный список");
-        }
+        validateData(owner, member);
 
         Optional<Friend> ownerFriendOptional = friendRepository
                 .findFriendByOwnerIdAndMemberId(owner.getId(), member.getId());
@@ -157,6 +153,32 @@ public class ManageFriendServiceImpl implements ManageFriendService {
     public boolean isFriends(UUID firstId, UUID secondId) {
         return friendRepository.existsByOwnerIdAndMemberIdAndIsDeleted(firstId, secondId, false)
                 || friendRepository.existsByOwnerIdAndMemberIdAndIsDeleted(secondId, firstId, false);
+    }
+
+    private void validateData(CreateFriendDto owner, CreateFriendDto member) {
+        if (owner.getId().equals(member.getId())) {
+            throw new BadRequestException("Идентификаторы совпадают, нельзя добавить себя в друзья");
+        }
+
+        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(owner.getId(), member.getId()).getValue())) {
+            throw new BadRequestException("Нельзя добавить пользователя, который находится в черном списке");
+        }
+
+        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(member.getId(), owner.getId()).getValue())) {
+            throw new ForbiddenException("Пользователь добавил вас в черный список");
+        }
+
+        try {
+            PersonDto memberInfo = integrationPersonInfoService.getPersonInfo(member.getId());
+            if (!member.getId().equals(memberInfo.getId())) {
+                throw new InternalException("Ошибка во время интеграционного запроса в auth-service. Запросил" +
+                        "одного пользователя, а пришел другой");
+            }
+        } catch (HttpClientErrorException.NotFound exception) {
+            throw new BadRequestException(String.format("Пользователь с id '%s' не существует", member.getId()));
+        } catch (Exception exception) {
+            throw new InternalException("Ошибка во время интеграционного запроса в auth-service.", exception);
+        }
     }
 
     /**
