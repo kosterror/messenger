@@ -5,20 +5,43 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: users1
+        - id: users-api
           uri: http://localhost:8081/
           predicates:
             - Path=/api/users/**
-        - id: users2
+        - id: users-integrations
           uri: http://localhost:8081/
           predicates:
             - Path=/integration/users/**
-        - id: friends1
+        - id: friends-api
           uri: http://localhost:8082/
           predicates:
             - Path=/api/friends/**
-        - id: friends2
+        - id: friends-integrations
           uri: http://localhost:8082/
           predicates:
             - Path=/integration/friends/**
-
+        - id: chat-api
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/api/chat/**
+        - id: chat-integrations
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/integration/chat/**
+        - id: notifications-api
+          uri: http://localhost:8084/
+          predicates:
+            - Path=/api/notifications/**
+        - id: notification-integrations
+          uri: http://localhost:8084/
+          predicates:
+            - Path=/integration/notifications/**
+        - id: file-storage-api
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/api/file-storage/**
+        - id: file-storage-integration
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/integration/file-storage/**
