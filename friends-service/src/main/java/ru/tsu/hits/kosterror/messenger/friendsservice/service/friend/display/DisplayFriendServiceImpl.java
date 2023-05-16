@@ -43,8 +43,11 @@ public class DisplayFriendServiceImpl implements DisplayFriendService {
     @Override
     public BooleanDto isFriends(UUID ownerId,
                                 UUID memberId) {
-        Optional<Friend> ownerFriend = friendRepository.findFriendByOwnerIdAndMemberId(ownerId, memberId);
-        Optional<Friend> memberFriend = friendRepository.findFriendByOwnerIdAndMemberId(memberId, ownerId);
+        Optional<Friend> ownerFriend = friendRepository
+                .findFriendByOwnerIdAndMemberIdAndIsDeleted(ownerId, memberId, false);
+        Optional<Friend> memberFriend = friendRepository
+                .findFriendByOwnerIdAndMemberIdAndIsDeleted(memberId, ownerId, false);
+
 
         if (ownerFriend.isPresent() && memberFriend.isPresent()) {
             return new BooleanDto(true);
