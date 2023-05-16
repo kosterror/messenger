@@ -4,7 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
+import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateBlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
@@ -27,6 +31,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
     private final BlockedPersonRepository blockedPersonRepository;
     private final ManageFriendService manageFriendService;
     private final BlockedPersonMapper blockedPersonMapper;
+    private final IntegrationPersonInfoService integrationPersonInfoService;
 
     @Override
     @Transactional
@@ -34,6 +39,8 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
         if (ownerId.equals(memberDto.getId())) {
             throw new BadRequestException("Некорректный запрос, идентификаторы совпадают");
         }
+
+        checkPersonExisting(memberDto.getId());
 
         if (manageFriendService.isFriends(ownerId, memberDto.getId())) {
             manageFriendService.deleteFriend(ownerId, memberDto.getId());
@@ -87,6 +94,20 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
         entity.setAddedDate(LocalDate.now());
         entity.setIsDeleted(false);
         entity.setDeleteDate(null);
+    }
+
+    private void checkPersonExisting(UUID personId) {
+        try {
+            PersonDto person = integrationPersonInfoService.getPersonInfo(personId);
+            if (!person.getId().equals(personId)) {
+                throw new InternalException("Ошибка во время интеграционного запроса в auth-service. Запросил" +
+                        " одного пользователя, а пришел другой");
+            }
+        } catch (HttpClientErrorException.NotFound exception) {
+            throw new BadRequestException(String.format("Пользователь с id '%s' не существует", personId));
+        } catch (Exception exception) {
+            throw new InternalException("Ошибка во время интеграционного запроса в auth-service.", exception);
+        }
     }
 
 }
