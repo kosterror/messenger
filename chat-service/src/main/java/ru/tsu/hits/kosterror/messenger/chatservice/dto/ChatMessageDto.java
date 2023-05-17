@@ -21,7 +21,6 @@ public class ChatMessageDto {
     private Boolean isHasAttachment;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
-
     private LocalDateTime lastMessageDateTime;
 
     private UUID lastMessageAuthor;
