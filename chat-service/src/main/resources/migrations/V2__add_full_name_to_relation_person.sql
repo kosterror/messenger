@@ -1,0 +1,2 @@
+ALTER TABLE relation_person
+    ADD COLUMN full_name VARCHAR(255) DEFAULT NULL;

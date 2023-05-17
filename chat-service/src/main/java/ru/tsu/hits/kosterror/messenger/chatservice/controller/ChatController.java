@@ -7,11 +7,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.ChatDto;
+import ru.tsu.hits.kosterror.messenger.chatservice.dto.ChatFilters;
+import ru.tsu.hits.kosterror.messenger.chatservice.dto.ChatMessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.CreateUpdateChatDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatinfo.ChatInfoService;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatmanage.ChatManageService;
+import ru.tsu.hits.kosterror.messenger.core.request.PagingFilteringRequest;
+import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
@@ -21,6 +26,7 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.ext
 @Slf4j
 @RequiredArgsConstructor
 public class ChatController {
+
 
     private final ChatManageService chatManageService;
     private final ChatInfoService chatInfoService;
@@ -54,5 +60,16 @@ public class ChatController {
                            @PathVariable UUID chatId) {
         return chatInfoService.findChatById(extractId(auth), chatId);
     }
+
+    @PostMapping
+    @Operation(
+            summary = "Получить список чатов.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public PagingResponse<List<ChatMessageDto>> getChats(Authentication auth,
+                                                         @RequestBody PagingFilteringRequest<ChatFilters> request) {
+        return chatInfoService.getChats(extractId(auth), request);
+    }
+
 
 }

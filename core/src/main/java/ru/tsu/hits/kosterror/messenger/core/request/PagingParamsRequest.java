@@ -18,10 +18,10 @@ public class PagingParamsRequest {
 
     @Min(0)
     @Schema(description = "Номер страницы.", minimum = "0")
-    private int page = 0;
+    private Integer page = 0;
 
     @Min(1)
     @Schema(description = "Размер страницы.", minimum = "1")
-    private int size = 10;
+    private Integer size = 10;
 
 }

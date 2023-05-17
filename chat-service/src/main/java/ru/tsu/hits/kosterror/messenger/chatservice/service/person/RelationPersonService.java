@@ -7,6 +7,8 @@ import java.util.UUID;
 
 public interface RelationPersonService {
 
+    RelationPerson createRelationPersonEntity(UUID personId);
+
     RelationPerson findRelationPersonEntity(UUID personId);
 
     List<RelationPerson> createAllRelationPerson(List<UUID> personIds);
