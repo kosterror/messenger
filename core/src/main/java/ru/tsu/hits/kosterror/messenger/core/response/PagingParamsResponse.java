@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Объект для возврата ответа о пагинации")
 public class PagingParamsResponse {
 
-    private int totalPage;
-    private int totalElements;
+    private int totalPages;
+    private long totalElements;
     private int page;
     private int size;
 
