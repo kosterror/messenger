@@ -178,9 +178,9 @@ public class ChatInfoServiceImpl implements ChatInfoService {
             }
 
             if (chat1.getLastMessageDateTime().isAfter(chat2.getLastMessageDateTime())) {
-                return 1;
-            } else if (chat1.getLastMessageDateTime().isBefore(chat2.getLastMessageDateTime())) {
                 return -1;
+            } else if (chat1.getLastMessageDateTime().isBefore(chat2.getLastMessageDateTime())) {
+                return 1;
             } else {
                 return 0;
             }
