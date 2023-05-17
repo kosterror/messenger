@@ -26,6 +26,9 @@ public class FileMetaData {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "size")
+    private Long sizeInBytes;
+
     @Column(name = "upload_date_time")
     private LocalDateTime uploadDateTime;
 

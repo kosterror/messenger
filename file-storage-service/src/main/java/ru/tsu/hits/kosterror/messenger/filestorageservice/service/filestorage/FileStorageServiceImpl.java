@@ -38,7 +38,7 @@ public class FileStorageServiceImpl implements FileStorageService {
     public FileMetaDataDto uploadFile(@NonNull UUID authorId,
                                       @NonNull MultipartFile file) {
         try {
-            FileMetaData metaData = buildFileMetaData(authorId, file.getOriginalFilename());
+            FileMetaData metaData = buildFileMetaData(authorId, file);
 
             PutObjectArgs putObjectArgs = buildPutObjectArgs(metaData, file);
             minioClient.putObject(putObjectArgs);
@@ -82,13 +82,17 @@ public class FileStorageServiceImpl implements FileStorageService {
         return fileMetaDataMapper.entityToDto(fileMetaData);
     }
 
-    private FileMetaData buildFileMetaData(UUID authorId, String filename) {
+    private FileMetaData buildFileMetaData(UUID authorId, MultipartFile file) {
+        String rawFilename = file.getOriginalFilename();
+        String convertedFilename = fileNameService.convertToFilename(rawFilename);
+
         return FileMetaData
                 .builder()
                 .id(UUID.randomUUID())
-                .name(fileNameService.convertToFilename(filename))
+                .name(convertedFilename)
                 .uploadDateTime(LocalDateTime.now())
                 .authorId(authorId)
+                .sizeInBytes(file.getSize())
                 .build();
     }
 
