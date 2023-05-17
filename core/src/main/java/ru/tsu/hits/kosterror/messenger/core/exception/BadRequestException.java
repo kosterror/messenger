@@ -14,4 +14,13 @@ public class BadRequestException extends RuntimeException {
         super(message);
     }
 
+    /**
+     * Конструктор.
+     *
+     * @param message сообщение об ошибке.
+     * @param cause   причина.
+     */
+    public BadRequestException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -21,6 +21,9 @@ public class RelationPerson extends BaseEntity {
     @Column(name = "person_id")
     private UUID personId;
 
+    @Column(name = "full_name")
+    private String fullName;
+
     @ManyToMany(mappedBy = "members")
     private List<Chat> chats;
 

@@ -1,22 +1,47 @@
 package ru.tsu.hits.kosterror.messenger.chatservice.service.person;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.RelationPerson;
 import ru.tsu.hits.kosterror.messenger.chatservice.repository.RelationPersonRepository;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
+import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
+import ru.tsu.hits.kosterror.messenger.core.exception.ConflictException;
+import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RelationPersonServiceImpl implements RelationPersonService {
 
     private final RelationPersonRepository repository;
+    private final IntegrationPersonInfoService integrationPersonInfoService;
+
+    @Override
+    public RelationPerson createRelationPersonEntity(UUID personId) {
+        PersonDto personDto = getPersonDetails(personId);
+        if (repository.findByPersonId(personId).isPresent()) {
+            throw new ConflictException(String.format("RelationPerson с id = '%s' уже существует", personId));
+        }
+
+        RelationPerson relationPerson = RelationPerson
+                .builder()
+                .personId(personId)
+                .fullName(personDto.getFullName())
+                .build();
+
+        return repository.save(relationPerson);
+    }
 
     @Override
     public RelationPerson findRelationPersonEntity(UUID personId) {
@@ -51,10 +76,25 @@ public class RelationPersonServiceImpl implements RelationPersonService {
         List<RelationPerson> result = new ArrayList<>();
 
         for (UUID personId : personIds) {
-            result.add(new RelationPerson(personId, new ArrayList<>(), new ArrayList<>()));
+            PersonDto personDetails = getPersonDetails(personId);
+            result.add(RelationPerson
+                    .builder()
+                    .personId(personId)
+                    .fullName(personDetails.getFullName())
+                    .build());
         }
 
         return result;
+    }
+
+    private PersonDto getPersonDetails(UUID personId) {
+        try {
+            return integrationPersonInfoService.getPersonInfo(personId);
+        } catch (HttpClientErrorException.NotFound exception) {
+            throw new BadRequestException("Не удалось найти пользователя с id = " + personId, exception);
+        } catch (Exception e) {
+            throw new InternalException("Ошибка во время создания RelationPerson", e);
+        }
     }
 
 }

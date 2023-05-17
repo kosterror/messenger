@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import ru.tsu.hits.kosterror.messenger.core.config.SwaggerConfig;
 import ru.tsu.hits.kosterror.messenger.core.controller.ExceptionHandlingController;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
+import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageIntegrationIntegrationServiceImpl;
@@ -71,6 +73,16 @@ public class ApplicationConfig {
     @Bean
     public FileStorageIntegrationService fileStorageIntegrationService() {
         return new FileStorageIntegrationIntegrationServiceImpl(commonIntegrationService());
+    }
+
+    /**
+     * Создает бин {@link IntegrationPersonInfoService}
+     *
+     * @return бин {@link IntegrationPersonInfoService}.
+     */
+    @Bean
+    public IntegrationPersonInfoService personInfoService() {
+        return new IntegrationPersonInfoServiceImpl(commonIntegrationService());
     }
 
 }
