@@ -36,6 +36,18 @@ public class ChatManageServiceImpl implements ChatManageService {
     private final ChatMapper chatMapper;
 
     @Override
+    public Chat createPrivateChat(RelationPerson first, RelationPerson second) {
+        Chat chat = Chat
+                .builder()
+                .type(ChatType.PRIVATE)
+                .creationDate(LocalDateTime.now())
+                .members(List.of(first, second))
+                .build();
+
+        return chatRepository.save(chat);
+    }
+
+    @Override
     public ChatDto createGroupChat(UUID adminId, CreateUpdateChatDto dto) {
         List<RelationPerson> members = getPreparedChatMembers(adminId, dto);
         Chat chat = Chat.builder()
