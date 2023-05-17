@@ -23,7 +23,7 @@ public class MessageController {
     private final MessageService messageService;
 
 
-    @PostMapping("/group")
+    @PostMapping("/group/message")
     @Operation(
             summary = "Отправить сообщение в беседу.",
             security = @SecurityRequirement(name = "bearerAuth")
@@ -31,6 +31,16 @@ public class MessageController {
     public void sendMessageToGroupChat(Authentication auth,
                                        @RequestBody @Valid SendMessageDto dto) {
         messageService.sendMessageToGroupChat(extractId(auth), dto);
+    }
+
+    @PostMapping("/private/message")
+    @Operation(
+            summary = "Отправить сообщение в личный диалог.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public void sendMessageToPrivateChat(Authentication auth,
+                                         @RequestBody @Valid SendMessageDto dto) {
+        messageService.sendMessageToPrivateChat(extractId(auth), dto);
     }
 
 }

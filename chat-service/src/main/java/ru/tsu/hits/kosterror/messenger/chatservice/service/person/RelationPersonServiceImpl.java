@@ -38,9 +38,16 @@ public class RelationPersonServiceImpl implements RelationPersonService {
                 .builder()
                 .personId(personId)
                 .fullName(personDto.getFullName())
+                .messages(new ArrayList<>())
+                .chats(new ArrayList<>())
                 .build();
 
         return repository.save(relationPerson);
+    }
+
+    @Override
+    public Optional<RelationPerson> findOptionalRelationPerson(UUID personId) {
+        return repository.findByPersonId(personId);
     }
 
     @Override
