@@ -33,4 +33,15 @@ public class JwtExtractor {
         return ((JwtPersonData) authentication.getPrincipal()).getId();
     }
 
+    /**
+     * Метод для извлечения {@code fullName} из {@link Authentication} текущего запроса.
+     *
+     * @param authentication информация о пользователя для текущего HTTP запроса.
+     * @return ФИО пользователя.
+     */
+    public static String extractFullName(Authentication authentication) {
+        return ((JwtPersonData) authentication.getPrincipal()).getFullName();
+    }
+
+
 }
