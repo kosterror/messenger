@@ -24,7 +24,8 @@ public class SendMessageDto {
             "если диалог, то это поле является id пользователя, кому отправляется сообщение.")
     private UUID targetId;
 
-    @Schema(description = "Текст сообщения.", example = "У меня к тебе дело...")
+    @Schema(description = "Текст сообщения.", example = "Осмысленный пример текста сообщения.")
+    @Size(max = 500, message = "Длина сообщения не может превышать 500 символов.")
     private String text;
 
     @Size(max = 10)

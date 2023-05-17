@@ -34,7 +34,7 @@ public class IntegrationFriendController {
             summary = "Проверить существование связи дружбы.",
             security = @SecurityRequirement(name = HeaderValues.HEADER_API_KEY)
     )
-    public BooleanDto checkBlockingPerson(@RequestBody PairPersonIdDto pairPersonId) {
+    public BooleanDto isFriends(@RequestBody PairPersonIdDto pairPersonId) {
         return displayFriendService.isFriends(pairPersonId.getOwnerId(), pairPersonId.getMemberId());
     }
 
