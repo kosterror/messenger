@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tsu.hits.kosterror.messenger.chatservice.dto.MessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.SendMessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.Chat;
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.Message;
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.RelationPerson;
 import ru.tsu.hits.kosterror.messenger.chatservice.enumeration.ChatType;
+import ru.tsu.hits.kosterror.messenger.chatservice.mapper.MessageMapper;
 import ru.tsu.hits.kosterror.messenger.chatservice.repository.MessageRepository;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatinfo.ChatInfoService;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatmanage.ChatManageService;
@@ -35,6 +37,7 @@ public class MessageServiceImpl implements MessageService {
     private final ChatInfoService chatInfoService;
     private final ChatManageService chatManageService;
     private final FriendIntegrationService friendIntegrationService;
+    private final MessageMapper messageMapper;
 
     @Override
     @Transactional
@@ -96,6 +99,16 @@ public class MessageServiceImpl implements MessageService {
 
         messageToSave = messageRepository.save(messageToSave);
         log.info("Сообщение отправлено: {}", messageToSave);
+    }
+
+    @Override
+    public List<MessageDto> getChatMessages(UUID personId, UUID chatId) {
+        Chat chat = chatInfoService.findChatEntityById(personId, chatId);
+        return chat
+                .getMessages()
+                .stream()
+                .map(messageMapper::entityToDto)
+                .collect(Collectors.toList());
     }
 
     private Optional<Chat> findPrivateChat(RelationPerson first, RelationPerson second) {

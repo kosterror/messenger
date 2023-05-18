@@ -38,6 +38,7 @@ public class RelationPersonServiceImpl implements RelationPersonService {
                 .builder()
                 .personId(personId)
                 .fullName(personDto.getFullName())
+                .avatarId(personDto.getAvatarId())
                 .messages(new ArrayList<>())
                 .chats(new ArrayList<>())
                 .build();
@@ -88,6 +89,7 @@ public class RelationPersonServiceImpl implements RelationPersonService {
                     .builder()
                     .personId(personId)
                     .fullName(personDetails.getFullName())
+                    .avatarId(personDetails.getAvatarId())
                     .build());
         }
 

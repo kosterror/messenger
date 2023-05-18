@@ -24,6 +24,9 @@ public class Attachment extends BaseEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "size")
+    private Long sizeInBytes;
+
     @Column(name = "file_id")
     private UUID fileId;
 

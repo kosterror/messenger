@@ -24,6 +24,9 @@ public class FileMetaDataDto {
             example = "Файл с таким названием.txt")
     private String name;
 
+    @Schema(description = "Размер файла в байтах.", example = "124512")
+    private Long sizeInBytes;
+
     @Schema(description = "Идентификатор пользователя, который загрузил этот файл.")
     private UUID authorId;
 

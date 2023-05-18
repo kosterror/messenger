@@ -21,6 +21,9 @@ public class RelationPerson extends BaseEntity {
     @Column(name = "person_id")
     private UUID personId;
 
+    @Column(name = "avatar_id")
+    private UUID avatarId;
+
     @Column(name = "full_name")
     private String fullName;
 
