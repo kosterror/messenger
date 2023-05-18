@@ -4,14 +4,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.tsu.hits.kosterror.messenger.chatservice.dto.MessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.SendMessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.message.MessageService;
 
 import javax.validation.Valid;
+
+import java.util.List;
+import java.util.UUID;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
 
@@ -41,6 +42,16 @@ public class MessageController {
     public void sendMessageToPrivateChat(Authentication auth,
                                          @RequestBody @Valid SendMessageDto dto) {
         messageService.sendMessageToPrivateChat(extractId(auth), dto);
+    }
+
+    @GetMapping("/{chatId}/messages")
+    @Operation(
+            summary = "Получить сообщения чата.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public List<MessageDto> getMessages(Authentication auth,
+                                        @PathVariable UUID chatId) {
+        return messageService.getChatMessages(extractId(auth), chatId);
     }
 
 }
