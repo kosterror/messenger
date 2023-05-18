@@ -11,7 +11,7 @@
 
     <groupId>ru.tsu.hits.kosterror.messenger</groupId>
     <artifactId>chat-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>chat-service</name>
     <description>Service for user communication</description>
 
