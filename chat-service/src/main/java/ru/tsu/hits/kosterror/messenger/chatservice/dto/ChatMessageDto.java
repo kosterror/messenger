@@ -24,4 +24,7 @@ public class ChatMessageDto {
     private LocalDateTime lastMessageDateTime;
 
     private UUID lastMessageAuthor;
+
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
+    private LocalDateTime creationDateTime;
 }

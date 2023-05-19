@@ -1,0 +1,1 @@
+ALTER TABLE chat ALTER COLUMN date_of_creation SET NOT NULL;
