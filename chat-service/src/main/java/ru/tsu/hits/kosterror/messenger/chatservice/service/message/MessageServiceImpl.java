@@ -104,9 +104,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<MessageDto> getChatMessages(UUID personId, UUID chatId) {
         Chat chat = chatInfoService.findChatEntityById(personId, chatId);
-        //TODO: отсортировать сообщения
-        return chat
-                .getMessages()
+        List<Message> messages = chat.getMessages();
+        sortMessagesBySendingDate(messages);
+
+        return messages
                 .stream()
                 .map(messageMapper::entityToDto)
                 .collect(Collectors.toList());
