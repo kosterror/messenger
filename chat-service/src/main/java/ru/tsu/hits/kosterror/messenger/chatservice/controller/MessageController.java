@@ -54,4 +54,14 @@ public class MessageController {
         return messageService.getChatMessages(extractId(auth), chatId);
     }
 
+    @GetMapping("/search-messages")
+    @Operation(
+            summary = "Поиск сообщения.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    public List<MessageDto> findMessages(Authentication auth,
+                                         @RequestParam String searchSubstring) {
+        return messageService.findMessages(extractId(auth), searchSubstring);
+    }
+
 }

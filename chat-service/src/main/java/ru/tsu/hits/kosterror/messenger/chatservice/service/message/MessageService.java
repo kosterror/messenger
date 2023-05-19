@@ -17,4 +17,6 @@ public interface MessageService {
 
     List<MessageDto> getChatMessages(UUID personId, UUID chatId);
 
+    List<MessageDto> findMessages(UUID personId, String substring);
+
 }

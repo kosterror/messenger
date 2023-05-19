@@ -4,11 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.MessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.SendMessageDto;
-import ru.tsu.hits.kosterror.messenger.chatservice.entity.Chat;
-import ru.tsu.hits.kosterror.messenger.chatservice.entity.Message;
-import ru.tsu.hits.kosterror.messenger.chatservice.entity.RelationPerson;
+import ru.tsu.hits.kosterror.messenger.chatservice.entity.*;
 import ru.tsu.hits.kosterror.messenger.chatservice.enumeration.ChatType;
 import ru.tsu.hits.kosterror.messenger.chatservice.mapper.MessageMapper;
 import ru.tsu.hits.kosterror.messenger.chatservice.repository.MessageRepository;
@@ -22,6 +21,7 @@ import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -104,11 +104,69 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<MessageDto> getChatMessages(UUID personId, UUID chatId) {
         Chat chat = chatInfoService.findChatEntityById(personId, chatId);
+        //TODO: отсортировать сообщения
         return chat
                 .getMessages()
                 .stream()
                 .map(messageMapper::entityToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MessageDto> findMessages(UUID personId, String substring) {
+        RelationPerson relationPerson = relationPersonService.findRelationPersonEntity(personId);
+        List<Chat> chats = relationPerson.getChats();
+
+        List<Message> rightMessages = new ArrayList<>();
+
+        for (Chat chat : chats) {
+            List<Message> unfilteredMessages = chat.getMessages();
+            List<Message> filteredMessages = filterMessages(unfilteredMessages, substring);
+            rightMessages.addAll(filteredMessages);
+        }
+
+        sortMessagesBySendingDate(rightMessages);
+
+        return rightMessages
+                .stream()
+                .map(messageMapper::entityToDto)
+                .collect(Collectors.toList());
+    }
+
+
+    private List<Message> filterMessages(List<Message> messages, String substring) {
+        String substringUpper = substring.toUpperCase();
+
+        return messages
+                .stream()
+                .filter(msg -> {
+                    if (msg.getText() != null && msg.getText().toUpperCase().contains(substringUpper)) {
+                        return true;
+                    }
+                    return msg.getAttachments() != null && msg.getAttachments()
+                            .stream()
+                            .anyMatch(attachment -> attachment.getName() != null &&
+                                    attachment.getName().toUpperCase().contains(substringUpper));
+                }).collect(Collectors.toList());
+    }
+
+    private void sortMessagesBySendingDate(List<Message> messages) {
+        messages.sort((msg1, msg2) -> {
+            if (msg1 == null || msg2 == null) {
+                throw new NullPointerException("Коллекция с элементами null не может быть отсортирована");
+            }
+
+            LocalDateTime sendDate1 = msg1.getSendingDate();
+            LocalDateTime sendDate2 = msg2.getSendingDate();
+
+            if (sendDate1.isAfter(sendDate2)) {
+                return -1;
+            } else if (sendDate1.isBefore(sendDate2)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 
     private Optional<Chat> findPrivateChat(RelationPerson first, RelationPerson second) {
@@ -173,7 +231,7 @@ public class MessageServiceImpl implements MessageService {
             if (Boolean.TRUE.equals(receiverIsBlocked)) {
                 throw new BadRequestException("Пользователь у вас в черном списке");
             }
-        } catch (Exception exception) {
+        } catch (RestClientException exception) {
             throw new InternalException("Ошибка во время интеграционного запроса в friends-service", exception);
         }
     }
