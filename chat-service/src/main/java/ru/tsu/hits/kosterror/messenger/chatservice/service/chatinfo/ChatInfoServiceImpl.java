@@ -68,7 +68,6 @@ public class ChatInfoServiceImpl implements ChatInfoService {
                 .orElseGet(() -> relationPersonService.createRelationPersonEntity(personId));
 
         List<Chat> chatPersons = sourceRelationPerson.getChats();
-        chatPersons = filterChatByNameWithIgnoreCase(chatPersons, request.getFilters().getChatName());
 
         int pageNumber = request.getPaging().getPage() == null ? DEFAULT_PAGE_NUMBER : request.getPaging().getPage();
         int size = request.getPaging().getSize() == null ? DEFAULT_PAGE_SIZE : request.getPaging().getSize();
@@ -81,6 +80,8 @@ public class ChatInfoServiceImpl implements ChatInfoService {
                 .stream()
                 .map(chat -> mapChatToChatMessage(sourceRelationPerson, chat))
                 .collect(Collectors.toList());
+
+        chatMessages = filterChatByNameWithIgnoreCase(chatMessages, request.getFilters().getChatName());
 
         sortChatMessagesByLastMessage(chatMessages);
         List<ChatMessageDto> page = getPage(chatMessages, pagingParams.getPage(), pagingParams.getSize());
@@ -105,7 +106,7 @@ public class ChatInfoServiceImpl implements ChatInfoService {
 
         String lastMessageText = null;
         boolean isHasAttachment = false;
-        LocalDateTime lastMessageDateTime = LocalDateTime.MIN;
+        LocalDateTime lastMessageDateTime = null;
         UUID lastMessageAuthor = null;
 
         if (lastMessageOpt.isPresent()) {
@@ -122,7 +123,8 @@ public class ChatInfoServiceImpl implements ChatInfoService {
                 lastMessageText,
                 isHasAttachment,
                 lastMessageDateTime,
-                lastMessageAuthor
+                lastMessageAuthor,
+                chat.getCreationDate()
         );
     }
 
@@ -144,12 +146,13 @@ public class ChatInfoServiceImpl implements ChatInfoService {
                 .getFullName();
     }
 
-    private List<Chat> filterChatByNameWithIgnoreCase(@NotNull List<Chat> chats, @Nullable String chatName) {
+    private List<ChatMessageDto> filterChatByNameWithIgnoreCase(@NotNull List<ChatMessageDto> chatMessages,
+                                                                @Nullable String chatName) {
         if (chatName == null) {
-            return new ArrayList<>(chats);
+            return new ArrayList<>(chatMessages);
         }
 
-        return chats
+        return chatMessages
                 .stream()
                 .filter(chat -> (chat.getName().toUpperCase().contains(chatName.toUpperCase())))
                 .collect(Collectors.toList());
@@ -163,7 +166,7 @@ public class ChatInfoServiceImpl implements ChatInfoService {
 
         Message lastMessage = messages.get(0);
         for (int i = 1; i < messages.size(); i++) {
-            if (messages.get(i).getSendingDate().isBefore(lastMessage.getSendingDate())) {
+            if (messages.get(i).getSendingDate().isAfter(lastMessage.getSendingDate())) {
                 lastMessage = messages.get(i);
             }
         }
@@ -177,9 +180,14 @@ public class ChatInfoServiceImpl implements ChatInfoService {
                 throw new NullPointerException("Нельзя отсортировать список чатов, где какие-то элементы равны null");
             }
 
-            if (chat1.getLastMessageDateTime().isAfter(chat2.getLastMessageDateTime())) {
+            LocalDateTime dateTime1 = chat1.getLastMessageDateTime() != null ?
+                    chat1.getLastMessageDateTime() : chat1.getCreationDateTime();
+            LocalDateTime dateTime2 = chat2.getLastMessageDateTime() != null ?
+                    chat2.getLastMessageDateTime() : chat2.getCreationDateTime();
+
+            if (dateTime1.isAfter(dateTime2)) {
                 return -1;
-            } else if (chat1.getLastMessageDateTime().isBefore(chat2.getLastMessageDateTime())) {
+            } else if (dateTime1.isBefore(dateTime2)) {
                 return 1;
             } else {
                 return 0;
