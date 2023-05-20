@@ -18,7 +18,10 @@ public class RabbitMQConsumer {
 
     @Bean
     public Consumer<NewNotificationDto> createNotification() {
-        return notificationManageService::createNotification;
+        return newNotificationDto -> {
+            log.info("Сообщение из RabbitMQ в методе 'createNotification': {}", newNotificationDto);
+            notificationManageService.createNotification(newNotificationDto);
+        };
     }
 
 }
