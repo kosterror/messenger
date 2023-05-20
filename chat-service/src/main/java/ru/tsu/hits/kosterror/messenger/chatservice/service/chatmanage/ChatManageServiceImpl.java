@@ -3,6 +3,7 @@ package ru.tsu.hits.kosterror.messenger.chatservice.service.chatmanage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.ChatDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.CreateUpdateChatDto;
@@ -13,10 +14,13 @@ import ru.tsu.hits.kosterror.messenger.chatservice.mapper.ChatMapper;
 import ru.tsu.hits.kosterror.messenger.chatservice.repository.ChatRepository;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.person.RelationPersonService;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
+import ru.tsu.hits.kosterror.messenger.core.dto.FileMetaDataDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
+import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
+import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
 
 import java.time.LocalDateTime;
@@ -34,6 +38,7 @@ public class ChatManageServiceImpl implements ChatManageService {
     private final FriendIntegrationService friendIntegrationService;
     private final RelationPersonService relationPersonService;
     private final ChatMapper chatMapper;
+    private final FileStorageIntegrationService fileStorageIntegrationService;
 
     @Override
     public Chat createPrivateChat(RelationPerson first, RelationPerson second) {
@@ -49,6 +54,7 @@ public class ChatManageServiceImpl implements ChatManageService {
 
     @Override
     public ChatDto createGroupChat(UUID adminId, CreateUpdateChatDto dto) {
+        validateAvatar(adminId, dto.getAvatarId());
         List<RelationPerson> members = getPreparedChatMembers(adminId, dto);
         Chat chat = Chat.builder()
                 .type(ChatType.GROUP)
@@ -66,7 +72,7 @@ public class ChatManageServiceImpl implements ChatManageService {
     @Override
     public ChatDto updateGroupChat(UUID adminId, UUID chatId, CreateUpdateChatDto dto) {
         Chat chat = chatRepository
-                .findChatByAdminId(adminId)
+                .findChatByIdAndAdminId(chatId, adminId)
                 .orElseThrow(() -> new NotFoundException("Чат с таким идентификатором и администратором не найден"));
 
         List<RelationPerson> members = getPreparedChatMembers(adminId, dto);
@@ -80,6 +86,7 @@ public class ChatManageServiceImpl implements ChatManageService {
     }
 
     private List<RelationPerson> getPreparedChatMembers(UUID adminId, CreateUpdateChatDto dto) {
+        validateAvatar(adminId, dto.getAvatarId());
         List<UUID> memberIds = dto.getMembersId().stream().distinct().collect(Collectors.toList());
 
         if (memberIds.contains(adminId)) {
@@ -108,6 +115,25 @@ public class ChatManageServiceImpl implements ChatManageService {
 
         if (!unfriendPersonIds.isEmpty()) {
             throw new BadRequestException("Не все участники чата являются друзьями: " + unfriendPersonIds);
+        }
+    }
+
+    private void validateAvatar(UUID adminId, UUID fileId) {
+        if (fileId == null) {
+            return;
+        }
+
+        try {
+            FileMetaDataDto fileMetaData = fileStorageIntegrationService.getFileMetaData(fileId);
+            if (!fileMetaData.getAuthorId().equals(adminId)) {
+                throw new ForbiddenException(String.format("Файл с id = '%s' не принадлежит вам," +
+                        "чтобы сделать его аватаркой", fileId));
+            }
+        } catch (HttpClientErrorException.NotFound exception) {
+            throw new NotFoundException(String.format("Файл с id = '%s' для аватарки не найден", fileId));
+        } catch (Exception exception) {
+            throw new InternalException(String.format("Ошибка во время интеграционного запроса в " +
+                    "file-storage-service на получение метаинформации файла c id = '%s'", fileId));
         }
     }
 
