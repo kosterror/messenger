@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import ru.tsu.hits.kosterror.messenger.chatservice.enumeration.ChatType;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -25,4 +26,7 @@ public class ChatDto {
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private LocalDateTime creationDate;
+
+    private List<MemberDto> members;
+
 }
