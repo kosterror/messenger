@@ -28,7 +28,7 @@ public class SendMessageDto {
     @Size(max = 500, message = "Длина сообщения не может превышать 500 символов.")
     private String text;
 
-    @Size(max = 10)
+    @Size(max = 10, message = "Количество вложений не может быть больше 10.")
     @Schema(description = "Идентификаторы файлов вложений.")
     List<UUID> attachmentIds;
 

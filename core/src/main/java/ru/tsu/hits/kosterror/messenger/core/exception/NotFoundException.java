@@ -14,4 +14,13 @@ public class NotFoundException extends RuntimeException {
         super(message);
     }
 
+    /**
+     * Конструктор.
+     *
+     * @param message сообщение об ошибке.
+     * @param cause   причина.
+     */
+    public NotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

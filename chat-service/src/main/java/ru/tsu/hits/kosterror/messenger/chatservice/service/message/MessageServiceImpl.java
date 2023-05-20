@@ -38,6 +38,7 @@ public class MessageServiceImpl implements MessageService {
     private final ChatManageService chatManageService;
     private final FriendIntegrationService friendIntegrationService;
     private final MessageMapper messageMapper;
+    private final AttachmentService attachmentService;
 
     @Override
     @Transactional
@@ -45,14 +46,14 @@ public class MessageServiceImpl implements MessageService {
         Chat chat = chatInfoService.findChatEntityById(authorId, dto.getTargetId());
         RelationPerson author = relationPersonService.findRelationPersonEntity(authorId);
 
-        //TODO добавить attachments
-        Message messageToSend = new Message(
-                dto.getText(),
-                LocalDateTime.now(),
-                chat,
-                null,
-                author
-        );
+        Message messageToSend = Message.builder()
+                .text(dto.getText())
+                .sendingDate(LocalDateTime.now())
+                .chat(chat)
+                .relationPerson(author)
+                .build();
+        List<Attachment> attachments = buildAttachments(messageToSend, authorId, dto);
+        messageToSend.setAttachments(attachments);
 
         messageRepository.save(messageToSend);
     }
@@ -87,15 +88,16 @@ public class MessageServiceImpl implements MessageService {
                     return createdPrivateChat;
                 });
 
-        //TODO добавить attachments
         Message messageToSave = Message
                 .builder()
                 .text(dto.getText())
                 .sendingDate(LocalDateTime.now())
                 .chat(chat)
-                .attachments(null)
                 .relationPerson(author)
                 .build();
+
+        List<Attachment> attachments = buildAttachments(messageToSave, authorId, dto);
+        messageToSave.setAttachments(attachments);
 
         messageToSave = messageRepository.save(messageToSave);
         log.info("Сообщение отправлено: {}", messageToSave);
@@ -134,6 +136,30 @@ public class MessageServiceImpl implements MessageService {
                 .collect(Collectors.toList());
     }
 
+    private List<Attachment> buildAttachments(Message message, UUID authorId, SendMessageDto dto) {
+        List<Attachment> attachments = new ArrayList<>();
+        List<UUID> nonexistentFileIds = new ArrayList<>();
+        List<UUID> fileIds = dto.getAttachmentIds();
+
+        if (dto.getAttachmentIds() == null) {
+            return attachments;
+        }
+
+        for (UUID fileId : fileIds) {
+            try {
+                Attachment attachment = attachmentService.saveAttachment(message, fileId, authorId);
+                attachments.add(attachment);
+            } catch (NotFoundException exception) {
+                nonexistentFileIds.add(fileId);
+            }
+        }
+
+        if (!nonexistentFileIds.isEmpty()) {
+            throw new NotFoundException("Файлы с id: '" + nonexistentFileIds + "' не существуют");
+        }
+
+        return attachments;
+    }
 
     private List<Message> filterMessages(List<Message> messages, String substring) {
         String substringUpper = substring.toUpperCase();
