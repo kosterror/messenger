@@ -2,6 +2,7 @@ package ru.tsu.hits.kosterror.messenger.authservice.service.person;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.domain.*;
 import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingParamsResponse;
 import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
+import ru.tsu.hits.kosterror.messenger.core.util.RabbitMQBindings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class PersonServiceImpl implements PersonService {
     private final PersonRepository personRepository;
     private final PersonMapper personMapper;
     private final FriendIntegrationService friendIntegrationService;
+    private final StreamBridge streamBridge;
 
     @Override
     public PersonDto getPersonInfo(UUID personId) {
@@ -68,7 +71,11 @@ public class PersonServiceImpl implements PersonService {
         person.setAvatarId(dto.getAvatarId());
         person = personRepository.save(person);
 
-        return personMapper.entityToDto(person);
+        PersonDto personDto = personMapper.entityToDto(person);
+
+        synchronizePersonDetails(personDto);
+
+        return personDto;
     }
 
     @Override
@@ -199,6 +206,16 @@ public class PersonServiceImpl implements PersonService {
         return personRepository
                 .findByLogin(login)
                 .orElseThrow(() -> new NotFoundException(String.format(PERSON_NOT_FOUND, login)));
+    }
+
+    /**
+     * Метод для синхронизации данных о пользователе
+     * с другими сервисами через брокер сообщений.
+     *
+     * @param personDto актуальная информация о пользователе.
+     */
+    private void synchronizePersonDetails(PersonDto personDto) {
+        streamBridge.send(RabbitMQBindings.SYNCHRONIZE_PERSON_DETAILS_OUT, personDto);
     }
 
 }
