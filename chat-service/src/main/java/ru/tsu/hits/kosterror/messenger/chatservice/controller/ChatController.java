@@ -31,7 +31,7 @@ public class ChatController {
     private final ChatManageService chatManageService;
     private final ChatInfoService chatInfoService;
 
-    @PostMapping("/group/create")
+    @PostMapping("/group")
     @Operation(
             summary = "Создать беседу.",
             security = @SecurityRequirement(name = "bearerAuth")
@@ -61,7 +61,7 @@ public class ChatController {
         return chatInfoService.findChatById(extractId(auth), chatId);
     }
 
-    @PostMapping
+    @PostMapping("/search")
     @Operation(
             summary = "Получить список чатов.",
             security = @SecurityRequirement(name = "bearerAuth")

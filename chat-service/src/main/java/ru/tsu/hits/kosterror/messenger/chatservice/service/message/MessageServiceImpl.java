@@ -7,10 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.MessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.SendMessageDto;
-import ru.tsu.hits.kosterror.messenger.chatservice.entity.*;
+import ru.tsu.hits.kosterror.messenger.chatservice.entity.Attachment;
+import ru.tsu.hits.kosterror.messenger.chatservice.entity.Chat;
+import ru.tsu.hits.kosterror.messenger.chatservice.entity.Message;
+import ru.tsu.hits.kosterror.messenger.chatservice.entity.RelationPerson;
 import ru.tsu.hits.kosterror.messenger.chatservice.enumeration.ChatType;
 import ru.tsu.hits.kosterror.messenger.chatservice.mapper.MessageMapper;
 import ru.tsu.hits.kosterror.messenger.chatservice.repository.MessageRepository;
+import ru.tsu.hits.kosterror.messenger.chatservice.service.attachment.AttachmentService;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatinfo.ChatInfoService;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatmanage.ChatManageService;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.person.RelationPersonService;
@@ -18,6 +22,7 @@ import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
 
 import java.time.LocalDateTime;
@@ -38,28 +43,21 @@ public class MessageServiceImpl implements MessageService {
     private final ChatManageService chatManageService;
     private final FriendIntegrationService friendIntegrationService;
     private final MessageMapper messageMapper;
+    private final AttachmentService attachmentService;
 
     @Override
     @Transactional
-    public void sendMessageToGroupChat(UUID authorId, SendMessageDto dto) {
+    public void sendMessageToChat(UUID authorId, SendMessageDto dto) {
         Chat chat = chatInfoService.findChatEntityById(authorId, dto.getTargetId());
         RelationPerson author = relationPersonService.findRelationPersonEntity(authorId);
+        Message message = buildMessage(chat, author, dto);
 
-        //TODO добавить attachments
-        Message messageToSend = new Message(
-                dto.getText(),
-                LocalDateTime.now(),
-                chat,
-                null,
-                author
-        );
-
-        messageRepository.save(messageToSend);
+        messageRepository.save(message);
     }
 
     @Override
     @Transactional
-    public void sendMessageToPrivateChat(UUID authorId, SendMessageDto dto) {
+    public void sendMessageToPerson(UUID authorId, SendMessageDto dto) {
         if (authorId.equals(dto.getTargetId())) {
             throw new BadRequestException("Нельзя отправить сообщение самому себе");
         }
@@ -87,18 +85,9 @@ public class MessageServiceImpl implements MessageService {
                     return createdPrivateChat;
                 });
 
-        //TODO добавить attachments
-        Message messageToSave = Message
-                .builder()
-                .text(dto.getText())
-                .sendingDate(LocalDateTime.now())
-                .chat(chat)
-                .attachments(null)
-                .relationPerson(author)
-                .build();
-
-        messageToSave = messageRepository.save(messageToSave);
-        log.info("Сообщение отправлено: {}", messageToSave);
+        Message message = buildMessage(chat, author, dto);
+        message = messageRepository.save(message);
+        log.info("Сообщение отправлено: {}", message);
     }
 
     @Override
@@ -134,6 +123,43 @@ public class MessageServiceImpl implements MessageService {
                 .collect(Collectors.toList());
     }
 
+    private Message buildMessage(Chat chat, RelationPerson author, SendMessageDto dto) {
+        Message message = Message.builder()
+                .text(dto.getText())
+                .sendingDate(LocalDateTime.now())
+                .chat(chat)
+                .relationPerson(author)
+                .build();
+
+        List<Attachment> attachments = buildAttachments(message, author.getPersonId(), dto);
+        message.setAttachments(attachments);
+        return message;
+    }
+
+    private List<Attachment> buildAttachments(Message message, UUID authorId, SendMessageDto dto) {
+        List<Attachment> attachments = new ArrayList<>();
+        List<UUID> nonexistentFileIds = new ArrayList<>();
+        List<UUID> fileIds = dto.getAttachmentIds();
+
+        if (dto.getAttachmentIds() == null) {
+            return attachments;
+        }
+
+        for (UUID fileId : fileIds) {
+            try {
+                Attachment attachment = attachmentService.saveAttachment(message, fileId, authorId);
+                attachments.add(attachment);
+            } catch (NotFoundException exception) {
+                nonexistentFileIds.add(fileId);
+            }
+        }
+
+        if (!nonexistentFileIds.isEmpty()) {
+            throw new NotFoundException("Файлы с id: '" + nonexistentFileIds + "' не существуют");
+        }
+
+        return attachments;
+    }
 
     private List<Message> filterMessages(List<Message> messages, String substring) {
         String substringUpper = substring.toUpperCase();

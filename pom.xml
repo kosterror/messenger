@@ -17,6 +17,17 @@
     <description>Microservice messenger with Spring Boot</description>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>auth-service</module>
+        <module>chat-service</module>
+        <module>core</module>
+        <module>core-security</module>
+        <module>file-storage-service</module>
+        <module>friends-service</module>
+        <module>gateway-api</module>
+        <module>notification-service</module>
+    </modules>
+
     <properties>
         <java.version>11</java.version>
         <lombok.version>1.18.26</lombok.version>

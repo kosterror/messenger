@@ -29,7 +29,7 @@ public class Message extends BaseEntity {
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
-    @OneToMany(mappedBy = "message")
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL)
     private List<Attachment> attachments;
 
     @ManyToOne

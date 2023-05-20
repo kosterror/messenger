@@ -10,7 +10,6 @@ import ru.tsu.hits.kosterror.messenger.chatservice.dto.SendMessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.message.MessageService;
 
 import javax.validation.Valid;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -24,27 +23,30 @@ public class MessageController {
     private final MessageService messageService;
 
 
-    @PostMapping("/group/message")
+    @PostMapping("/message/send")
     @Operation(
-            summary = "Отправить сообщение в беседу.",
+            summary = "Отправить сообщение в чат.",
+            description = "Сообщение может отправиться в личный чат и в беседу. " +
+                    "Чтобы начать личный чат нужно сперва использовать запроса на отправку " +
+                    "сообщения в личный диалог (\"Отправить сообщение в личный диалог.\").",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public void sendMessageToGroupChat(Authentication auth,
                                        @RequestBody @Valid SendMessageDto dto) {
-        messageService.sendMessageToGroupChat(extractId(auth), dto);
+        messageService.sendMessageToChat(extractId(auth), dto);
     }
 
-    @PostMapping("/private/message")
+    @PostMapping("/private/message/send")
     @Operation(
             summary = "Отправить сообщение в личный диалог.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public void sendMessageToPrivateChat(Authentication auth,
                                          @RequestBody @Valid SendMessageDto dto) {
-        messageService.sendMessageToPrivateChat(extractId(auth), dto);
+        messageService.sendMessageToPerson(extractId(auth), dto);
     }
 
-    @GetMapping("/{chatId}/messages")
+    @GetMapping("/{chatId}/message")
     @Operation(
             summary = "Получить сообщения чата.",
             security = @SecurityRequirement(name = "bearerAuth")
@@ -54,7 +56,7 @@ public class MessageController {
         return messageService.getChatMessages(extractId(auth), chatId);
     }
 
-    @GetMapping("/search-messages")
+    @GetMapping("/search-message")
     @Operation(
             summary = "Поиск сообщения.",
             security = @SecurityRequirement(name = "bearerAuth")

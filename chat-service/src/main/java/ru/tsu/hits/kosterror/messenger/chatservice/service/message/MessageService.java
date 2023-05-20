@@ -10,10 +10,10 @@ import java.util.UUID;
 public interface MessageService {
 
     @Transactional
-    void sendMessageToGroupChat(UUID authorId, SendMessageDto dto);
+    void sendMessageToChat(UUID authorId, SendMessageDto dto);
 
     @Transactional
-    void sendMessageToPrivateChat(UUID authorId, SendMessageDto dto);
+    void sendMessageToPerson(UUID authorId, SendMessageDto dto);
 
     List<MessageDto> getChatMessages(UUID personId, UUID chatId);
 
