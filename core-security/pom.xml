@@ -16,7 +16,7 @@
     <description>The security core of all microservices</description>
 
     <properties>
-        <java.version>${java.version}</java.version>
+        <java.version>11</java.version>
     </properties>
 
     <dependencies>
@@ -65,14 +65,5 @@
             <artifactId>springdoc-openapi-ui</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
