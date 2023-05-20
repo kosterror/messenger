@@ -20,7 +20,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import static ru.tsu.hits.kosterror.messenger.authservice.util.constant.RabbitMQBindings.CREATE_NOTIFICATION_OUT;
+import static ru.tsu.hits.kosterror.messenger.core.util.RabbitMQBindings.CREATE_NOTIFICATION_OUT;
 
 /**
  * Реализация интерфейса {@link AuthService}.
