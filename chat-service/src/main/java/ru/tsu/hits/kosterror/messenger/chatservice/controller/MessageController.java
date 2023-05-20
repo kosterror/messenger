@@ -10,7 +10,6 @@ import ru.tsu.hits.kosterror.messenger.chatservice.dto.SendMessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.message.MessageService;
 
 import javax.validation.Valid;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -27,14 +26,14 @@ public class MessageController {
     @PostMapping("/message/send")
     @Operation(
             summary = "Отправить сообщение в чат.",
-            description = "Сообщение может отправиться в личный чат и в беседу." +
+            description = "Сообщение может отправиться в личный чат и в беседу. " +
                     "Чтобы начать личный чат нужно сперва использовать запроса на отправку " +
                     "сообщения в личный диалог (\"Отправить сообщение в личный диалог.\").",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public void sendMessageToGroupChat(Authentication auth,
                                        @RequestBody @Valid SendMessageDto dto) {
-        messageService.sendMessageToGroupChat(extractId(auth), dto);
+        messageService.sendMessageToChat(extractId(auth), dto);
     }
 
     @PostMapping("/private/message/send")
@@ -44,7 +43,7 @@ public class MessageController {
     )
     public void sendMessageToPrivateChat(Authentication auth,
                                          @RequestBody @Valid SendMessageDto dto) {
-        messageService.sendMessageToPrivateChat(extractId(auth), dto);
+        messageService.sendMessageToPerson(extractId(auth), dto);
     }
 
     @GetMapping("/{chatId}/message")

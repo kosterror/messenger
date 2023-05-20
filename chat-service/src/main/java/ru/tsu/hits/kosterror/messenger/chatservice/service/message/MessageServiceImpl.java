@@ -47,25 +47,17 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public void sendMessageToGroupChat(UUID authorId, SendMessageDto dto) {
+    public void sendMessageToChat(UUID authorId, SendMessageDto dto) {
         Chat chat = chatInfoService.findChatEntityById(authorId, dto.getTargetId());
         RelationPerson author = relationPersonService.findRelationPersonEntity(authorId);
+        Message message = buildMessage(chat, author, dto);
 
-        Message messageToSend = Message.builder()
-                .text(dto.getText())
-                .sendingDate(LocalDateTime.now())
-                .chat(chat)
-                .relationPerson(author)
-                .build();
-        List<Attachment> attachments = buildAttachments(messageToSend, authorId, dto);
-        messageToSend.setAttachments(attachments);
-
-        messageRepository.save(messageToSend);
+        messageRepository.save(message);
     }
 
     @Override
     @Transactional
-    public void sendMessageToPrivateChat(UUID authorId, SendMessageDto dto) {
+    public void sendMessageToPerson(UUID authorId, SendMessageDto dto) {
         if (authorId.equals(dto.getTargetId())) {
             throw new BadRequestException("Нельзя отправить сообщение самому себе");
         }
@@ -93,19 +85,9 @@ public class MessageServiceImpl implements MessageService {
                     return createdPrivateChat;
                 });
 
-        Message messageToSave = Message
-                .builder()
-                .text(dto.getText())
-                .sendingDate(LocalDateTime.now())
-                .chat(chat)
-                .relationPerson(author)
-                .build();
-
-        List<Attachment> attachments = buildAttachments(messageToSave, authorId, dto);
-        messageToSave.setAttachments(attachments);
-
-        messageToSave = messageRepository.save(messageToSave);
-        log.info("Сообщение отправлено: {}", messageToSave);
+        Message message = buildMessage(chat, author, dto);
+        message = messageRepository.save(message);
+        log.info("Сообщение отправлено: {}", message);
     }
 
     @Override
@@ -139,6 +121,19 @@ public class MessageServiceImpl implements MessageService {
                 .stream()
                 .map(messageMapper::entityToDto)
                 .collect(Collectors.toList());
+    }
+
+    private Message buildMessage(Chat chat, RelationPerson author, SendMessageDto dto) {
+        Message message = Message.builder()
+                .text(dto.getText())
+                .sendingDate(LocalDateTime.now())
+                .chat(chat)
+                .relationPerson(author)
+                .build();
+
+        List<Attachment> attachments = buildAttachments(message, author.getPersonId(), dto);
+        message.setAttachments(attachments);
+        return message;
     }
 
     private List<Attachment> buildAttachments(Message message, UUID authorId, SendMessageDto dto) {

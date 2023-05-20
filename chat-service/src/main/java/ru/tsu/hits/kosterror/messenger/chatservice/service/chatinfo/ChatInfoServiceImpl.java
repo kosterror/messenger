@@ -196,14 +196,9 @@ public class ChatInfoServiceImpl implements ChatInfoService {
     }
 
     private boolean hasAccessToChat(UUID personId, Chat chat) {
-        List<RelationPerson> members = chat.getMembers();
-
-        List<RelationPerson> membersWithSameId = members
+        return chat.getMembers()
                 .stream()
-                .filter(member -> member.getPersonId().equals(personId))
-                .collect(Collectors.toList());
-
-        return !membersWithSameId.isEmpty();
+                .anyMatch(member -> member.getPersonId().equals(personId));
     }
 
 }
