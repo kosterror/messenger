@@ -2,15 +2,19 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.man
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
+import ru.tsu.hits.kosterror.messenger.core.dto.NewNotificationDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
+import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
+import ru.tsu.hits.kosterror.messenger.core.util.RabbitMQBindings;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.BlockedPersonMapper;
@@ -33,6 +37,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
     private final ManageFriendService manageFriendService;
     private final BlockedPersonMapper blockedPersonMapper;
     private final IntegrationPersonInfoService integrationPersonInfoService;
+    private final StreamBridge streamBridge;
 
     @Override
     @Transactional
@@ -65,6 +70,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
         }
 
         blockedPerson = blockedPersonRepository.save(blockedPerson);
+        sendNotificationAddedToBlockedList(ownerId, memberId);
         return blockedPersonMapper.entityToDto(blockedPerson);
     }
 
@@ -81,6 +87,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
         blockedPerson.setIsDeleted(true);
         blockedPerson.setDeleteDate(LocalDate.now());
         blockedPersonRepository.save(blockedPerson);
+        sendNotificationRemovedFromBlockedList(ownerId, memberId);
     }
 
     /**
@@ -105,6 +112,29 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
         } catch (RestClientException exception) {
             throw new InternalException("Ошибка во время интеграционного запроса в auth-service", exception);
         }
+    }
+
+    private void sendNotificationAddedToBlockedList(UUID authorId, UUID receiverId) {
+        PersonDto authorDetails = personDto(authorId);
+        String notificationText = String.format("Пользователь %s добавил вас в черный список",
+                authorDetails.getFullName()
+        );
+
+        sendNotification(receiverId, NotificationType.ADDED_TO_BLOCKED_LIST, notificationText);
+    }
+
+    private void sendNotificationRemovedFromBlockedList(UUID authorId, UUID receiverId) {
+        PersonDto authorDetails = personDto(authorId);
+        String notificationText = String.format("Пользователь %s удалил вас в из черного списка",
+                authorDetails.getFullName()
+        );
+
+        sendNotification(receiverId, NotificationType.REMOVED_FROM_BLOCKED_LIST, notificationText);
+    }
+
+    private void sendNotification(UUID receiverId, NotificationType notificationType, String notificationText) {
+        NewNotificationDto notification = new NewNotificationDto(receiverId, notificationType, notificationText);
+        streamBridge.send(RabbitMQBindings.CREATE_NOTIFICATION_OUT, notification);
     }
 
 }
