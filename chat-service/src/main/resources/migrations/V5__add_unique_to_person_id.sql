@@ -1,0 +1,1 @@
+ALTER TABLE relation_person ADD CONSTRAINT unique_person_id UNIQUE (person_id);
