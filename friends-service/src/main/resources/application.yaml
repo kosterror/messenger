@@ -36,3 +36,13 @@ spring:
   flyway:
     locations: classpath:migrations
     enabled: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: rmq-user
+    password: rmq-pass
+  cloud.stream.bindings:
+    synchronizePersonDetails-in-0:
+      destination: SYNCHRONIZE_PERSON_DETAILS
+    createNotification-out-0:
+      destination: CREATE_NOTIFICATION

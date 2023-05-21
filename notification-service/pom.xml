@@ -16,7 +16,7 @@
     <description>This is a service that provides functionality for notifications about various events</description>
 
     <properties>
-        <java.version>${java.version}</java.version>
+        <java.version>11</java.version>
     </properties>
 
     <dependencies>

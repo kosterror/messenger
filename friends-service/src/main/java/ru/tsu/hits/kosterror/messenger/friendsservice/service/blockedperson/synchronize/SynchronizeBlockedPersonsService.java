@@ -1,5 +1,8 @@
 package ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.synchronize;
 
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
+
+import javax.transaction.Transactional;
 import java.util.UUID;
 
 /**
@@ -12,6 +15,15 @@ public interface SynchronizeBlockedPersonsService {
      *
      * @param blockedPersonId идентификатор внешнего пользователя.
      */
+    @Transactional
     void syncBlockedPersonIdFullName(UUID blockedPersonId);
+
+    /**
+     * Метод для синхронизации информации о заблокированных пользователях.
+     *
+     * @param personDto актуальная информация о пользователе.
+     */
+    @Transactional
+    void syncBlockedPerson(PersonDto personDto);
 
 }

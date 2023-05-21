@@ -11,6 +11,7 @@ import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.Integrat
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.BlockedPersonRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class SynchronizeBlockedPersonsServiceImpl implements SynchronizeBlockedP
     private final IntegrationPersonInfoService integrationPersonInfoService;
 
     @Override
+    @Transactional
     public void syncBlockedPersonIdFullName(UUID blockedPersonId) {
         try {
             PersonDto personDto = integrationPersonInfoService.getPersonInfo(blockedPersonId);
@@ -38,6 +40,15 @@ public class SynchronizeBlockedPersonsServiceImpl implements SynchronizeBlockedP
         } catch (Exception exception) {
             throw new InternalException("Исключение во время выполнения интеграционного запроса", exception);
         }
+    }
+
+    @Override
+    @Transactional
+    public void syncBlockedPerson(PersonDto personDto) {
+        List<BlockedPerson> blockedPersons = blockedPersonRepository.findAllByMemberId(personDto.getId());
+        blockedPersons.forEach(blockedPerson -> blockedPerson.setMemberFullName(personDto.getFullName()));
+
+        blockedPersonRepository.saveAll(blockedPersons);
     }
 
 }

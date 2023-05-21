@@ -10,6 +10,7 @@ import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.Integrat
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class SynchronizeFriendsServiceImpl implements SynchronizeFriendsService 
     private final IntegrationPersonInfoService integrationPersonInfoService;
 
     @Override
+    @Transactional
     public void syncFriendFullName(UUID friendId) {
         try {
             PersonDto person = integrationPersonInfoService.getPersonInfo(friendId);
@@ -37,4 +39,14 @@ public class SynchronizeFriendsServiceImpl implements SynchronizeFriendsService 
             throw new InternalException("Исключение во время выполнения интеграционного запроса", exception);
         }
     }
+
+    @Override
+    @Transactional
+    public void syncFriend(PersonDto personDto) {
+        List<Friend> friends = friendRepository.findAllByMemberId(personDto.getId());
+        friends.forEach(friend -> friend.setMemberFullName(personDto.getFullName()));
+
+        friendRepository.saveAll(friends);
+    }
+
 }

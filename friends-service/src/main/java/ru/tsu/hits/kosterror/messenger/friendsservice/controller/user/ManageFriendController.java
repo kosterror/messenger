@@ -7,14 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
-import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage.ManageFriendService;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
-import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractPersonData;
+import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
 
 /**
  * Контроллер с методами для управления друзьями.
@@ -27,21 +25,14 @@ public class ManageFriendController {
 
     private final ManageFriendService manageFriendService;
 
-    /**
-     * Эндпоинт для добавления друга.
-     *
-     * @param auth информация об аутентифицированном пользователе.
-     * @param dto  информация о новом друге.
-     * @return сохраненная информация о новом друге.
-     */
-    @PostMapping("/create")
+    @PostMapping("/{id}")
     @Operation(
             summary = "Добавить друга.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public FriendDto createFriend(Authentication auth,
-                                  @RequestBody @Valid CreateFriendDto dto) {
-        return manageFriendService.createFriend(extractPersonData(auth), dto);
+                                  @PathVariable UUID id) {
+        return manageFriendService.createFriend(extractId(auth), id);
     }
 
     /**

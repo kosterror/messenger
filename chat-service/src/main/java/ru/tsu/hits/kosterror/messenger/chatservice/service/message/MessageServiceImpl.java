@@ -2,6 +2,7 @@ package ru.tsu.hits.kosterror.messenger.chatservice.service.message;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
@@ -18,12 +19,15 @@ import ru.tsu.hits.kosterror.messenger.chatservice.service.attachment.Attachment
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatinfo.ChatInfoService;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.chatmanage.ChatManageService;
 import ru.tsu.hits.kosterror.messenger.chatservice.service.person.RelationPersonService;
+import ru.tsu.hits.kosterror.messenger.core.dto.NewNotificationDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
+import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
+import ru.tsu.hits.kosterror.messenger.core.util.RabbitMQBindings;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
+    private static final int NOTIFICATION_TEXT_SIZE = 100;
     private final RelationPersonService relationPersonService;
     private final MessageRepository messageRepository;
     private final ChatInfoService chatInfoService;
@@ -44,6 +49,7 @@ public class MessageServiceImpl implements MessageService {
     private final FriendIntegrationService friendIntegrationService;
     private final MessageMapper messageMapper;
     private final AttachmentService attachmentService;
+    private final StreamBridge streamBridge;
 
     @Override
     @Transactional
@@ -52,7 +58,8 @@ public class MessageServiceImpl implements MessageService {
         RelationPerson author = relationPersonService.findRelationPersonEntity(authorId);
         Message message = buildMessage(chat, author, dto);
 
-        messageRepository.save(message);
+        message = messageRepository.save(message);
+        sendNewMessageNotification(chat, message, author);
     }
 
     @Override
@@ -88,6 +95,7 @@ public class MessageServiceImpl implements MessageService {
         Message message = buildMessage(chat, author, dto);
         message = messageRepository.save(message);
         log.info("Сообщение отправлено: {}", message);
+        sendNewMessageNotification(chat, message, author);
     }
 
     @Override
@@ -261,6 +269,47 @@ public class MessageServiceImpl implements MessageService {
         } catch (RestClientException exception) {
             throw new InternalException("Ошибка во время интеграционного запроса в friends-service", exception);
         }
+    }
+
+    private RelationPerson findReceiver(Chat privateChat, UUID authorId) {
+        if (privateChat.getType() != ChatType.PRIVATE) {
+            throw new InternalException("Попытка найти собеседника в чате, который не является личным");
+        }
+
+        if (privateChat.getMembers() == null || privateChat.getMembers().size() != 2) {
+            throw new InternalException("Некорректное количество участников в личном чате");
+        }
+
+        return privateChat
+                .getMembers()
+                .stream()
+                .filter(member -> !member.getPersonId().equals(authorId))
+                .findFirst()
+                .orElseThrow(() -> new InternalException("Собеседник в личном чате не найден"));
+    }
+
+    private void sendNewMessageNotification(Chat chat, Message message, RelationPerson author) {
+        if (chat.getType() != ChatType.PRIVATE) {
+            return;
+        }
+
+        RelationPerson receiver = findReceiver(chat, author.getPersonId());
+
+        String notificationText = String.format("Сообщение от: %s.", message.getRelationPerson().getFullName());
+
+        if (message.getText() != null && !message.getText().isBlank()) {
+            notificationText += message.getText();
+            if (notificationText.length() > NOTIFICATION_TEXT_SIZE) {
+                notificationText = notificationText.substring(0, NOTIFICATION_TEXT_SIZE);
+            }
+        }
+
+        NewNotificationDto newNotificationDto = new NewNotificationDto(receiver.getPersonId(),
+                NotificationType.NEW_MESSAGE,
+                notificationText
+        );
+
+        streamBridge.send(RabbitMQBindings.CREATE_NOTIFICATION_OUT, newNotificationDto);
     }
 
 }

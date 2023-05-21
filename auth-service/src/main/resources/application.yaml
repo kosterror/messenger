@@ -49,3 +49,5 @@ spring:
   cloud.stream.bindings:
     createNotification-out-0:
       destination: CREATE_NOTIFICATION
+    synchronizePersonDetails-out-0:
+      destination: SYNCHRONIZE_PERSON_DETAILS

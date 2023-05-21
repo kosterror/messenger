@@ -8,10 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
-import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateBlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.manage.ManageBlockedPersonService;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
 /**
@@ -25,22 +23,15 @@ public class ManageBlockedPersonController {
 
     private final ManageBlockedPersonService manageBlockedPersonService;
 
-    /**
-     * Метод для добавления пользователя в чёрный список.
-     *
-     * @param auth информация об авторизованном пользователе.
-     * @param dto  информация о пользователе, которого нужно добавить в чёрный список.
-     * @return сохраненная информация о заблокированном пользователе.
-     */
-    @PostMapping("/create")
+    @PostMapping("/{id}")
     @Operation(
             summary = "Добавить пользователя в чёрный список.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     public BlockedPersonDto createBlockedPerson(Authentication auth,
-                                                @RequestBody @Valid CreateBlockedPersonDto dto
+                                                @PathVariable UUID id
     ) {
-        return manageBlockedPersonService.createBlockedPerson(JwtExtractor.extractId(auth), dto);
+        return manageBlockedPersonService.createBlockedPerson(JwtExtractor.extractId(auth), id);
     }
 
     /**

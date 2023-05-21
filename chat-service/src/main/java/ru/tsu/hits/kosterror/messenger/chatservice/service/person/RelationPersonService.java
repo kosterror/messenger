@@ -1,6 +1,7 @@
 package ru.tsu.hits.kosterror.messenger.chatservice.service.person;
 
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.RelationPerson;
+import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,5 +16,7 @@ public interface RelationPersonService {
     List<RelationPerson> createAllRelationPerson(List<UUID> personIds);
 
     Optional<RelationPerson> findOptionalRelationPerson(UUID personId);
+
+    void synchronizeRelationPerson(PersonDto personDto);
 
 }

@@ -5,6 +5,8 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.person.RegisterPersonDto;
 import ru.tsu.hits.kosterror.messenger.authservice.dto.token.FullPersonDto;
 import ru.tsu.hits.kosterror.messenger.core.exception.UnauthorizedException;
 
+import javax.transaction.Transactional;
+
 /**
  * Сервис для регистрации и аутентификации пользователя.
  */
@@ -24,6 +26,7 @@ public interface AuthService {
      * @param dto данные для аутентификации.
      * @return dto с токеном и данными о пользователе.
      */
+    @Transactional
     FullPersonDto login(PersonCredentialsDto dto) throws UnauthorizedException;
 
 }

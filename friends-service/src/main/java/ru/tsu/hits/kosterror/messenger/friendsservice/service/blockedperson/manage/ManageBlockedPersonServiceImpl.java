@@ -2,15 +2,20 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.man
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
+import ru.tsu.hits.kosterror.messenger.core.dto.NewNotificationDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
+import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
+import ru.tsu.hits.kosterror.messenger.core.util.RabbitMQBindings;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.BlockedPersonDto;
-import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateBlockedPersonDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.BlockedPerson;
 import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.BlockedPersonMapper;
 import ru.tsu.hits.kosterror.messenger.friendsservice.repository.BlockedPersonRepository;
@@ -32,38 +37,40 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
     private final ManageFriendService manageFriendService;
     private final BlockedPersonMapper blockedPersonMapper;
     private final IntegrationPersonInfoService integrationPersonInfoService;
+    private final StreamBridge streamBridge;
 
     @Override
     @Transactional
-    public BlockedPersonDto createBlockedPerson(UUID ownerId, CreateBlockedPersonDto memberDto) {
-        if (ownerId.equals(memberDto.getId())) {
-            throw new BadRequestException("Некорректный запрос, идентификаторы совпадают");
+    public BlockedPersonDto createBlockedPerson(UUID ownerId, UUID memberId) {
+        if (ownerId.equals(memberId)) {
+            throw new BadRequestException("Нельзя добавтиь самого себя в черный список");
         }
 
-        checkPersonExisting(memberDto.getId());
+        PersonDto personDetails = personDto(memberId);
 
-        if (manageFriendService.isFriends(ownerId, memberDto.getId())) {
-            manageFriendService.deleteFriend(ownerId, memberDto.getId());
+        if (manageFriendService.isFriends(ownerId, memberId)) {
+            manageFriendService.deleteFriend(ownerId, memberId);
         }
 
         BlockedPerson blockedPerson;
         Optional<BlockedPerson> blockedPersonOptional = blockedPersonRepository
-                .findBlockedPersonByOwnerIdAndMemberId(ownerId, memberDto.getId());
+                .findBlockedPersonByOwnerIdAndMemberId(ownerId, memberId);
 
         if (blockedPersonOptional.isPresent()) {
             blockedPerson = blockedPersonOptional.get();
             if (Boolean.TRUE.equals(blockedPerson.getIsDeleted())) {
-                makeEntityBlocked(blockedPerson, memberDto);
+                makeEntityBlocked(blockedPerson, personDetails);
             } else {
                 throw new BadRequestException("Пользователь уже заблокирован");
             }
         } else {
             blockedPerson = new BlockedPerson();
             blockedPerson.setOwnerId(ownerId);
-            makeEntityBlocked(blockedPerson, memberDto);
+            makeEntityBlocked(blockedPerson, personDetails);
         }
 
         blockedPerson = blockedPersonRepository.save(blockedPerson);
+        sendNotificationAddedToBlockedList(ownerId, memberId);
         return blockedPersonMapper.entityToDto(blockedPerson);
     }
 
@@ -80,6 +87,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
         blockedPerson.setIsDeleted(true);
         blockedPerson.setDeleteDate(LocalDate.now());
         blockedPersonRepository.save(blockedPerson);
+        sendNotificationRemovedFromBlockedList(ownerId, memberId);
     }
 
     /**
@@ -88,7 +96,7 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
      * @param entity сущность.
      * @param dto    информация о заблокированном пользователе.
      */
-    private void makeEntityBlocked(BlockedPerson entity, CreateBlockedPersonDto dto) {
+    private void makeEntityBlocked(BlockedPerson entity, PersonDto dto) {
         entity.setMemberId(dto.getId());
         entity.setMemberFullName(dto.getFullName());
         entity.setAddedDate(LocalDate.now());
@@ -96,18 +104,37 @@ public class ManageBlockedPersonServiceImpl implements ManageBlockedPersonServic
         entity.setDeleteDate(null);
     }
 
-    private void checkPersonExisting(UUID personId) {
+    private PersonDto personDto(UUID personId) {
         try {
-            PersonDto person = integrationPersonInfoService.getPersonInfo(personId);
-            if (!person.getId().equals(personId)) {
-                throw new InternalException("Ошибка во время интеграционного запроса в auth-service. Запросил" +
-                        " одного пользователя, а пришел другой");
-            }
+            return integrationPersonInfoService.getPersonInfo(personId);
         } catch (HttpClientErrorException.NotFound exception) {
-            throw new BadRequestException(String.format("Пользователь с id '%s' не существует", personId));
-        } catch (Exception exception) {
-            throw new InternalException("Ошибка во время интеграционного запроса в auth-service.", exception);
+            throw new NotFoundException(String.format("Пользователь с id %s не найден", personId));
+        } catch (RestClientException exception) {
+            throw new InternalException("Ошибка во время интеграционного запроса в auth-service", exception);
         }
+    }
+
+    private void sendNotificationAddedToBlockedList(UUID authorId, UUID receiverId) {
+        PersonDto authorDetails = personDto(authorId);
+        String notificationText = String.format("Пользователь %s добавил вас в черный список",
+                authorDetails.getFullName()
+        );
+
+        sendNotification(receiverId, NotificationType.ADDED_TO_BLOCKED_LIST, notificationText);
+    }
+
+    private void sendNotificationRemovedFromBlockedList(UUID authorId, UUID receiverId) {
+        PersonDto authorDetails = personDto(authorId);
+        String notificationText = String.format("Пользователь %s удалил вас в из черного списка",
+                authorDetails.getFullName()
+        );
+
+        sendNotification(receiverId, NotificationType.REMOVED_FROM_BLOCKED_LIST, notificationText);
+    }
+
+    private void sendNotification(UUID receiverId, NotificationType notificationType, String notificationText) {
+        NewNotificationDto notification = new NewNotificationDto(receiverId, notificationType, notificationText);
+        streamBridge.send(RabbitMQBindings.CREATE_NOTIFICATION_OUT, notification);
     }
 
 }

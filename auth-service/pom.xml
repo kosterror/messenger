@@ -16,7 +16,7 @@
     <description>Service for registration, authentication and account management</description>
 
     <properties>
-        <java.version>${java.version}</java.version>
+        <java.version>11</java.version>
     </properties>
 
     <dependencies>
