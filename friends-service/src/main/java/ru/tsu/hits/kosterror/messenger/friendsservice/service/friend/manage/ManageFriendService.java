@@ -1,7 +1,5 @@
 package ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage;
 
-import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
-import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 
 import java.util.UUID;
@@ -11,14 +9,7 @@ import java.util.UUID;
  */
 public interface ManageFriendService {
 
-    /**
-     * Метод для добавления пользователя в друзья.
-     *
-     * @param owner  информация о пользователе, который добавляет в друзья.
-     * @param member информация о пользователе, которого добавляют в друзья.
-     * @return информация о сохраненном друге.
-     */
-    FriendDto createFriend(JwtPersonData owner, CreateFriendDto member);
+    FriendDto createFriend(UUID ownerId, UUID memberId);
 
     /**
      * Метод для удаления друга.

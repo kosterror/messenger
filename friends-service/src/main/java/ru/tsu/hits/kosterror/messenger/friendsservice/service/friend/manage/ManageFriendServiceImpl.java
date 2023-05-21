@@ -6,16 +6,16 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import ru.tsu.hits.kosterror.messenger.core.dto.NewNotificationDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
+import ru.tsu.hits.kosterror.messenger.core.exception.NotFoundException;
 import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
 import ru.tsu.hits.kosterror.messenger.core.util.RabbitMQBindings;
-import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
-import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.entity.Friend;
 import ru.tsu.hits.kosterror.messenger.friendsservice.mapper.FriendMapper;
@@ -23,7 +23,6 @@ import ru.tsu.hits.kosterror.messenger.friendsservice.repository.FriendRepositor
 import ru.tsu.hits.kosterror.messenger.friendsservice.service.blockedperson.display.DisplayBlockedPersonService;
 
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,18 +46,14 @@ public class ManageFriendServiceImpl implements ManageFriendService {
 
     @Override
     @Transactional
-    public FriendDto createFriend(JwtPersonData jwtOwnerData, CreateFriendDto member) {
-        CreateFriendDto owner = new CreateFriendDto(
-                jwtOwnerData.getId(),
-                jwtOwnerData.getFullName()
-        );
+    public FriendDto createFriend(UUID ownerId, UUID memberId) {
+        validateIds(ownerId, memberId);
 
-        validateData(owner, member);
+        PersonDto ownerDetails = personDto(ownerId);
+        PersonDto memberDetails = personDto(memberId);
 
-        Optional<Friend> ownerFriendOptional = friendRepository
-                .findFriendByOwnerIdAndMemberId(owner.getId(), member.getId());
-        Optional<Friend> memberFriendOptional = friendRepository
-                .findFriendByOwnerIdAndMemberId(member.getId(), owner.getId());
+        Optional<Friend> ownerFriendOptional = friendRepository.findFriendByOwnerIdAndMemberId(ownerId, memberId);
+        Optional<Friend> memberFriendOptional = friendRepository.findFriendByOwnerIdAndMemberId(memberId, ownerId);
 
         Friend ownerFriend;
         Friend memberFriend;
@@ -67,40 +62,27 @@ public class ManageFriendServiceImpl implements ManageFriendService {
             ownerFriend = ownerFriendOptional.get();
             memberFriend = memberFriendOptional.get();
 
-            ownerFriend.setOwnerId(owner.getId());
-            ownerFriend.setMemberId(member.getId());
-
-            if (Objects.equals(ownerFriend.getIsDeleted(), memberFriend.getIsDeleted())) {
+            if (ownerFriend.getIsDeleted().equals(memberFriend.getIsDeleted())) {
                 if (Boolean.TRUE.equals(ownerFriend.getIsDeleted())) {
                     ownerFriend.setIsDeleted(false);
-                    memberFriend.setIsDeleted(false);
-                    ownerFriend.setAddedDate(LocalDate.now());
-                    memberFriend.setAddedDate(LocalDate.now());
                     ownerFriend.setDeletedDate(null);
+                    ownerFriend.setAddedDate(LocalDate.now());
+
+                    memberFriend.setIsDeleted(false);
                     memberFriend.setDeletedDate(null);
+                    memberFriend.setAddedDate(LocalDate.now());
                 } else {
                     throw new BadRequestException("Вы уже являетесь друзьями");
                 }
             } else {
-                throw new InternalException(
-                        String.format(
-                                FRIEND_RELATION_ONE_DIRECTION,
-                                ownerFriend.getOwnerId(),
-                                memberFriend.getOwnerId()
-                        )
-                );
+                throw new InternalException(String.format(FRIEND_RELATION_ONE_DIRECTION, ownerId, memberId));
             }
         } else if (ownerFriendOptional.isEmpty() && memberFriendOptional.isEmpty()) {
-            ownerFriend = buildFriend(owner.getId(), member);
-            memberFriend = buildFriend(member.getId(), owner);
+            ownerFriend = buildFriend(ownerId, memberDetails);
+            memberFriend = buildFriend(memberId, ownerDetails);
         } else {
-            throw new InternalException(
-                    String.format(
-                            FRIEND_RELATION_ONE_DIRECTION,
-                            owner.getId(),
-                            member.getId()
-                    )
-            );
+            throw new InternalException(String.format("Аномалия данных. Существует однонаправленная" +
+                    " связь дружбы у: %s %s", ownerId, memberId));
         }
 
         ownerFriend = friendRepository.save(ownerFriend);
@@ -164,29 +146,17 @@ public class ManageFriendServiceImpl implements ManageFriendService {
                 || friendRepository.existsByOwnerIdAndMemberIdAndIsDeleted(secondId, firstId, false);
     }
 
-    private void validateData(CreateFriendDto owner, CreateFriendDto member) {
-        if (owner.getId().equals(member.getId())) {
+    private void validateIds(UUID ownerId, UUID memberId) {
+        if (ownerId.equals(memberId)) {
             throw new BadRequestException("Идентификаторы совпадают, нельзя добавить себя в друзья");
         }
 
-        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(owner.getId(), member.getId()).getValue())) {
+        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(ownerId, memberId).getValue())) {
             throw new BadRequestException("Нельзя добавить пользователя, который находится в черном списке");
         }
 
-        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(member.getId(), owner.getId()).getValue())) {
+        if (Boolean.TRUE.equals(displayBlockedPersonService.personIsBlocked(memberId, ownerId).getValue())) {
             throw new ForbiddenException("Пользователь добавил вас в черный список");
-        }
-
-        try {
-            PersonDto memberInfo = integrationPersonInfoService.getPersonInfo(member.getId());
-            if (!member.getId().equals(memberInfo.getId())) {
-                throw new InternalException("Ошибка во время интеграционного запроса в auth-service. Запросил" +
-                        "одного пользователя, а пришел другой");
-            }
-        } catch (HttpClientErrorException.NotFound exception) {
-            throw new BadRequestException(String.format("Пользователь с id '%s' не существует", member.getId()));
-        } catch (Exception exception) {
-            throw new InternalException("Ошибка во время интеграционного запроса в auth-service.", exception);
         }
     }
 
@@ -200,23 +170,16 @@ public class ManageFriendServiceImpl implements ManageFriendService {
         friend.setDeletedDate(LocalDate.now());
     }
 
-    /**
-     * Метод для создания {@link Friend} на основе входных параметров.
-     *
-     * @param ownerId идентификатор целевого пользователя.
-     * @param dto     информация о внешнем пользователе.
-     * @return новый объект {@link Friend}.
-     */
-    private Friend buildFriend(UUID ownerId, CreateFriendDto dto) {
-        Friend friend = new Friend();
-        friend.setOwnerId(ownerId);
-        friend.setMemberId(dto.getId());
-        friend.setMemberFullName(dto.getFullName());
-        friend.setDeletedDate(null);
-        friend.setIsDeleted(false);
-        friend.setAddedDate(LocalDate.now());
-
-        return friend;
+    private Friend buildFriend(UUID ownerId, PersonDto memberDetails) {
+        return Friend
+                .builder()
+                .ownerId(ownerId)
+                .memberId(memberDetails.getId())
+                .memberFullName(memberDetails.getFullName())
+                .deletedDate(null)
+                .isDeleted(false)
+                .addedDate(LocalDate.now())
+                .build();
     }
 
     private void sendNewFriendNotification(String authorFullName, UUID receiverId) {
@@ -226,6 +189,16 @@ public class ManageFriendServiceImpl implements ManageFriendService {
         );
 
         streamBridge.send(RabbitMQBindings.CREATE_NOTIFICATION_OUT, newNotificationDto);
+    }
+
+    private PersonDto personDto(UUID personId) {
+        try {
+            return integrationPersonInfoService.getPersonInfo(personId);
+        } catch (HttpClientErrorException.NotFound exception) {
+            throw new NotFoundException(String.format("Пользователь с id %s не найден", personId));
+        } catch (RestClientException exception) {
+            throw new InternalException("Ошибка во время интеграционного запроса в auth-service", exception);
+        }
     }
 
 }
