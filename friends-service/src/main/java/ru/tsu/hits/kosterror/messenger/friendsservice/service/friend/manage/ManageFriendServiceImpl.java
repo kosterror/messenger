@@ -88,7 +88,7 @@ public class ManageFriendServiceImpl implements ManageFriendService {
         ownerFriend = friendRepository.save(ownerFriend);
         memberFriend = friendRepository.save(memberFriend);
 
-        sendNewFriendNotification(memberFriend.getMemberFullName(), memberFriend.getOwnerId());
+        sendAddedToFriendListNotification(memberFriend.getMemberFullName(), memberFriend.getOwnerId());
 
         return friendMapper.entityToDto(ownerFriend);
     }
@@ -137,7 +137,9 @@ public class ManageFriendServiceImpl implements ManageFriendService {
         }
 
         friendRepository.save(ownerFriend);
-        friendRepository.save(memberFriend);
+        memberFriend = friendRepository.save(memberFriend);
+
+        sendRemovedFromFriendListNotification(memberFriend.getMemberFullName(), memberFriend.getOwnerId());
     }
 
     @Override
@@ -182,10 +184,19 @@ public class ManageFriendServiceImpl implements ManageFriendService {
                 .build();
     }
 
-    private void sendNewFriendNotification(String authorFullName, UUID receiverId) {
+    private void sendAddedToFriendListNotification(String authorFullName, UUID receiverId) {
         NewNotificationDto newNotificationDto = new NewNotificationDto(receiverId,
                 NotificationType.ADDED_TO_FRIEND_LIST,
                 String.format(ADDED_TO_FRIEND_LIST_NOTIFICATION_TEXT, authorFullName)
+        );
+
+        streamBridge.send(RabbitMQBindings.CREATE_NOTIFICATION_OUT, newNotificationDto);
+    }
+
+    private void sendRemovedFromFriendListNotification(String authorFullName, UUID receiverId) {
+        NewNotificationDto newNotificationDto = new NewNotificationDto(receiverId,
+                NotificationType.REMOVED_FROM_FRIEND_LIST,
+                String.format(REMOVED_FROM_FRIEND_LIST_NOTIFICATION_TEXT, authorFullName)
         );
 
         streamBridge.send(RabbitMQBindings.CREATE_NOTIFICATION_OUT, newNotificationDto);
