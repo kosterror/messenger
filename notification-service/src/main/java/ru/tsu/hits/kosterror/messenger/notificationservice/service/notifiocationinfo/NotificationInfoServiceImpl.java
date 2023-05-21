@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.tsu.hits.kosterror.messenger.core.dto.NumberDto;
@@ -13,6 +14,7 @@ import ru.tsu.hits.kosterror.messenger.core.response.PagingResponse;
 import ru.tsu.hits.kosterror.messenger.notificationservice.dto.NotificationDto;
 import ru.tsu.hits.kosterror.messenger.notificationservice.dto.NotificationFilters;
 import ru.tsu.hits.kosterror.messenger.notificationservice.entity.Notification;
+import ru.tsu.hits.kosterror.messenger.notificationservice.entity.Notification_;
 import ru.tsu.hits.kosterror.messenger.notificationservice.mapper.NotificationMapper;
 import ru.tsu.hits.kosterror.messenger.notificationservice.repository.NotificationRepository;
 
@@ -42,7 +44,10 @@ public class NotificationInfoServiceImpl implements NotificationInfoService {
         Specification<Notification> specification = buildSpecification(personId, request.getFilters());
         Page<Notification> pageNotification = repository.findAll(
                 specification,
-                PageRequest.of(request.getPaging().getPage(), request.getPaging().getSize())
+                PageRequest.of(request.getPaging().getPage(),
+                        request.getPaging().getSize(),
+                        Sort.by(Sort.Direction.DESC, Notification_.RECEIVED_DATE)
+                )
         );
 
         return buildPagingResponse(pageNotification);
