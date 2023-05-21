@@ -25,7 +25,7 @@ public class ManageFriendController {
 
     private final ManageFriendService manageFriendService;
 
-    @PostMapping("/add/{id}")
+    @PostMapping("/{id}")
     @Operation(
             summary = "Добавить друга.",
             security = @SecurityRequirement(name = "bearerAuth")
