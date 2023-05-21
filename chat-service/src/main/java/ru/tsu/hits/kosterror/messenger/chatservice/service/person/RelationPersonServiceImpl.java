@@ -80,6 +80,21 @@ public class RelationPersonServiceImpl implements RelationPersonService {
         return resultList;
     }
 
+    @Override
+    public void synchronizeRelationPerson(PersonDto personDto) {
+        Optional<RelationPerson> relationPeopleOptional = repository.findByPersonId(personDto.getId());
+
+        if (relationPeopleOptional.isEmpty()) {
+            return;
+        }
+
+        RelationPerson relationPerson = relationPeopleOptional.get();
+        relationPerson.setFullName(personDto.getFullName());
+        relationPerson.setAvatarId(personDto.getAvatarId());
+
+        repository.save(relationPerson);
+    }
+
     private List<RelationPerson> buildRelationPersons(List<UUID> personIds) {
         List<RelationPerson> result = new ArrayList<>();
 
