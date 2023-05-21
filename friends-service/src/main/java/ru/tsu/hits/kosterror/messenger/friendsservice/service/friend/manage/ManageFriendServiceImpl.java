@@ -2,14 +2,18 @@ package ru.tsu.hits.kosterror.messenger.friendsservice.service.friend.manage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import ru.tsu.hits.kosterror.messenger.core.dto.NewNotificationDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
+import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 import ru.tsu.hits.kosterror.messenger.core.exception.BadRequestException;
 import ru.tsu.hits.kosterror.messenger.core.exception.ForbiddenException;
 import ru.tsu.hits.kosterror.messenger.core.exception.InternalException;
 import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoService;
+import ru.tsu.hits.kosterror.messenger.core.util.RabbitMQBindings;
 import ru.tsu.hits.kosterror.messenger.coresecurity.model.JwtPersonData;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.CreateFriendDto;
 import ru.tsu.hits.kosterror.messenger.friendsservice.dto.FriendDto;
@@ -31,12 +35,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ManageFriendServiceImpl implements ManageFriendService {
 
+    private static final String ADDED_TO_FRIEND_LIST_NOTIFICATION_TEXT = "Пользователь %s добавил вас в друзья";
+    private static final String REMOVED_FROM_FRIEND_LIST_NOTIFICATION_TEXT = "Пользователь %s удалил вас из друзей";
     private static final String FRIEND_RELATION_ONE_DIRECTION = "Нарушена целостность данных. Связь дружбы является" +
             " односторонней для пользователей: '%s', '%s'";
     private final FriendRepository friendRepository;
     private final FriendMapper friendMapper;
     private final DisplayBlockedPersonService displayBlockedPersonService;
     private final IntegrationPersonInfoService integrationPersonInfoService;
+    private final StreamBridge streamBridge;
 
     @Override
     @Transactional
@@ -97,7 +104,9 @@ public class ManageFriendServiceImpl implements ManageFriendService {
         }
 
         ownerFriend = friendRepository.save(ownerFriend);
-        friendRepository.save(memberFriend);
+        memberFriend = friendRepository.save(memberFriend);
+
+        sendNewFriendNotification(memberFriend.getMemberFullName(), memberFriend.getOwnerId());
 
         return friendMapper.entityToDto(ownerFriend);
     }
@@ -208,6 +217,15 @@ public class ManageFriendServiceImpl implements ManageFriendService {
         friend.setAddedDate(LocalDate.now());
 
         return friend;
+    }
+
+    private void sendNewFriendNotification(String authorFullName, UUID receiverId) {
+        NewNotificationDto newNotificationDto = new NewNotificationDto(receiverId,
+                NotificationType.ADDED_TO_FRIEND_LIST,
+                String.format(ADDED_TO_FRIEND_LIST_NOTIFICATION_TEXT, authorFullName)
+        );
+
+        streamBridge.send(RabbitMQBindings.CREATE_NOTIFICATION_OUT, newNotificationDto);
     }
 
 }
