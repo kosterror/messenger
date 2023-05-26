@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
 
 import static ru.tsu.hits.kosterror.messenger.notificationservice.service.specification.NotificationSpecification.*;
 
+/**
+ * Класс, реализующий метод {@link NotificationInfoService}.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -53,6 +56,13 @@ public class NotificationInfoServiceImpl implements NotificationInfoService {
         return buildPagingResponse(pageNotification);
     }
 
+    /**
+     * Метод для построения спецификации для запроса в БД.
+     *
+     * @param personId идентификатор пользователя.
+     * @param filters  параметры.
+     * @return спецификация.
+     */
     private Specification<Notification> buildSpecification(UUID personId, NotificationFilters filters) {
         Specification<Notification> specification = personId(personId);
 
@@ -75,6 +85,12 @@ public class NotificationInfoServiceImpl implements NotificationInfoService {
         return specification;
     }
 
+    /**
+     * Метод для построения ответа в виде списка, обернутого в {@link PagingResponse}.
+     *
+     * @param notificationPage страница сущностей.
+     * @return список {@link NotificationDto}, обернутый в {@link PagingResponse}.
+     */
     private PagingResponse<List<NotificationDto>> buildPagingResponse(Page<Notification> notificationPage) {
         List<NotificationDto> notifications = notificationPage
                 .getContent()

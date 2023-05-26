@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Класс для создания спецификации.
+ */
 @UtilityClass
 public class NotificationSpecification {
 

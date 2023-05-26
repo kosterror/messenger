@@ -2,6 +2,7 @@ package ru.tsu.hits.kosterror.messenger.notificationservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.ext
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
+@Tag(name = "Управления уведомлениями")
 public class NotificationManageController {
 
     private final NotificationManageService notificationManageService;
