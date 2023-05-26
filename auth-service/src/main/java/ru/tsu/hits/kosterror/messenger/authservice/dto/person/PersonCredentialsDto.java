@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * DTO для credentials пользователя.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

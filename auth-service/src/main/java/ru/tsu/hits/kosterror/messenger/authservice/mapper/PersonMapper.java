@@ -8,6 +8,10 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonFilters;
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 
+/**
+ * Интерфейс на основе которого будет сгенерирован код для конвертирования
+ * Person в связанные с ним dto и наоборот.
+ */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE

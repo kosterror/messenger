@@ -78,6 +78,11 @@ public class AuthServiceImpl implements AuthService {
         return new FullPersonDto(token, personDto);
     }
 
+    /**
+     * Отправляет сообщение через брокер сообщений об успешной аутентификации.
+     *
+     * @param personId идентификатор пользователя.
+     */
     private void sendSuccessLoginMessage(UUID personId) {
         NewNotificationDto notification = NewNotificationDto
                 .builder()
