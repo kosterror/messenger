@@ -36,6 +36,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Класс, реализующий {@link MessageService}.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -131,6 +134,14 @@ public class MessageServiceImpl implements MessageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Метод для создания объекта {@link Message} для отправки сообщения.
+     *
+     * @param chat   сущность чата.
+     * @param author сущность автора.
+     * @param dto    информация об отправляемом сообщении.
+     * @return созданный объект.
+     */
     private Message buildMessage(Chat chat, RelationPerson author, SendMessageDto dto) {
         Message message = Message.builder()
                 .text(dto.getText())
@@ -144,6 +155,14 @@ public class MessageServiceImpl implements MessageService {
         return message;
     }
 
+    /**
+     * Метод для построения списка вложений сообщения.
+     *
+     * @param message  сущность сообщения.
+     * @param authorId идентификатор автора.
+     * @param dto      информация об отправляемом сообщении.
+     * @return список построенных вложений.
+     */
     private List<Attachment> buildAttachments(Message message, UUID authorId, SendMessageDto dto) {
         List<Attachment> attachments = new ArrayList<>();
         List<UUID> nonexistentFileIds = new ArrayList<>();
@@ -169,6 +188,13 @@ public class MessageServiceImpl implements MessageService {
         return attachments;
     }
 
+    /**
+     * Метод для фильтрации списка сообщений по подстроке.
+     *
+     * @param messages  список сообщений.
+     * @param substring подстрока.
+     * @return отфильтрованный список.
+     */
     private List<Message> filterMessages(List<Message> messages, String substring) {
         String substringUpper = substring.toUpperCase();
 
@@ -185,6 +211,11 @@ public class MessageServiceImpl implements MessageService {
                 }).collect(Collectors.toList());
     }
 
+    /**
+     * Сортирует сообщения по дате отправки.
+     *
+     * @param messages список сообщений, который будет отсортирован.
+     */
     private void sortMessagesBySendingDate(List<Message> messages) {
         messages.sort((msg1, msg2) -> {
             if (msg1 == null || msg2 == null) {
@@ -204,6 +235,13 @@ public class MessageServiceImpl implements MessageService {
         });
     }
 
+    /**
+     * Ищет личный чат между пользователями.
+     *
+     * @param first  сущность первого пользователя.
+     * @param second сущность второго пользователя.
+     * @return сущность чата, обернутая в {@link Optional}.
+     */
     private Optional<Chat> findPrivateChat(RelationPerson first, RelationPerson second) {
         List<Chat> firstChats = getPrivateChats(first);
         List<Chat> crossedChats = findChatsWithMember(firstChats, second.getId());
@@ -232,6 +270,12 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
+    /**
+     * Метод для получения списка чатов, которые являются личными для пользователя.
+     *
+     * @param relationPerson сущность пользователя, который получает список личных чатов.
+     * @return список личных чатов.
+     */
     private List<Chat> getPrivateChats(RelationPerson relationPerson) {
         return relationPerson
                 .getChats()
@@ -240,6 +284,13 @@ public class MessageServiceImpl implements MessageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Получает список сущностей чатов с конкретным участником.
+     *
+     * @param chats    список чатов, в котором нужно отфильтровать данные.
+     * @param memberId идентификатор участника чата.
+     * @return список чатов с заданным участником.
+     */
     private List<Chat> findChatsWithMember(List<Chat> chats, UUID memberId) {
         return chats
                 .stream()
@@ -251,6 +302,12 @@ public class MessageServiceImpl implements MessageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Проверяет заблокирован ли кто-то из собеседников другим.`
+     *
+     * @param authorId   пользователь, который отправляет сообщение.
+     * @param receiverId пользователь, который получает сообщение.
+     */
     private void checkBlocking(UUID authorId, UUID receiverId) {
         PairPersonIdDto first = new PairPersonIdDto(authorId, receiverId);
         PairPersonIdDto second = new PairPersonIdDto(receiverId, authorId);
@@ -271,6 +328,13 @@ public class MessageServiceImpl implements MessageService {
         }
     }
 
+    /**
+     * Метод для получения собеседника в личном чате.
+     *
+     * @param privateChat сущность личного чата.
+     * @param authorId    id пользователя, собеседника которого нужно найти.
+     * @return найденный собеседник.
+     */
     private RelationPerson findReceiver(Chat privateChat, UUID authorId) {
         if (privateChat.getType() != ChatType.PRIVATE) {
             throw new InternalException("Попытка найти собеседника в чате, который не является личным");
@@ -288,6 +352,13 @@ public class MessageServiceImpl implements MessageService {
                 .orElseThrow(() -> new InternalException("Собеседник в личном чате не найден"));
     }
 
+    /**
+     * Отправляет уведомление через брокер о новом сообщении.
+     *
+     * @param chat    сущность чата, где пришло новое сообщение.
+     * @param message сущность сообщения.
+     * @param author  сущность автора сообщения.
+     */
     private void sendNewMessageNotification(Chat chat, Message message, RelationPerson author) {
         if (chat.getType() != ChatType.PRIVATE) {
             return;

@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Класс реализующий {@link ChatManageService}.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -85,6 +88,13 @@ public class ChatManageServiceImpl implements ChatManageService {
         return chatMapper.entityToDto(chat);
     }
 
+    /**
+     * Метод для получения списка участников создаваемого чата.
+     *
+     * @param adminId идентификатор администратора.
+     * @param dto     информация о создаваемом или изменяемом чате.
+     * @return список участников.
+     */
     private List<RelationPerson> getPreparedChatMembers(UUID adminId, CreateUpdateChatDto dto) {
         validateAvatar(adminId, dto.getAvatarId());
         List<UUID> memberIds = dto.getMembersId().stream().distinct().collect(Collectors.toList());
@@ -98,6 +108,12 @@ public class ChatManageServiceImpl implements ChatManageService {
         return relationPersonService.createAllRelationPerson(memberIds);
     }
 
+    /**
+     * Метод для проверки участников чата.
+     *
+     * @param personId  создатель чата.
+     * @param memberIds список идентификаторов.
+     */
     private void validateMemberIds(UUID personId, List<UUID> memberIds) {
         List<UUID> unfriendPersonIds = new ArrayList<>();
         for (UUID memberId : memberIds) {
@@ -118,6 +134,12 @@ public class ChatManageServiceImpl implements ChatManageService {
         }
     }
 
+    /**
+     * Метод для проверки аватарки чата.
+     *
+     * @param adminId создатель чата.
+     * @param fileId  идентификатор файла, который будет выступать аватаркой.
+     */
     private void validateAvatar(UUID adminId, UUID fileId) {
         if (fileId == null) {
             return;

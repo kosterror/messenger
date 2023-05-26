@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+/**
+ * Информация о вложении сообщения.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -7,6 +7,9 @@ import ru.tsu.hits.kosterror.messenger.chatservice.entity.Chat;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * JPA репозиторий для сущности {@link Chat}
+ */
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, UUID> {
 

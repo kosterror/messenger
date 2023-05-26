@@ -7,6 +7,10 @@ import org.mapstruct.ReportingPolicy;
 import ru.tsu.hits.kosterror.messenger.chatservice.dto.MessageDto;
 import ru.tsu.hits.kosterror.messenger.chatservice.entity.Message;
 
+/**
+ * Интерфейс, на основе которого сгенерируется класс с логикой конвертирования сущности Message в связанные
+ * с ним dto и наоборот.
+ */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
