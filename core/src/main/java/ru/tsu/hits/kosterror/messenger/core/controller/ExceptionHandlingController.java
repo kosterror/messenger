@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.tsu.hits.kosterror.messenger.core.exception.*;
 import ru.tsu.hits.kosterror.messenger.core.response.ApiError;
 
@@ -54,6 +55,20 @@ public class ExceptionHandlingController {
                 HttpStatus.BAD_REQUEST.value(),
                 "Тело запроса не прошло валидацию",
                 messages
+        );
+
+        return buildResponseEntity(error);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiError> handleMaxUploadSizeExceededException(HttpServletRequest request,
+                                                                         MaxUploadSizeExceededException exception
+    ) {
+        logError(request, exception);
+
+        ApiError error = new ApiError(
+                HttpStatus.BAD_REQUEST.value(),
+                "Недопустимый размер файла"
         );
 
         return buildResponseEntity(error);
