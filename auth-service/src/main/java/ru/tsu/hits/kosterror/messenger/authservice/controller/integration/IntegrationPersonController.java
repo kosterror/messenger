@@ -18,7 +18,7 @@ import java.util.UUID;
  * Контроллер для интеграционных запросов.
  */
 @RestController
-@RequestMapping("/integration/users/")
+@RequestMapping("/integration/users")
 @RequiredArgsConstructor
 @Tag(name = "Интеграционные запросы")
 public class IntegrationPersonController {

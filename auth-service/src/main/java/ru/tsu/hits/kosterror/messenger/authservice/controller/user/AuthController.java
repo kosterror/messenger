@@ -38,7 +38,8 @@ public class AuthController {
      * @return в теле ответа объект {@link PersonDto} и access токен в хэдере.
      */
     @PostMapping("/register")
-    @Operation(summary = "Зарегистрироваться")
+    @Operation(summary = "Зарегистрироваться", description = "ID аватарки можно указать после регистрации." +
+            "Так как в file-storage-service нужно быть аутентифицированным, чтобы что-то загрузить.")
     public ResponseEntity<PersonDto> register(@RequestBody @Valid RegisterPersonDto dto) {
         FullPersonDto fullPersonDto = service.register(dto);
 

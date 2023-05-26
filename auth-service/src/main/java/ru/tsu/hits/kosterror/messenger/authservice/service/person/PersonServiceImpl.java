@@ -12,6 +12,7 @@ import ru.tsu.hits.kosterror.messenger.authservice.dto.request.PersonPageRequest
 import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import ru.tsu.hits.kosterror.messenger.authservice.mapper.PersonMapper;
 import ru.tsu.hits.kosterror.messenger.authservice.repository.PersonRepository;
+import ru.tsu.hits.kosterror.messenger.authservice.service.common.FileValidateService;
 import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
@@ -43,6 +44,7 @@ public class PersonServiceImpl implements PersonService {
     private final PersonMapper personMapper;
     private final FriendIntegrationService friendIntegrationService;
     private final StreamBridge streamBridge;
+    private final FileValidateService fileValidateService;
 
     @Override
     public PersonDto getPersonInfo(UUID personId) {
@@ -63,6 +65,8 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public PersonDto updatePersonInfo(String login, UpdatePersonDto dto) throws NotFoundException {
         Person person = findPerson(login);
+
+        fileValidateService.isValidAvatarId(person.getId(), dto.getAvatarId());
 
         person.setFullName(dto.getFullName());
         person.setBirthDate(dto.getBirthDate());

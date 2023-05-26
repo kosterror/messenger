@@ -70,6 +70,11 @@ public class ApplicationConfig {
         return new SwaggerConfig();
     }
 
+    /**
+     * Создает бин {@link FileStorageIntegrationService}.
+     *
+     * @return бин {@link FileStorageIntegrationService}.
+     */
     @Bean
     public FileStorageIntegrationService fileStorageIntegrationService() {
         return new FileStorageIntegrationIntegrationServiceImpl(commonIntegrationService());
