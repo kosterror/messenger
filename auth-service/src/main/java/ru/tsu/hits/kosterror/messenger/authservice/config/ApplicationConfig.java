@@ -9,8 +9,8 @@ import ru.tsu.hits.kosterror.messenger.core.config.SwaggerConfig;
 import ru.tsu.hits.kosterror.messenger.core.controller.ExceptionHandlingController;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationServiceImpl;
-import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageIntegrationIntegrationServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageIntegrationService;
+import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageIntegrationServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationServiceImpl;
 
@@ -77,7 +77,7 @@ public class ApplicationConfig {
      */
     @Bean
     public FileStorageIntegrationService fileStorageIntegrationService() {
-        return new FileStorageIntegrationIntegrationServiceImpl(commonIntegrationService());
+        return new FileStorageIntegrationServiceImpl(commonIntegrationService());
     }
 
     /**

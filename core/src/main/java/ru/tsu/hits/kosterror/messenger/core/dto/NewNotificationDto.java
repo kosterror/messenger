@@ -8,6 +8,9 @@ import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 
 import java.util.UUID;
 
+/**
+ * DTO с информацией об отправляемом уведомлении.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
