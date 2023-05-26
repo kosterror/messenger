@@ -4,6 +4,9 @@ import com.ibm.icu.text.Transliterator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Класс, реализующий {@link FilenameService}.
+ */
 @Service
 @RequiredArgsConstructor
 public class FilenameServiceImpl implements FilenameService {

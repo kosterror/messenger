@@ -14,6 +14,9 @@ import ru.tsu.hits.kosterror.messenger.filestorageservice.service.filestorage.Fi
 
 import java.util.UUID;
 
+/**
+ * Контроллер для интеграционных запросов.
+ */
 @RestController
 @RequestMapping("/integration/file-storage")
 @RequiredArgsConstructor
@@ -22,6 +25,12 @@ public class IntegrationController {
 
     private final FileStorageService fileStorageService;
 
+    /**
+     * Метод для получения метаинформации о файле.
+     *
+     * @param fileId идентификатор файла.
+     * @return метаинформация о файле.
+     */
     @GetMapping("/{fileId}")
     @Operation(
             summary = "Получить метаинформацию о пользователе.",

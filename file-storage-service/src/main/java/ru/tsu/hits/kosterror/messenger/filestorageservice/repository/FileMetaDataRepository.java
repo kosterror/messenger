@@ -5,5 +5,8 @@ import ru.tsu.hits.kosterror.messenger.filestorageservice.entity.FileMetaData;
 
 import java.util.UUID;
 
+/**
+ * JPA репозиторий для работы с БД для сущности {@link FileMetaData}.
+ */
 public interface FileMetaDataRepository extends JpaRepository<FileMetaData, UUID> {
 }

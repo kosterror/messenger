@@ -10,6 +10,9 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Сущность метаинформации о файле.
+ */
 @Entity
 @Table(name = "file_meta_data")
 @Getter

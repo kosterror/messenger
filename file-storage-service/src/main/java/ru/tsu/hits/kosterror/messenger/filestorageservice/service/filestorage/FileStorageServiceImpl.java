@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Класс, реализующий {@link FileStorageService}.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -82,6 +85,13 @@ public class FileStorageServiceImpl implements FileStorageService {
         return fileMetaDataMapper.entityToDto(fileMetaData);
     }
 
+    /**
+     * Метод для создания объекта {@link FileMetaData}.
+     *
+     * @param authorId идентификатор владельца файла.
+     * @param file     сам файл.
+     * @return метаинформация о файле.
+     */
     private FileMetaData buildFileMetaData(UUID authorId, MultipartFile file) {
         String rawFilename = file.getOriginalFilename();
         String convertedFilename = fileNameService.convertToFilename(rawFilename);
@@ -96,6 +106,14 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .build();
     }
 
+    /**
+     * Метод для создания {@link PutObjectArgs}.
+     *
+     * @param metaData метаинформация о файле.
+     * @param file     сам файл.
+     * @return объект {@link PutObjectArgs}.
+     * @throws IOException может возникнуть при чтении байтов из {file}.
+     */
     private PutObjectArgs buildPutObjectArgs(FileMetaData metaData, MultipartFile file) throws IOException {
         byte[] content = file.getBytes();
 

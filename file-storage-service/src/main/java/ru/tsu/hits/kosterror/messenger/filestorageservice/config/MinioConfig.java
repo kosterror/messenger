@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Bean;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Конфиг для MinIO.
+ */
 @Slf4j
 @Data
 @ConfigurationProperties("minio")
@@ -23,6 +26,11 @@ public class MinioConfig {
         log.info("MinioConfig: {}", this);
     }
 
+    /**
+     * Создает бин {@link MinioClient}.
+     *
+     * @return бин {@link MinioClient}.
+     */
     @Bean
     public MinioClient minioClient() {
         return MinioClient

@@ -6,11 +6,19 @@ import org.springframework.context.annotation.Configuration;
 import ru.tsu.hits.kosterror.messenger.core.config.SwaggerConfig;
 import ru.tsu.hits.kosterror.messenger.core.controller.ExceptionHandlingController;
 
+/**
+ * Класс с конфигурацией сервиса.
+ */
 @Configuration
 public class ApplicationConfig {
 
     private static final String CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
 
+    /**
+     * Создает бин {@link Transliterator}.
+     *
+     * @return бин {@link Transliterator}.
+     */
     @Bean
     Transliterator cyrillicTransliterator() {
         return Transliterator.getInstance(CYRILLIC_TO_LATIN);
