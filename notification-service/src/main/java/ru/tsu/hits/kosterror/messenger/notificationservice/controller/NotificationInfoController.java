@@ -2,6 +2,7 @@ package ru.tsu.hits.kosterror.messenger.notificationservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,23 @@ import java.util.List;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
 
+/**
+ * Контроллер для отображения уведомлений.
+ */
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
+@Tag(name = "Информация об уведомлениях")
 public class NotificationInfoController {
 
     private final NotificationInfoService service;
 
+    /**
+     * Получить количество непрочитанных уведомлений.
+     *
+     * @param auth информация о пользователе.
+     * @return объект с числом непрочитанных уведомлений.
+     */
     @GetMapping("/unchecked")
     @Operation(
             summary = "Получить количество непрочитанных уведомлений.",
@@ -33,6 +44,13 @@ public class NotificationInfoController {
         return service.countUncheckedNotifications(extractId(auth));
     }
 
+    /**
+     * Получить список уведомлений.
+     *
+     * @param auth    информация о пользователе.
+     * @param request запрос с пагинацией и фильтрацией.
+     * @return список уведомлений.
+     */
     @PostMapping
     @Operation(
             summary = "Получить список уведомлений.",

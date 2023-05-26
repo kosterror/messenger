@@ -6,6 +6,7 @@ app:
   integration-endpoints:
     person-is-blocked: http://localhost:8080/integration/friends/blocked-persons
     is-friends: http://localhost:8080/integration/friends
+    \ get-file-meta-data: http://localhost:8080/integration/file-storage/{fileId}
   security:
     jwt-token:
       root-path: /api

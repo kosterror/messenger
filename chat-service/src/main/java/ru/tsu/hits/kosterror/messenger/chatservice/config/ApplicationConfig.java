@@ -9,8 +9,8 @@ import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.Integrat
 import ru.tsu.hits.kosterror.messenger.core.integration.auth.personinfo.IntegrationPersonInfoServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationServiceImpl;
-import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageIntegrationIntegrationServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageIntegrationService;
+import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageIntegrationServiceImpl;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationService;
 import ru.tsu.hits.kosterror.messenger.core.integration.friends.FriendIntegrationServiceImpl;
 
@@ -70,9 +70,14 @@ public class ApplicationConfig {
         return new SwaggerConfig();
     }
 
+    /**
+     * Создает бин {@link FileStorageIntegrationService}.
+     *
+     * @return бин {@link FileStorageIntegrationService}.
+     */
     @Bean
     public FileStorageIntegrationService fileStorageIntegrationService() {
-        return new FileStorageIntegrationIntegrationServiceImpl(commonIntegrationService());
+        return new FileStorageIntegrationServiceImpl(commonIntegrationService());
     }
 
     /**

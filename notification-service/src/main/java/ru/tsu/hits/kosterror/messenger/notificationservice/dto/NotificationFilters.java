@@ -8,6 +8,9 @@ import ru.tsu.hits.kosterror.messenger.core.enumeration.NotificationType;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * DTO для параметров фильтрации уведомлений.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

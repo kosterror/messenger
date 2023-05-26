@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+/**
+ * Информация об участнике чата.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

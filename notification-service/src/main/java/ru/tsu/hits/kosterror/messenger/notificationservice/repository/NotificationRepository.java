@@ -7,6 +7,9 @@ import ru.tsu.hits.kosterror.messenger.notificationservice.entity.Notification;
 
 import java.util.UUID;
 
+/**
+ * JPA репозиторий для {@link Notification}.
+ */
 @Repository
 public interface NotificationRepository
         extends JpaRepository<Notification, UUID>, JpaSpecificationExecutor<Notification> {

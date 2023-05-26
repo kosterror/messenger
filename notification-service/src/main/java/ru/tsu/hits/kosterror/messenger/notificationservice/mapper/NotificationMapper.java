@@ -7,6 +7,10 @@ import ru.tsu.hits.kosterror.messenger.core.dto.NewNotificationDto;
 import ru.tsu.hits.kosterror.messenger.notificationservice.dto.NotificationDto;
 import ru.tsu.hits.kosterror.messenger.notificationservice.entity.Notification;
 
+/**
+ * Интерфейс, на основе которого сгенерируется класс для маппинга {@link Notification} в связанные
+ * с ним DTO и наоборот.
+ */
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE

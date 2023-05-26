@@ -27,6 +27,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Класс, реализуюший {@link ChatInfoService}
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -89,6 +92,14 @@ public class ChatInfoServiceImpl implements ChatInfoService {
         return new PagingResponse<>(pagingParams, page);
     }
 
+    /**
+     * Метод для получения части списка с учетом размера и номера страницы.
+     *
+     * @param list     список.
+     * @param page     номер страницы.
+     * @param pageSize размер страницы.
+     * @return полученная информация.
+     */
     private List<ChatMessageDto> getPage(List<ChatMessageDto> list, int page, int pageSize) {
         int start = pageSize * page;
         int finish = pageSize * (page + 1);
@@ -101,6 +112,13 @@ public class ChatInfoServiceImpl implements ChatInfoService {
         return list.subList(start, finish);
     }
 
+    /**
+     * Метод для конвертирования {@link RelationPerson} и {@link Chat} в {@link ChatMessageDto}.
+     *
+     * @param sourceRelationPerson сущность пользователя.
+     * @param chat                 сущность чата.
+     * @return преобразованная информация.
+     */
     private ChatMessageDto mapChatToChatMessage(RelationPerson sourceRelationPerson, Chat chat) {
         Optional<Message> lastMessageOpt = getLastMessage(chat);
 
@@ -128,6 +146,13 @@ public class ChatInfoServiceImpl implements ChatInfoService {
         );
     }
 
+    /**
+     * Метод для получения названия чата.
+     *
+     * @param sourceRelationPerson сущность пользователя.
+     * @param chat                 сущность чата.
+     * @return названия чата.
+     */
     private String getChatName(RelationPerson sourceRelationPerson, Chat chat) {
         if (chat.getType() == ChatType.GROUP) {
             return chat.getName();
@@ -146,6 +171,13 @@ public class ChatInfoServiceImpl implements ChatInfoService {
                 .getFullName();
     }
 
+    /**
+     * Метод для фильтрации списка {@link ChatMessageDto} по названию чата.
+     *
+     * @param chatMessages список, который будет фильтроваться.
+     * @param chatName     названия чата.
+     * @return отфильтрованный список.
+     */
     private List<ChatMessageDto> filterChatByNameWithIgnoreCase(@NotNull List<ChatMessageDto> chatMessages,
                                                                 @Nullable String chatName) {
         if (chatName == null) {
@@ -158,6 +190,12 @@ public class ChatInfoServiceImpl implements ChatInfoService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Метод для получения последнего сообщения в чате.
+     *
+     * @param chat сущность чата.
+     * @return сущность последнего сообщения, обернутая в {@link Optional}.
+     */
     private Optional<Message> getLastMessage(Chat chat) {
         List<Message> messages = chat.getMessages();
         if (messages.isEmpty()) {
@@ -174,6 +212,11 @@ public class ChatInfoServiceImpl implements ChatInfoService {
         return Optional.of(lastMessage);
     }
 
+    /**
+     * Метод для сортировки списка информации о чатах по-последнему сообщения.
+     *
+     * @param chatMessages список.
+     */
     private void sortChatMessagesByLastMessage(List<ChatMessageDto> chatMessages) {
         chatMessages.sort((chat1, chat2) -> {
             if (chat1 == null || chat2 == null) {
@@ -195,6 +238,13 @@ public class ChatInfoServiceImpl implements ChatInfoService {
         });
     }
 
+    /**
+     * Метод для проверки наличия доступа к чату для пользователя с id = personId.
+     *
+     * @param personId идентификатор пользователя.
+     * @param chat     сущность чата.
+     * @return имеет ли пользователь доступ.
+     */
     private boolean hasAccessToChat(UUID personId, Chat chat) {
         return chat.getMembers()
                 .stream()

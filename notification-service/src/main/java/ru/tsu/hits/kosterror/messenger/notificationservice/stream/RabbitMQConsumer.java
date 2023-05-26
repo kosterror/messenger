@@ -9,6 +9,9 @@ import ru.tsu.hits.kosterror.messenger.notificationservice.service.notificatioma
 
 import java.util.function.Consumer;
 
+/**
+ * Класс с конфигураций бинов, которые будут принимать сообщения из очередей брокера сообщений.
+ */
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
@@ -16,6 +19,12 @@ public class RabbitMQConsumer {
 
     private final NotificationManageService notificationManageService;
 
+    /**
+     * Создает бин-анонимную функцию, который принимает и читает сообщения из очереди {@code createNotificaiton}.
+     * И на основе них создает уведомления.
+     *
+     * @return бин-анонимная функция.
+     */
     @Bean
     public Consumer<NewNotificationDto> createNotification() {
         return newNotificationDto -> {

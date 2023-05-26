@@ -11,6 +11,7 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+      resolve-lazily: true
   datasource:
     url: jdbc:postgresql://localhost:5404/messenger-file-storage-db
     username: postgres

@@ -9,7 +9,6 @@ import ru.tsu.hits.kosterror.messenger.authservice.util.validation.login.UniqueL
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.UUID;
 
 /**
  * DTO для регистрации пользователя с валидацией.
@@ -39,7 +38,5 @@ public class RegisterPersonDto {
     private String phoneNumber;
 
     private String city;
-
-    private UUID avatarId;
 
 }

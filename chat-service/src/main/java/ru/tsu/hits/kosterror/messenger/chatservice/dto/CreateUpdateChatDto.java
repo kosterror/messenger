@@ -9,6 +9,9 @@ import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Информация для создания и обновления чата.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

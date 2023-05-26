@@ -2,6 +2,7 @@ package ru.tsu.hits.kosterror.messenger.chatservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -21,16 +22,27 @@ import java.util.UUID;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
 
+/**
+ * Контроллер для взаимодействия с чатами.
+ */
 @RequestMapping("/api/chat")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "Чаты")
 public class ChatController {
 
 
     private final ChatManageService chatManageService;
     private final ChatInfoService chatInfoService;
 
+    /**
+     * Метод для создания беседы.
+     *
+     * @param auth информацией о пользователе.
+     * @param dto  информация о создаваемой беседе.
+     * @return сохраненная информация.
+     */
     @PostMapping("/group")
     @Operation(
             summary = "Создать беседу.",
@@ -40,6 +52,14 @@ public class ChatController {
         return chatManageService.createGroupChat(extractId(auth), dto);
     }
 
+    /**
+     * Метод для изменения групповых бесед.
+     *
+     * @param auth   информация о пользователе.
+     * @param chatId идентификатор беседы.
+     * @param dto    новая информация о бседе.
+     * @return сохраненная информация.
+     */
     @PutMapping("/group/{chatId}")
     @Operation(
             summary = "Изменить беседу.",
@@ -51,6 +71,13 @@ public class ChatController {
         return chatManageService.updateGroupChat(extractId(auth), chatId, dto);
     }
 
+    /**
+     * Метод для получения информации о чате.
+     *
+     * @param auth   информация о пользователе.
+     * @param chatId идентификатор чата.
+     * @return информация о чате.
+     */
     @GetMapping("/{chatId}")
     @Operation(
             summary = "Получить информацию о чате.",
@@ -61,6 +88,13 @@ public class ChatController {
         return chatInfoService.findChatById(extractId(auth), chatId);
     }
 
+    /**
+     * Метод для получения списка чатов.
+     *
+     * @param auth    информация о пользователе.
+     * @param request запрос с пагинацией и фильтрацией.
+     * @return найденная информация.
+     */
     @PostMapping("/search")
     @Operation(
             summary = "Получить список чатов.",

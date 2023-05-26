@@ -20,6 +20,9 @@ import java.util.UUID;
 
 import static ru.tsu.hits.kosterror.messenger.coresecurity.util.JwtExtractor.extractId;
 
+/**
+ * Контроллер для пользовательских запросов.
+ */
 @RestController
 @RequestMapping("/api/file-storage")
 @RequiredArgsConstructor
@@ -29,6 +32,13 @@ public class FileStorageController {
 
     private final FileStorageService fileStorageService;
 
+    /**
+     * Загружает файл в S3.
+     *
+     * @param auth информация о пользователе.
+     * @param file загружаемый файл.
+     * @return метаинформация о сохраненном файле.
+     */
     @PostMapping(
             value = "/upload",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -43,6 +53,12 @@ public class FileStorageController {
         return fileStorageService.uploadFile(extractId(auth), file);
     }
 
+    /**
+     * Выгружает файл по fileId.
+     *
+     * @param fileId идентификатор файла.
+     * @return файл с заданным fileId.
+     */
     @GetMapping(value = "/download/{fileId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @Operation(
             summary = "Скачать файл.",
@@ -60,6 +76,12 @@ public class FileStorageController {
                 .body(fileAndFilename.getSecond());
     }
 
+    /**
+     * Метод для получения метаинформации о файле.
+     *
+     * @param fileId идентификатор файла.
+     * @return метаинформация о файле.
+     */
     @GetMapping(value = "/{fileId}")
     @Operation(
             summary = "Получить метаинформацию о файле.",

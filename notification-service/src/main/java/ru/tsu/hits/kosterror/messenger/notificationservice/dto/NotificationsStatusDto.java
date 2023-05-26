@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * DTO для запросов на изменения статус уведомлений.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -7,6 +7,9 @@ import ru.tsu.hits.kosterror.messenger.authservice.entity.Person;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * JPA репозиторий для сущности Person.
+ */
 @Repository
 public interface PersonRepository extends JpaRepository<Person, UUID> {
 

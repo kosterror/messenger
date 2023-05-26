@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Класс, реализующий {@link NotificationManageService}.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -59,6 +62,12 @@ public class NotificationManageServiceImpl implements NotificationManageService 
         return notificationInfoService.countUncheckedNotifications(personId);
     }
 
+    /**
+     * Метод для создания уведомления.
+     *
+     * @param dto информация для создания.
+     * @return созданный объект.
+     */
     private Notification buildNotification(NewNotificationDto dto) {
         Notification notification = mapper.newDtoToEntity(dto);
         notification.setIsChecked(false);
@@ -67,6 +76,11 @@ public class NotificationManageServiceImpl implements NotificationManageService 
         return notification;
     }
 
+    /**
+     * Сделать уведомления прочитанными.
+     *
+     * @param notifications список уведомлений.
+     */
     private void setChecked(List<Notification> notifications) {
         LocalDateTime dateTime = LocalDateTime.now();
 
@@ -76,6 +90,11 @@ public class NotificationManageServiceImpl implements NotificationManageService 
         });
     }
 
+    /**
+     * Сделать уведомления непрочитанными.
+     *
+     * @param notifications список уведомлений.
+     */
     private void setUnchecked(List<Notification> notifications) {
         notifications.forEach(notification -> {
             notification.setIsChecked(false);
@@ -83,6 +102,13 @@ public class NotificationManageServiceImpl implements NotificationManageService 
         });
     }
 
+    /**
+     * Метод для получения информации весь ли список уведомлений принадлежит пользователю.
+     *
+     * @param notifications список уведомлений.
+     * @param personId      идентификатор пользователя.
+     * @return все ли уведомления принадлежат пользователю.
+     */
     private boolean areNotificationBelongToPerson(List<Notification> notifications, UUID personId) {
         long count = notifications
                 .stream()

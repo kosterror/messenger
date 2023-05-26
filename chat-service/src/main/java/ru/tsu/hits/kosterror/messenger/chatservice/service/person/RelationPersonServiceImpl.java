@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Класс, реализующий {@link RelationPersonService}.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -95,6 +98,12 @@ public class RelationPersonServiceImpl implements RelationPersonService {
         repository.save(relationPerson);
     }
 
+    /**
+     * Метод для построения списка сущностей {@link RelationPerson}.
+     *
+     * @param personIds список идентификаторов пользователей.
+     * @return список созданных объектов.
+     */
     private List<RelationPerson> buildRelationPersons(List<UUID> personIds) {
         List<RelationPerson> result = new ArrayList<>();
 
@@ -111,6 +120,12 @@ public class RelationPersonServiceImpl implements RelationPersonService {
         return result;
     }
 
+    /**
+     * Отправляет интеграционный запрос в {@code auth-service} для получения информации о пользователе.
+     *
+     * @param personId идентификатор пользователя.
+     * @return полученная информация о пользователе.
+     */
     private PersonDto getPersonDetails(UUID personId) {
         try {
             return integrationPersonInfoService.getPersonInfo(personId);

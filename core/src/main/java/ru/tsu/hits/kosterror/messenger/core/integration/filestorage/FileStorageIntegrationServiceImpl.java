@@ -12,8 +12,11 @@ import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegration
 
 import java.util.UUID;
 
+/**
+ * Класс, реализующий интерфейс {@link FileStorageIntegrationService}.
+ */
 @RequiredArgsConstructor
-public class FileStorageIntegrationIntegrationServiceImpl implements FileStorageIntegrationService {
+public class FileStorageIntegrationServiceImpl implements FileStorageIntegrationService {
 
     private final CommonIntegrationService commonIntegrationService;
     @Value("${app.integration-endpoints.get-file-meta-data}")

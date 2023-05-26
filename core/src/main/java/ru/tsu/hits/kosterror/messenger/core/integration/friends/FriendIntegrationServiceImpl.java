@@ -10,6 +10,9 @@ import ru.tsu.hits.kosterror.messenger.core.dto.BooleanDto;
 import ru.tsu.hits.kosterror.messenger.core.dto.PairPersonIdDto;
 import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegrationService;
 
+/**
+ * Класс, реализующий {@link FriendIntegrationService}.
+ */
 @RequiredArgsConstructor
 public class FriendIntegrationServiceImpl implements FriendIntegrationService {
 

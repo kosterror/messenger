@@ -15,6 +15,9 @@ import ru.tsu.hits.kosterror.messenger.core.integration.filestorage.FileStorageI
 
 import java.util.UUID;
 
+/**
+ * Класс, реализующий интерфейс {@link AttachmentService}
+ */
 @Service
 @RequiredArgsConstructor
 public class AttachmentServiceImpl implements AttachmentService {
@@ -40,6 +43,12 @@ public class AttachmentServiceImpl implements AttachmentService {
         return attachmentRepository.save(attachment);
     }
 
+    /**
+     * Делает интеграционный запрос для получения метаинформации о файле и обрабатывает полученные исключения.
+     *
+     * @param fileId идентификатор файла.
+     * @return полученная метаинформация.
+     */
     private FileMetaDataDto getFileMetaData(UUID fileId) {
         try {
             return fileStorageIntegrationService.getFileMetaData(fileId);

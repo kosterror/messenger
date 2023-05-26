@@ -9,6 +9,9 @@ import ru.tsu.hits.kosterror.messenger.core.dto.PersonDto;
 
 import java.util.function.Consumer;
 
+/**
+ * Класс с конфигурацией бинов для приема сообщений из брокера сообщений.
+ */
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
@@ -16,6 +19,11 @@ public class RabbitMQConsumer {
 
     private final RelationPersonService relationPersonService;
 
+    /**
+     * Создает бин, который принимает сообщения для синхронизации информации о пользователе.
+     *
+     * @return возвращает анонимную функцию, которая занимается обновлением информации о пользователе.
+     */
     @Bean
     public Consumer<PersonDto> synchronizePersonDetails() {
         return personDto -> {

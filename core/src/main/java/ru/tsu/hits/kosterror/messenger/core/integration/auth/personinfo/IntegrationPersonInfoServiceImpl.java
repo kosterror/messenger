@@ -11,6 +11,9 @@ import ru.tsu.hits.kosterror.messenger.core.integration.common.CommonIntegration
 
 import java.util.UUID;
 
+/**
+ * Класс, реализующий {@link IntegrationPersonInfoService}.
+ */
 @RequiredArgsConstructor
 public class IntegrationPersonInfoServiceImpl implements IntegrationPersonInfoService {
 
